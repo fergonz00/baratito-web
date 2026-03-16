@@ -1,0 +1,1277 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Guía Orlando · Disnerd</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Nunito:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --sky:#B8DCEE; --sky-light:#E8F4FB; --sky-mid:#9FCDE0;
+    --lavender:#C9C3E8; --lavender-light:#EEECf8; --lavender-mid:#A89FD4;
+    --rose:#EAB8C8; --rose-light:#FAF0F4; --rose-mid:#D494AB;
+    --sage:#B8D8C8; --sage-light:#EAF5EE;
+    --cream:#FDFAF7; --white:#FFFFFF;
+    --text:#3A3550; --muted:#8A87A0; --border:#E2DDF0;
+    --success:#7EC8A0; --warning:#F0C97A; --danger:#E8958A;
+    --disney-main:#9FCDE0; --universal-main:#C9C3E8;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  body{font-family:'Nunito',sans-serif;background:var(--cream);color:var(--text);min-height:100vh;overflow-x:hidden}
+
+  /* LOGIN */
+  #login-screen{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;background:linear-gradient(160deg,#C9E8F5 0%,#D8D4F0 50%,#EEC8D8 100%);position:relative;overflow:hidden}
+  #login-screen::before{content:'';position:absolute;top:-10%;left:-10%;width:60%;height:60%;background:radial-gradient(circle,rgba(255,255,255,.5) 0%,transparent 70%);pointer-events:none}
+  #login-screen::after{content:'';position:absolute;bottom:-10%;right:-5%;width:50%;height:50%;background:radial-gradient(circle,rgba(201,195,232,.4) 0%,transparent 70%);pointer-events:none}
+  .login-stars{position:absolute;top:0;left:0;right:0;bottom:0;pointer-events:none;overflow:hidden}
+  .star{position:absolute;background:white;border-radius:50%;animation:twinkle 3s infinite}
+  @keyframes twinkle{0%,100%{opacity:.3;transform:scale(1)}50%{opacity:.9;transform:scale(1.4)}}
+  .login-box{position:relative;z-index:10;width:100%;max-width:380px;text-align:center}
+  .login-logo{font-family:'Cormorant Garamond',serif;font-size:13px;letter-spacing:6px;color:var(--text);text-transform:uppercase;margin-bottom:8px;opacity:.6;font-style:italic}
+  .login-title{font-family:'Cormorant Garamond',serif;font-size:52px;font-weight:600;color:var(--text);line-height:1;margin-bottom:6px}
+  .login-title span{color:var(--lavender-mid)}
+  .login-subtitle{color:var(--muted);font-size:13px;letter-spacing:1px;margin-bottom:40px;font-weight:300}
+  .login-form{background:rgba(255,255,255,.7);border:1px solid rgba(255,255,255,.9);border-radius:24px;padding:32px 24px;backdrop-filter:blur(20px)}
+  .form-group{margin-bottom:16px;text-align:left}
+  .form-group label{display:block;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:8px;font-weight:600}
+  .form-group input{width:100%;background:rgba(255,255,255,.8);border:1.5px solid var(--border);border-radius:14px;padding:14px 16px;color:var(--text);font-size:15px;font-family:'Nunito',sans-serif;outline:none;transition:border-color .2s}
+  .form-group input:focus{border-color:var(--lavender-mid)}
+  .form-group input::placeholder{color:var(--muted);opacity:.6}
+  .login-btn{width:100%;background:linear-gradient(135deg,var(--sky-mid),var(--lavender-mid));border:none;border-radius:16px;padding:16px;color:white;font-size:15px;font-weight:600;font-family:'Nunito',sans-serif;letter-spacing:.5px;cursor:pointer;margin-top:8px;transition:transform .15s;box-shadow:0 4px 20px rgba(160,150,210,.3)}
+  .login-btn:active{transform:scale(.98)}
+  .login-error{color:var(--danger);font-size:13px;margin-top:12px;display:none}
+
+  /* APP */
+  #app{display:none}
+  .app-header{position:sticky;top:0;z-index:100;background:rgba(253,250,247,.95);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:0 20px;height:60px;display:flex;align-items:center;justify-content:space-between}
+  .header-brand{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:600;display:flex;align-items:center;gap:10px;color:var(--sky-mid)}
+  .header-brand span{color:var(--text)}
+  .header-brand-links{display:flex;gap:6px;align-items:center}
+  .header-brand-links a{display:flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:50%;text-decoration:none;transition:transform .15s}
+  .header-brand-links a:active{transform:scale(.9)}
+  .header-brand-links .hbl-wa{background:#25D366}
+  .header-brand-links .hbl-ig{background:linear-gradient(135deg,#833ab4,#fd1d1d,#fcb045)}
+  .header-welcome{font-size:12px;color:var(--muted);text-align:right;font-style:italic;font-family:'Cormorant Garamond',serif;font-size:14px}
+
+  /* NAV */
+  .bottom-nav{position:fixed;bottom:0;left:0;right:0;z-index:100;background:rgba(253,250,247,.97);border-top:1px solid var(--border);display:flex;padding-bottom:env(safe-area-inset-bottom,8px);backdrop-filter:blur(10px)}
+  .nav-item{flex:1;display:flex;flex-direction:column;align-items:center;padding:10px 4px 8px;cursor:pointer;transition:color .2s;color:var(--muted);font-size:10px;font-weight:500;border:none;background:none;font-family:'Nunito',sans-serif}
+  .nav-item.active{color:var(--lavender-mid)}
+  .nav-icon{font-size:20px;margin-bottom:3px;transition:transform .2s}
+  .nav-item.active .nav-icon{transform:scale(1.15)}
+
+  /* PAGES */
+  .page{display:none;padding:20px 16px 100px;animation:fadeIn .3s ease}
+  .page.active{display:block}
+  @keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+  /* CONTACT */
+  .contact-bar{display:flex;gap:10px;margin-bottom:20px}
+  .contact-btn{flex:1;display:flex;align-items:center;justify-content:center;gap:8px;padding:14px 12px;border-radius:16px;border:none;font-family:'Nunito',sans-serif;font-size:13px;font-weight:600;cursor:pointer;text-decoration:none;transition:transform .15s}
+  .contact-btn:active{transform:scale(.97)}
+  .contact-wa{background:#25D366;color:white}
+  .contact-ig{background:linear-gradient(135deg,#833ab4,#fd1d1d,#fcb045);color:white}
+
+  /* INFO STRIP */
+  .info-strip{display:flex;gap:10px;margin-bottom:24px;overflow-x:auto;padding-bottom:4px;scrollbar-width:none}
+  .info-strip::-webkit-scrollbar{display:none}
+  .info-chip{flex-shrink:0;background:white;border:1.5px solid var(--border);border-radius:16px;padding:10px 16px;text-align:center;min-width:90px;box-shadow:0 2px 8px rgba(180,170,220,.1)}
+  .info-chip-icon{font-size:20px}
+  .info-chip-val{font-weight:700;font-size:14px;margin-top:2px;color:var(--lavender-mid)}
+  .info-chip-label{font-size:10px;color:var(--muted)}
+
+  /* PARK CARDS */
+  .greeting{margin-bottom:24px}
+  .greeting-sub{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:3px;font-weight:500}
+  .greeting-title{font-family:'Cormorant Garamond',serif;font-size:32px;font-weight:600;line-height:1.1;margin-top:4px;color:var(--text)}
+  .greeting-family{color:var(--lavender-mid)}
+  .park-cards-grid{display:flex;flex-direction:column;gap:14px;margin-bottom:20px}
+  .park-card{border-radius:24px;padding:22px;cursor:pointer;position:relative;overflow:hidden;transition:transform .2s;min-height:110px;display:flex;flex-direction:column;justify-content:flex-end;color:var(--text)}
+  .park-card:active{transform:scale(.98)}
+  .park-card.disney{background:linear-gradient(135deg,#C8E8F5 0%,#D8EEF8 100%);border:1.5px solid #A8D4EC}
+  .park-card.universal{background:linear-gradient(135deg,#D4CEEE 0%,#E4E0F5 100%);border:1.5px solid #B8B0E0}
+  .park-card::before{content:'';position:absolute;top:-20px;right:-20px;width:130px;height:130px;background:rgba(255,255,255,.35);border-radius:50%}
+  .park-card-emoji{position:absolute;top:16px;right:20px;font-size:36px;opacity:.85}
+  .park-card-label{font-size:10px;letter-spacing:3px;text-transform:uppercase;opacity:.6;margin-bottom:4px;font-weight:600}
+  .park-card-name{font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:600;line-height:1.1;color:var(--text)}
+  .park-card-sub{font-size:11px;opacity:.65;margin-top:3px}
+  .park-card-arrow{position:absolute;bottom:20px;right:20px;font-size:18px;opacity:.4;color:var(--text)}
+
+  /* PARK DETAIL */
+  .back-btn{display:flex;align-items:center;gap:8px;background:none;border:none;font-family:'Nunito',sans-serif;font-size:14px;color:var(--muted);cursor:pointer;padding:0;margin-bottom:20px}
+  .park-header-banner{border-radius:20px;padding:28px 24px;color:var(--text);margin-bottom:24px;position:relative;overflow:hidden}
+  .park-header-banner h1{font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:600;line-height:1.1}
+  .park-header-banner p{font-size:13px;opacity:.7;margin-top:6px}
+  .sub-selector{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;margin-bottom:20px;scrollbar-width:none}
+  .sub-selector::-webkit-scrollbar{display:none}
+  .sub-btn{flex-shrink:0;padding:8px 16px;border-radius:20px;border:1.5px solid var(--border);background:white;font-family:'Nunito',sans-serif;font-size:13px;font-weight:500;cursor:pointer;transition:all .2s;color:var(--text)}
+  .sub-btn.active{background:var(--lavender-mid);border-color:var(--lavender-mid);color:white}
+
+  /* LEGEND & BADGES */
+  .legend{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:16px;padding:12px 14px;background:white;border-radius:12px;border:1px solid var(--border)}
+  .legend-item{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--muted)}
+  .intensity-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+  .dot-red{background:#E8958A} .dot-yellow{background:#F0C97A} .dot-green{background:#7EC8A0} .dot-gray{background:#C0BBDA}
+  .attraction-list{display:flex;flex-direction:column;gap:8px;margin-bottom:8px}
+  .attraction-item{background:white;border-radius:14px;padding:12px 16px;display:flex;align-items:center;gap:12px;border:1.5px solid var(--border)}
+  .attraction-item.closed{opacity:.45;background:#f9f8fc}
+  .attraction-name{flex:1;font-size:14px;font-weight:500;line-height:1.3;color:var(--text)}
+  .attraction-badges{display:flex;gap:4px;flex-wrap:wrap;justify-content:flex-end}
+  .badge{font-size:10px;padding:2px 7px;border-radius:6px;font-weight:600;white-space:nowrap}
+  .badge-must{background:var(--sky-light);color:var(--sky-mid)}
+  .badge-height{background:var(--lavender-light);color:var(--lavender-mid)}
+  .badge-water{background:#E0F4FF;color:#5B9EC9}
+  .badge-single{background:var(--rose-light);color:var(--rose-mid)}
+  .badge-show{background:#FFF8E8;color:#C9A84C}
+  .badge-closed{background:#FDE8E8;color:#C07070}
+  .badge-new{background:var(--sage-light);color:#5BA07A}
+
+  /* RESTAURANTS */
+  .restaurant-item{background:white;border-radius:14px;padding:14px 16px;border:1.5px solid var(--border);margin-bottom:8px}
+  .restaurant-name{font-weight:600;font-size:14px;margin-bottom:3px;color:var(--text)}
+  .restaurant-desc{font-size:12px;color:var(--muted);line-height:1.4}
+  .reserva-tag{display:inline-block;font-size:10px;font-weight:600;padding:2px 8px;border-radius:6px;margin-top:6px}
+  .reserva-si{background:var(--rose-light);color:var(--rose-mid)}
+  .reserva-no{background:var(--sage-light);color:#5BA07A}
+
+  /* SECTION */
+  .section-title{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:600;margin-bottom:16px;margin-top:24px;color:var(--text)}
+  .section-label{font-size:11px;letter-spacing:2.5px;text-transform:uppercase;color:var(--muted);margin-bottom:12px;margin-top:20px;font-weight:600}
+  .section-card{background:white;border-radius:16px;padding:18px;margin-bottom:12px;border:1.5px solid var(--border)}
+
+  /* ALERT */
+  .alert-box{border-radius:16px;padding:14px 16px;margin-bottom:12px;display:flex;gap:12px;align-items:flex-start}
+  .alert-coral{background:var(--sky-light);border-left:3px solid var(--sky-mid)}
+  .alert-blue{background:var(--sky-light);border-left:3px solid var(--sky-mid)}
+  .alert-gold{background:#FFF8E8;border-left:3px solid #C9A84C}
+  .alert-green{background:var(--sage-light);border-left:3px solid var(--success)}
+  .alert-red{background:#FDE8E8;border-left:3px solid var(--danger)}
+  .alert-teal{background:var(--sky-light);border-left:3px solid var(--sky-mid)}
+  .alert-box p{font-size:13px;line-height:1.5;color:var(--text)}
+  .alert-box strong{display:block;font-size:13px;margin-bottom:2px;color:var(--text)}
+
+  /* TIPS */
+  .filter-row{display:flex;gap:8px;margin-bottom:20px;overflow-x:auto;padding-bottom:4px;scrollbar-width:none}
+  .filter-row::-webkit-scrollbar{display:none}
+  .filter-chip{flex-shrink:0;padding:7px 14px;border-radius:20px;border:1.5px solid var(--border);background:white;font-family:'Nunito',sans-serif;font-size:13px;font-weight:500;cursor:pointer;color:var(--text);transition:all .2s}
+  .filter-chip.active{background:var(--lavender-mid);border-color:var(--lavender-mid);color:white}
+
+  /* CHECKLIST */
+  .checklist-item{display:flex;align-items:flex-start;gap:12px;padding:14px 0;border-bottom:1px solid var(--border);cursor:pointer}
+  .checklist-item:last-child{border-bottom:none}
+  .check-box{width:22px;height:22px;border-radius:6px;border:2px solid var(--border);flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .2s;margin-top:1px}
+  .checklist-item.checked .check-box{background:var(--success);border-color:var(--success);color:white}
+  .checklist-item.checked .check-text{text-decoration:line-through;color:var(--muted)}
+  .check-text{font-size:14px;line-height:1.4;flex:1;color:var(--text)}
+  .check-sub{font-size:11px;color:var(--muted);margin-top:2px}
+  .progress-bar-wrap{background:var(--border);border-radius:10px;height:6px;margin-bottom:20px;overflow:hidden}
+  .progress-bar-fill{height:100%;background:linear-gradient(90deg,var(--sky-mid),var(--lavender-mid));border-radius:10px;transition:width .4s ease}
+  .progress-label{font-size:12px;color:var(--muted);margin-bottom:6px}
+
+  /* HEIGHTS */
+  .height-filter-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:20px}
+  .height-park-btn{padding:10px 12px;border-radius:14px;border:1.5px solid var(--border);background:white;font-family:'Nunito',sans-serif;font-size:13px;font-weight:500;cursor:pointer;text-align:center;transition:all .2s;color:var(--text)}
+  .height-park-btn.active-disney{background:var(--sky-mid);border-color:var(--sky-mid);color:white}
+  .height-park-btn.active-universal{background:var(--lavender-mid);border-color:var(--lavender-mid);color:white}
+  .height-park-btn.active-epic{background:var(--rose-mid);border-color:var(--rose-mid);color:white}
+  .height-table{background:white;border-radius:16px;border:1.5px solid var(--border);overflow:hidden;margin-bottom:16px}
+  .height-row{display:flex;align-items:center;padding:12px 16px;border-bottom:1px solid var(--border);gap:12px}
+  .height-row:last-child{border-bottom:none}
+  .height-row.closed-row{opacity:.35}
+  .height-attraction{flex:1;font-size:13px;font-weight:500;line-height:1.3;color:var(--text)}
+  .height-cm{font-size:15px;font-weight:700;flex-shrink:0;min-width:50px;text-align:right}
+
+  /* EPIC */
+  .epic-universe-badge{display:inline-block;background:var(--lavender-light);color:var(--lavender-mid);font-size:10px;font-weight:700;padding:3px 10px;border-radius:20px;letter-spacing:1px;text-transform:uppercase;margin-bottom:8px}
+  .world-portal{border-radius:18px;padding:18px;margin-bottom:10px;cursor:pointer;position:relative;overflow:hidden;border:1.5px solid rgba(255,255,255,.3)}
+  .portal-celestial{background:linear-gradient(135deg,#2a2a6e,#4040a0)}
+  .portal-harry{background:linear-gradient(135deg,#3d2800,#7a4820)}
+  .portal-nintendo{background:linear-gradient(135deg,#1a3a20,#2d6030)}
+  .portal-berk{background:linear-gradient(135deg,#1a2a40,#2d4a70)}
+  .portal-dark{background:linear-gradient(135deg,#200a0a,#501a1a)}
+  .portal-name{font-family:'Cormorant Garamond',serif;font-size:20px;color:white;font-weight:600}
+  .portal-desc{font-size:12px;color:rgba(255,255,255,.65);margin-top:4px}
+  .portal-icon{position:absolute;right:18px;top:50%;transform:translateY(-50%);font-size:32px;opacity:.7}
+
+  /* VOCAB */
+  .vocab-item{padding:10px 0;border-bottom:1px solid var(--border);display:flex;gap:12px;align-items:flex-start}
+  .vocab-item:last-child{border-bottom:none}
+  .vocab-term{font-size:12px;font-weight:700;color:var(--lavender-mid);min-width:110px;flex-shrink:0;line-height:1.3}
+  .vocab-def{font-size:13px;color:var(--muted);line-height:1.4;flex:1}
+
+  /* CURIOSITIES */
+  .curiosity-item{display:flex;gap:12px;padding:10px 0;border-bottom:1px solid var(--border);align-items:flex-start}
+  .curiosity-item:last-child{border-bottom:none}
+  .curiosity-icon{font-size:20px;flex-shrink:0;margin-top:1px}
+  .curiosity-text{font-size:13px;line-height:1.5;color:var(--muted);flex:1}
+  .curiosity-text strong{display:block;font-weight:700;margin-bottom:2px;color:var(--text)}
+</style>
+</head>
+<body>
+
+<div id="login-screen">
+  <div class="login-stars" id="stars-container"></div>
+  <div class="login-box">
+    <div class="login-logo">✦ Disnerd Sofi ✦</div>
+    <div class="login-title">Guía<br><span>Orlando</span></div>
+    <div class="login-subtitle">tu guía mágica de viaje</div>
+    <div class="login-form">
+      <div class="form-group"><label>Familia / Grupo</label><input type="text" id="username-input" placeholder="ej: Familia García" autocomplete="off"></div>
+      <div class="form-group"><label>Contraseña</label><input type="password" id="password-input" placeholder="Tu código de viaje"></div>
+      <button class="login-btn" onclick="doLogin()">✨ Ingresar</button>
+      <p class="login-error" id="login-error">Usuario o contraseña incorrectos</p>
+    </div>
+  </div>
+</div>
+
+<!-- PANEL ADMIN -->
+
+
+<div id="app">
+  <div class="app-header">
+    <div class="header-brand">Disnerd <span>Sofi</span><div class="header-brand-links"><a class="hbl-wa" href="https://wa.me/541132924274" target="_blank"><svg width="16" height="16" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg></a><a class="hbl-ig" href="https://instagram.com/disnerd.sofi" target="_blank"><svg width="16" height="16" viewBox="0 0 24 24" fill="white"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg></a></div></div>
+    <div class="header-welcome">Orlando 2026 ✨</div>
+  </div>
+
+  <!-- HOME -->
+  <div class="page active" id="page-home">
+    <div class="greeting">
+      <div class="greeting-sub">Bienvenidos</div>
+      <div class="greeting-title">¡Que empiece la magia!</div>
+    </div>
+    <div class="info-strip">
+      <div class="info-chip"><div class="info-chip-icon">🏰</div><div class="info-chip-val">6</div><div class="info-chip-label">Disney</div></div>
+      <div class="info-chip"><div class="info-chip-icon">🌍</div><div class="info-chip-val">4</div><div class="info-chip-label">Universal</div></div>
+    </div>
+    <div class="section-title">Elegí tu destino</div>
+    <div class="park-cards-grid">
+      <div class="park-card disney" onclick="openPark('disney')"><div class="park-card-emoji">🏰</div><div class="park-card-label">Walt Disney World</div><div class="park-card-name">Disney</div><div class="park-card-sub">6 parques · Temáticos y acuáticos</div><div class="park-card-arrow">→</div></div>
+      <div class="park-card universal" onclick="openPark('universal')"><div class="park-card-emoji">🌍</div><div class="park-card-label">Universal Orlando Resort</div><div class="park-card-name">Universal</div><div class="park-card-sub">4 parques · Studios · Islands · Epic · Volcano Bay</div><div class="park-card-arrow">→</div></div>
+    </div>
+
+    <div class="section-label" style="margin-top:8px">¿Qué encontrás en esta guía?</div>
+    <div class="section-card" style="display:flex;flex-direction:column;gap:14px">
+      <div style="display:flex;gap:12px;align-items:flex-start">
+        <span style="font-size:20px">🏰</span>
+        <div><div style="font-weight:600;font-size:13px;color:var(--text)">Parques completos</div><div style="font-size:12px;color:var(--muted);margin-top:2px">Todas las atracciones con descripción, alturas y tips de cada parque de Disney y Universal.</div></div>
+      </div>
+      <div style="display:flex;gap:12px;align-items:flex-start">
+        <span style="font-size:20px">💡</span>
+        <div><div style="font-weight:600;font-size:13px;color:var(--text)">Tips & consejos</div><div style="font-size:12px;color:var(--muted);margin-top:2px">Secretos de filas, comida, Lightning Lane y todo lo que necesitás saber antes de entrar. Incluye consejos y datos útiles si vas con un bebé.</div></div>
+      </div>
+      <div style="display:flex;gap:12px;align-items:flex-start">
+        <span style="font-size:20px">📏</span>
+        <div><div style="font-weight:600;font-size:13px;color:var(--text)">Alturas mínimas</div><div style="font-size:12px;color:var(--muted);margin-top:2px">Referencia rápida de todas las atracciones para planificar el día.</div></div>
+      </div>
+      <div style="display:flex;gap:12px;align-items:flex-start">
+        <span style="font-size:20px">✅</span>
+        <div><div style="font-weight:600;font-size:13px;color:var(--text)">Checklist del viaje</div><div style="font-size:12px;color:var(--muted);margin-top:2px">Lista interactiva para no olvidarte nada antes ni durante el viaje.</div></div>
+      </div>
+    </div>
+
+    <div class="section-label">Antes de llegar al parque</div>
+    <div class="alert-box alert-blue">
+      <span style="font-size:20px">🎟️</span>
+      <div>
+        <strong>Número de confirmación Disney</strong>
+        <p style="margin-top:8px"><strong style="color:var(--sky-mid)">Si no te hospedás dentro de Disney:</strong> Con ese número retirás los tickets de toda tu estadía el primer día de parque en las boleterías. ¡No necesitás nada más!</p>
+        <p style="margin-top:8px"><strong style="color:var(--sky-mid)">Si te hospedás dentro de Disney:</strong> Con ese número hacés el check-in en el front desk, donde te asignan la habitación y te dan los tickets y Magic Band. Check-in: 15hs · Check-out: 11am.</p>
+        <p style="margin-top:8px">Si llegás antes del horario de check-in podés dejar las valijas en el hotel y arrancar a recorrer Disney Springs o el supermercado mientras esperás.</p>
+      </div>
+    </div>
+
+    <div class="contact-bar">
+      <a class="contact-btn contact-wa" href="https://wa.me/541132924274" target="_blank"><svg width="16" height="16" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg> Escribime por WhatsApp</a>
+      <a class="contact-btn contact-ig" href="https://instagram.com/disnerd.sofi" target="_blank"><svg width="16" height="16" viewBox="0 0 24 24" fill="white"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg> @disnerd.sofi</a>
+    </div>
+  </div>
+
+  <!-- DISNEY -->
+  <div class="page" id="page-disney">
+    <button class="back-btn" onclick="goHome()">← Volver</button>
+    <div class="park-header-banner" style="background:linear-gradient(135deg,#C8E8F5,#D8EEF8);border:1.5px solid #A8D4EC">
+      <div style="font-size:11px;letter-spacing:3px;opacity:.6;text-transform:uppercase;margin-bottom:6px;color:var(--text)">Walt Disney World</div>
+      <h1>Disney ✨</h1><p>Elegí el parque que querés ver</p>
+    </div>
+    <div class="sub-selector" id="disney-sub-selector">
+      <button class="sub-btn active" onclick="showDisneyPark('mk',this)">🏰 Magic Kingdom</button>
+      <button class="sub-btn" onclick="showDisneyPark('epcot',this)">🌍 Epcot</button>
+      <button class="sub-btn" onclick="showDisneyPark('ak',this)">🌳 Animal Kingdom</button>
+      <button class="sub-btn" onclick="showDisneyPark('hs',this)">🎬 Hollywood Studios</button>
+      <button class="sub-btn" onclick="showDisneyPark('typhoon',this)">🌊 Typhoon Lagoon</button>
+      <button class="sub-btn" onclick="showDisneyPark('blizzard',this)">❄️ Blizzard Beach</button>
+      <button class="sub-btn" onclick="showDisneyPark('springs',this)">🛍️ Disney Springs</button>
+      <button class="sub-btn" onclick="showDisneyPark('historia',this)">📖 Historia</button>
+    </div>
+    <div id="disney-park-content"></div>
+  </div>
+
+  <!-- UNIVERSAL -->
+  <div class="page" id="page-universal">
+    <button class="back-btn" onclick="goHome()">← Volver</button>
+    <div class="park-header-banner" style="background:linear-gradient(135deg,#D4CEEE,#E4E0F5);border:1.5px solid #B8B0E0">
+      <div style="font-size:11px;letter-spacing:3px;opacity:.6;text-transform:uppercase;margin-bottom:6px;color:var(--text)">Universal Orlando Resort</div>
+      <h1>Universal 🌍</h1><p>4 parques · Studios · Islands · Epic Universe · Volcano Bay</p>
+    </div>
+    <div class="sub-selector" id="universal-sub-selector">
+      <button class="sub-btn" onclick="showUniversalPark('studios',this)" style="background:var(--universal-red);border-color:var(--universal-red);color:white">🎬 Universal Studios</button>
+      <button class="sub-btn" onclick="showUniversalPark('ioa',this)">🏝️ Islands of Adventure</button>
+      <button class="sub-btn" onclick="showUniversalPark('epic',this)">✨ Epic Universe</button>
+      <button class="sub-btn" onclick="showUniversalPark('volcano',this)">🌋 Volcano Bay</button>
+      <button class="sub-btn" onclick="showUniversalPark('citywalk',this)">🎡 CityWalk</button>
+    </div>
+    <div id="universal-park-content"></div>
+  </div>
+
+  <!-- TIPS -->
+  <div class="page" id="page-tips">
+    <div class="section-title" style="margin-top:4px">Tips & Consejos</div>
+    <div class="filter-row">
+      <button class="filter-chip active" onclick="filterTips('disney',this)">🏰 Disney</button>
+      <button class="filter-chip" onclick="filterTips('universal',this)">🌍 Universal</button>
+      <button class="filter-chip" onclick="filterTips('filas',this)">⏱️ Filas</button>
+      <button class="filter-chip" onclick="filterTips('comida',this)">🍔 Comida</button>
+      <button class="filter-chip" onclick="filterTips('general',this)">🎒 Antes de ir</button>
+      <button class="filter-chip" onclick="filterTips('bebes',this)">🍼 Con bebé</button>
+      <button class="filter-chip" onclick="filterTips('vocab',this)">📖 Vocabulario</button>
+    </div>
+    <div id="tips-container"></div>
+    <div class="contact-bar" style="margin-top:20px">
+      <a class="contact-btn contact-wa" href="https://wa.me/541132924274" target="_blank">📱 Escribime por WhatsApp</a>
+      <a class="contact-btn contact-ig" href="https://instagram.com/disnerd.sofi" target="_blank">📸 @disnerd.sofi</a>
+    </div>
+  </div>
+
+  <!-- CHECKLIST -->
+  <div class="page" id="page-checklist">
+    <div class="section-title" style="margin-top:4px">Checklist del Viaje</div>
+    <div class="progress-label" id="checklist-progress-label">0 de 0 completados</div>
+    <div class="progress-bar-wrap"><div class="progress-bar-fill" id="checklist-progress-bar" style="width:0%"></div></div>
+    <div id="checklist-container"></div>
+  </div>
+
+  <!-- ALTURAS -->
+  <div class="page" id="page-alturas">
+    <div class="section-title" style="margin-top:4px">Alturas Mínimas</div>
+    <div class="alert-box alert-red"><span style="font-size:18px">⚠️</span><p>Las atracciones en gris están cerradas temporalmente o permanentemente a marzo 2026.</p></div>
+    <div class="height-filter-grid">
+      <button class="height-park-btn active-disney" onclick="filterHeights('disney',this)">🏰 Disney</button>
+      <button class="height-park-btn" onclick="filterHeights('universal',this)">🌍 Universal</button>
+      <button class="height-park-btn" onclick="filterHeights('epic',this)">✨ Epic Universe</button>
+      <button class="height-park-btn" onclick="filterHeights('all',this)">📋 Todos</button>
+    </div>
+    <div id="heights-container"></div>
+  </div>
+
+  <!-- ADMIN -->
+  <div class="page" id="page-admin">
+    <div class="section-title" style="margin-top:4px">✦ Panel Sofi</div>
+    <div class="section-label" style="margin-bottom:12px">Clientes activos</div>
+    <div id="admin-user-list" style="margin-bottom:20px"></div>
+    <div class="section-card">
+      <div style="font-weight:600;font-size:14px;color:var(--text);margin-bottom:14px">Agregar nuevo cliente</div>
+      <div style="margin-bottom:12px">
+        <label style="font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:6px">Nombre (se muestra en la app)</label>
+        <input type="text" id="admin-nombre" placeholder="ej: Familia Rodríguez" style="width:100%;box-sizing:border-box;background:white;border:1.5px solid var(--border);border-radius:12px;padding:12px 14px;font-size:14px;font-family:'Nunito',sans-serif;outline:none;color:var(--text)">
+      </div>
+      <div style="margin-bottom:12px">
+        <label style="font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:6px">Usuario</label>
+        <input type="text" id="admin-usuario" placeholder="ej: familia rodriguez" style="width:100%;box-sizing:border-box;background:white;border:1.5px solid var(--border);border-radius:12px;padding:12px 14px;font-size:14px;font-family:'Nunito',sans-serif;outline:none;color:var(--text)">
+      </div>
+      <div style="margin-bottom:16px">
+        <label style="font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:6px">Contraseña</label>
+        <input type="text" id="admin-pass" placeholder="ej: rodriguez2026" style="width:100%;box-sizing:border-box;background:white;border:1.5px solid var(--border);border-radius:12px;padding:12px 14px;font-size:14px;font-family:'Nunito',sans-serif;outline:none;color:var(--text)">
+      </div>
+      <button onclick="agregarUsuario()" style="width:100%;background:linear-gradient(135deg,var(--sky-mid),var(--lavender-mid));border:none;border-radius:14px;padding:14px;color:white;font-size:14px;font-weight:600;font-family:'Nunito',sans-serif;cursor:pointer">+ Agregar cliente</button>
+      <p id="admin-msg" style="text-align:center;font-size:13px;margin-top:10px;display:none"></p>
+    </div>
+  </div>
+
+  <nav class="bottom-nav" id="bottom-nav">
+    <button class="nav-item active" onclick="navTo('home',this)"><span class="nav-icon">🏰</span>Inicio</button>
+    <button class="nav-item" onclick="navTo('tips',this)"><span class="nav-icon">💡</span>Tips</button>
+    <button class="nav-item" onclick="navTo('alturas',this)"><span class="nav-icon">📏</span>Alturas</button>
+    <button class="nav-item" onclick="navTo('checklist',this)"><span class="nav-icon">✅</span>Checklist</button>
+  </nav>
+</div>
+
+<script>
+const SUPABASE_URL='https://wjfglsafgaltusmbnccl.supabase.co';
+const SUPABASE_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndqZmdsc2FmZ2FsdHVzbWJuY2NsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM0MzM2OTksImV4cCI6MjA4OTAwOTY5OX0.OOwgyKDNQsbBaGDaL0OhJfc8eOsCClvvAPW0VFBKrOA';
+const ADMIN_PASS='SofiDisnerd2026';
+
+async function sbFetch(path,opts={}){
+  const res=await fetch(SUPABASE_URL+path,{...opts,headers:{'apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY,'Content-Type':'application/json','Prefer':'return=representation',...(opts.headers||{})}});
+  return res.json();
+}
+
+function createStars(){const c=document.getElementById('stars-container');for(let i=0;i<60;i++){const s=document.createElement('div');s.className='star';const sz=Math.random()*3+1;s.style.cssText=`width:${sz}px;height:${sz}px;top:${Math.random()*100}%;left:${Math.random()*100}%;animation-delay:${Math.random()*4}s;animation-duration:${2+Math.random()*3}s`;c.appendChild(s);}}
+createStars();
+
+document.getElementById('password-input').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin();});
+document.getElementById('username-input').addEventListener('keydown',e=>{if(e.key==='Enter')document.getElementById('password-input').focus();});
+
+let isAdmin=false;
+
+async function doLogin(){
+  const user=document.getElementById('username-input').value.trim().toLowerCase();
+  const pass=document.getElementById('password-input').value.trim();
+  const err=document.getElementById('login-error');
+  const btn=document.querySelector('.login-btn');
+  btn.textContent='Verificando...';
+  btn.disabled=true;
+  try{
+    const data=await sbFetch(`/rest/v1/disnerd_users?usuario=eq.${encodeURIComponent(user)}&select=*`);
+    if(data&&data.length>0){
+      const u=data[0];
+      const dbPass=u['clave']||'';
+      if(dbPass===pass){
+      isAdmin=(u['usuario']==='sofi');
+      document.getElementById('login-screen').style.display='none';
+      document.getElementById('app').style.display='block';
+      if(isAdmin){
+        const nav=document.getElementById('bottom-nav');
+        nav.innerHTML+=`<button class="nav-item" onclick="navTo('admin',this);cargarUsuarios()"><span class="nav-icon">⚙️</span>Admin</button>`;
+      }
+      initApp();
+      }else{err.style.display='block';setTimeout(()=>err.style.display='none',3000);}
+    }else{err.style.display='block';setTimeout(()=>err.style.display='none',3000);}
+  }catch(e){err.textContent='Error de conexión. Intentá de nuevo.';err.style.display='block';setTimeout(()=>{err.style.display='none';err.textContent='Usuario o contraseña incorrectos';},3000);}
+  btn.textContent='✨ Ingresar';
+  btn.disabled=false;
+}
+
+async function cargarUsuarios(){
+  const list=document.getElementById('admin-user-list');
+  list.innerHTML='<p style="font-size:13px;color:var(--muted);text-align:center;padding:16px">Cargando...</p>';
+  const data=await sbFetch('/rest/v1/disnerd_users?select=id,nombre,usuario,clave&order=nombre.asc');
+  if(!data||data.length===0){list.innerHTML='<p style="font-size:13px;color:var(--muted);text-align:center;padding:16px">No hay clientes todavía</p>';return;}
+  list.innerHTML=data.map(u=>`
+    <div style="background:white;border-radius:14px;padding:14px 16px;margin-bottom:10px;display:flex;align-items:center;justify-content:space-between;border:1.5px solid var(--border)">
+      <div>
+        <div style="font-weight:600;font-size:14px;color:var(--text)">${u.nombre}</div>
+        <div style="font-size:12px;color:var(--muted);margin-top:3px">👤 ${u.usuario} · 🔑 ${u['clave']}</div>
+      </div>
+      ${u.usuario==='sofi'?'<span style="font-size:12px;color:var(--muted);font-style:italic">Admin</span>':`<button onclick="borrarUsuario(${u.id})" style="background:#fff0f0;border:none;border-radius:10px;padding:8px 12px;font-size:13px;cursor:pointer;color:#c0392b;font-family:'Nunito',sans-serif">Eliminar</button>`}
+    </div>`).join('');
+}
+
+async function agregarUsuario(){
+  const nombre=document.getElementById('admin-nombre').value.trim();
+  const usuario=document.getElementById('admin-usuario').value.trim().toLowerCase();
+  const pass=document.getElementById('admin-pass').value.trim();
+  const msg=document.getElementById('admin-msg');
+  if(!nombre||!usuario||!pass){msg.textContent='Completá todos los campos';msg.style.color='#c0392b';msg.style.display='block';setTimeout(()=>msg.style.display='none',3000);return;}
+  const data=await sbFetch('/rest/v1/disnerd_users',{method:'POST',body:JSON.stringify({nombre,usuario,clave:pass})});
+  if(Array.isArray(data)&&data.length>0){
+    msg.textContent='✅ Cliente agregado correctamente';msg.style.color='#27ae60';
+    document.getElementById('admin-nombre').value='';
+    document.getElementById('admin-usuario').value='';
+    document.getElementById('admin-pass').value='';
+    cargarUsuarios();
+  }else{msg.textContent='Error al agregar. Verificá que el usuario no exista ya.';msg.style.color='#c0392b';}
+  msg.style.display='block';
+  setTimeout(()=>msg.style.display='none',3000);
+}
+
+async function borrarUsuario(id){
+  if(!confirm('¿Eliminar este cliente? Esta acción no se puede deshacer.'))return;
+  await sbFetch(`/rest/v1/disnerd_users?id=eq.${id}`,{method:'DELETE'});
+  cargarUsuarios();
+}
+
+function cerrarAdmin(){
+  document.getElementById('app').style.display='none';
+  document.getElementById('login-screen').style.display='flex';
+  document.getElementById('username-input').value='';
+  document.getElementById('password-input').value='';
+  isAdmin=false;
+}
+
+function navTo(page,btn){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(b=>b.classList.remove('active'));
+  document.getElementById('page-'+page).classList.add('active');
+  if(btn)btn.classList.add('active');
+  window.scrollTo(0,0);
+}
+function openPark(park){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById('page-'+park).classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(b=>b.classList.remove('active'));
+  window.scrollTo(0,0);
+  if(park==='disney')showDisneyPark('mk',document.querySelector('#disney-sub-selector .sub-btn'));
+  if(park==='universal')showUniversalPark('studios',document.querySelector('#universal-sub-selector .sub-btn'));
+}
+function goHome(){navTo('home',document.querySelector('.nav-item'));}
+
+function ic(i){if(i==='red')return 'dot-red';if(i==='yellow')return 'dot-yellow';if(i==='gray')return 'dot-gray';return 'dot-green';}
+
+let _aid=0;
+function renderA(a){
+  let b='';
+  if(a.must)b+='<span class="badge badge-must">⭐ Must</span>';
+  if(a.isNew)b+='<span class="badge badge-new">🆕 Nuevo</span>';
+  if(a.height)b+=`<span class="badge badge-height">📏 ${a.height}</span>`;
+  if(a.water)b+='<span class="badge badge-water">💧 Moja</span>';
+  if(a.single)b+='<span class="badge badge-single">👤 Single</span>';
+  if(a.show)b+='<span class="badge badge-show">🎭 Show</span>';
+  if(a.closed)b+=`<span class="badge badge-closed">🚧 ${a.closed}</span>`;
+  const note=a.note?`<div style="font-size:11px;color:#888;margin-top:3px">${a.note}</div>`:'';
+  if(a.desc){
+    const id='aid-'+(++_aid);
+    return `<div class="attraction-item ${a.closed?'closed':''}" onclick="toggleDesc('${id}')" style="cursor:pointer;flex-direction:column;align-items:flex-start;gap:6px">
+      <div style="display:flex;align-items:center;gap:12px;width:100%">
+        <div class="intensity-dot ${ic(a.intensity)}" style="flex-shrink:0"></div>
+        <div class="attraction-name" style="flex:1">${a.name}${note}</div>
+        <div class="attraction-badges">${b}</div>
+        <span id="arr-${id}" style="color:var(--muted);font-size:12px;flex-shrink:0">▼</span>
+      </div>
+      <div id="${id}" style="display:none;font-size:12px;color:#555;line-height:1.5;padding:6px 10px;background:#f8f7f5;border-radius:8px;width:100%;margin-top:2px">${a.desc}</div>
+    </div>`;
+  }
+  return `<div class="attraction-item ${a.closed?'closed':''}"><div class="intensity-dot ${ic(a.intensity)}"></div><div class="attraction-name">${a.name}${note}</div><div class="attraction-badges">${b}</div></div>`;
+}
+
+function toggleDesc(id){
+  const el=document.getElementById(id);
+  const arr=document.getElementById('arr-'+id);
+  const open=el.style.display==='none';
+  el.style.display=open?'block':'none';
+  arr.textContent=open?'▲':'▼';
+}
+
+// ===== DISNEY DATA =====
+const DP={
+  mk:{how:'Auto o Bus + Monorriel o Barco',areas:[
+    {name:'Tomorrowland',at:[
+      {name:'TRON Lightcycle Run',intensity:'red',must:true,height:'122cm',single:true,desc:'Montaña rusa de lanzamiento en motos de luz. La más rápida de Magic Kingdom. La fila techada en forma de serpiente es parte de la experiencia. De noche es espectacular.'},
+      {name:'Space Mountain',intensity:'red',must:true,height:'112cm',single:true,desc:'Clásico icónico desde 1975. Cohete espacial en la oscuridad total. No es la más intensa pero la oscuridad la hace especial. Duración: ~3 min.'},
+      {name:'Buzz Lightyear Space Ranger Spin',intensity:'gray',closed:'Cerrado hasta primavera 2026',note:'Reabre renovado con pistolas de mano, pantallas individuales y nuevo personaje Buddy.',desc:'Atracción de disparos interactivos en vehículos giratorios. Al reabrir tendrá pistolas de mano sueltas y targets reactivos. Perfecto para familia.'},
+      {name:'Monster Inc. Laugh Floor',intensity:'green',show:true,desc:'Show de comedia interactivo con monstruos animados. La audiencia participa en vivo y pueden aparecer en pantalla. 15 min. Muy divertido para todas las edades.'},
+      {name:'Astro Orbiter',intensity:'yellow',desc:'Cohetes giratorios a gran altura sobre Tomorrowland. La vista desde arriba es increíble. Ideal para quienes no le temen a las alturas.'},
+      {name:'Tomorrowland Speedway',intensity:'green',height:'81cm',desc:'Autitos de carrera sobre rieles. Los chicos manejan solos (con guía). Sin emociones fuertes, perfecto para los más pequeños que quieren sentirse grandes.'},
+      {name:'Carousel of Progress',intensity:'green',show:true,desc:'Show histórico de Walt Disney en persona. Teatro giratorio que muestra la evolución de la familia americana con la tecnología. 21 minutos. Un clásico que se suele saltar y vale la pena ver.'},
+    ]},
+    {name:'Fantasyland',at:[
+      {name:'Seven Dwarfs Mine Train',intensity:'red',must:true,height:'97cm',single:true,desc:'La montaña rusa más solicitada de Magic Kingdom. Vagonetas que se balancean entre las minas de los enanos. Suave para ser "roja" pero la fila siempre es larguísima. Lightning Lane o llegar al abrir.'},
+      {name:"Peter Pan's Flight",intensity:'yellow',must:true,desc:'Clásico desde 1971. Volás en un barco sobre Londres y Nunca Jamás. La fila supera 60 min casi siempre. Lightning Lane recomendado. Duración: ~3 min.'},
+      {name:'Journey of the Little Mermaid',intensity:'green',must:true,desc:'Paseo tranquilo bajo el mar con Ariel. Escenografía preciosa y canciones del clásico. Ideal para toda la familia. Fila corta por las mañanas.'},
+      {name:'Winnie the Pooh',intensity:'green',must:true,desc:'Paseo soñador con Pooh y amigos. Fila temática muy entretenida con libros interactivos. Clásico para los más chiquitos y nostálgico para los grandes.'},
+      {name:"Mickey's PhilharMagic 4D",intensity:'green',must:true,show:true,desc:'Show 4D con agua, aromas y efectos de aire. Donald Duck viaja por los mundos de Disney. 12 min. Imperdible para toda la familia. Teatro climatizado.'},
+      {name:'The Barnstormer',intensity:'yellow',height:'89cm',desc:'Mini montaña rusa temática de El Gran Ganso Claudio. Corta (90 seg) pero perfecta como primera coaster para los chicos. En Storybook Circus.'},
+      {name:"It's a Small World",intensity:'green',desc:'Paseo en bote con muñecos cantantes de todo el mundo. 11 minutos. Icónico y relajante. La canción te queda en la cabeza todo el día... todo el viaje... toda la vida.'},
+      {name:'Carrousel',intensity:'green',desc:'El Carrousel del Príncipe Encantador. Hermoso para fotos con el castillo de fondo. Perfecto para descansar y para los más pequeños.'},
+      {name:'Dumbo',intensity:'green',desc:'Elefantes voladores giratorios. Controlás la altura vos mismo. La fila tiene una zona de juegos cubierta — pedís un beeper y esperás jugando.'},
+      {name:'Mad Tea Party (Tazas)',intensity:'yellow',desc:'Tazas de té gigantes que girás vos mismo. Cuanto más girás el volante, más rápido va. Puede marear bastante. Clásico para fotos y risas.'},
+    ]},
+    {name:'Frontierland',at:[
+      {name:'Big Thunder Mountain',intensity:'gray',must:true,height:'102cm',single:true,closed:'Cerrado hasta mayo 2026',note:'Reabre renovado con nuevas Rainbow Caverns (piscinas fosforescentes).',desc:'La "Montaña más salvaje del Oeste". Montaña rusa minera con sacudidas y curvas rápidas. Más intensa de lo que parece. Al reabrir incluirá las icónicas Rainbow Caverns iluminadas.'},
+      {name:"Tiana's Bayou Adventure",intensity:'red',must:true,height:'102cm',note:'Fila standby normal o Lightning Lane Multi Pass (Tier 1). La fila virtual fue eliminada.',desc:'Reemplazó a Splash Mountain en 2024. Paseo en tronco por los bayous de Nueva Orleans con Tiana y sus amigos. Gran caída al final (¡mojás!). Música increíble.'},
+    ]},
+    {name:'Adventureland',at:[
+      {name:'Pirates of the Caribbean',intensity:'yellow',must:true,desc:'El clásico de clásicos. Paseo en bote por el mundo de los piratas. Jack Sparrow incluido. 8 minutos. Perfecta para el calor — es fresca y oscura. Nunca decepciona.'},
+      {name:'Jungle Cruise',intensity:'green',must:true,desc:'Crucero por la jungla con animales animatrónicos y chistes malísimos (en el buen sentido) de los Skippers. Actualizada en 2021 con más diversidad. 10 min. Imperdible por la experiencia.'},
+      {name:'Magic Carpets of Aladdin',intensity:'green',desc:'Alfombras voladoras giratorias al estilo Dumbo. Controlás altura y posición. En el centro hay un camello que escupe agua — cuidado dónde te sentás.'},
+      {name:'Tiki Room',intensity:'green',show:true,desc:'El primer show animatrónico de Disney (1963). Pájaros, flores y dioses tiki cantando. 15 min. Climatizado. Perfecto para el calor del mediodía o si viajan con abuelos.'},
+    ]},
+    {name:'Liberty Square',at:[
+      {name:'Haunted Mansion',intensity:'yellow',must:true,desc:'999 fantasmas felices te esperan. Paseo en "Doom Buggy" por la mansión embrujada. Oscuro y divertido pero no da miedo real. 8 min. Uno de los más queridos de Disney. En Halloween está decorado extra.'},
+      {name:'Liberty Square Riverboat',intensity:'gray',closed:'Cerrado permanente',note:'Cerró el 7/7/2025. El área se transforma en Piston Peak (Cars), apertura 2027-2028.',desc:'Barco de vapor histórico. Cerrado permanentemente para dar lugar al nuevo área de Cars (Piston Peak).'},
+      {name:'The Hall of Presidents',intensity:'green',show:true,desc:'Show animatrónico con todos los presidentes de EEUU. Lincoln habla. Biden y Trump incluidos. 23 min. Climatizado. Interesante culturalmente aunque no es para todos los públicos.'},
+    ]},
+  ],
+  shows:['🎆 Happily Ever After — Fuegos artificiales sobre el castillo. Cada noche. Llegar 30-45 min antes. ~18 min.','🎉 Festival of Fantasy — Desfile diurno ~3pm con carrozas de Frozen, Tangled, Peter Pan y más.','🌟 Disney Starlight: Dream the Night Away — NUEVO desde julio 2025. Primer desfile nocturno en casi una década con carrozas LED y Encanto, Frozen, Peter Pan.','✨ Kiss Goodnight — 30 min después del cierre. Voz de Walt Disney. Casi nadie lo sabe ni lo ve.'],
+  rr:[{name:"Cinderella's Royal Table",desc:'Dentro del castillo. Personaje: Cenicienta. Reservá con 60 días.'},{name:'Be Our Guest',desc:'Castillo de Bella y Bestia. Menú prix-fixe. Personaje: Bestia.'},{name:'Crystal Palace',desc:'Buffet con Pooh, Piglet, Eeyore y Tigger.'},{name:'Tony\'s Town Square',desc:'Italiano. Temático de La Dama y el Vagabundo. Buena vista al desfile.'}],
+  rl:[{name:'Pecos Bill Tall Tale Inn',desc:'Burritos y ensaladas en Frontierland'},{name:'Columbia Harbour House',desc:'Clásico en Liberty Square. Sopas y sándwiches.'},{name:"Pinocchio Village Haus",desc:'Pizza y pastas con vista a It\'s a Small World'},{name:"Gaston's Tavern",desc:'Jarra gigante de leche y croissants. Temático de La Bella y la Bestia.'},{name:"The Beak and Barrel",desc:'🆕 Taberna de Piratas en Adventureland. Cócteles y snacks. Abrió agosto 2025.'},{name:'Jungle Navigation Skipper Canteen',desc:'Sit-down con humor del Jungle Cruise. Sin reserva requerida.'}]},
+  epcot:{how:'Auto, Bus, Skyliner, Monorriel, Barco',areas:[
+    {name:'Future World',at:[
+      {name:'Guardians of the Galaxy: Cosmic Rewind',intensity:'red',must:true,height:'106cm',single:true,note:'Fila standby normal o Lightning Lane Single Pass (se compra individual). La fila virtual fue eliminada.',desc:'Montaña rusa "invertida" que gira 360° hacia atrás y adelante. La primera coaster de Disney que va al revés. Banda sonora de los 80s increíble. Sin caídas bruscas pero muy dinámica. Fila temática espectacular.'},
+      {name:'Test Track',intensity:'red',must:true,height:'102cm',single:true,desc:'Diseñás tu propio auto de prueba y lo sometés a tests de velocidad, temperatura y resistencia. El tramo final a 104 km/h en pista exterior es icónico. La fila interactiva es parte de la experiencia.'},
+      {name:"Soarin'",intensity:'yellow',must:true,height:'102cm',single:true,desc:'Vuelo cinematográfico sobre paisajes del mundo (o de EEUU en la versión America). Pantalla gigante semiesférica, asientos que se elevan, aromas sincronizados. Impresionante. Sentate en la fila del medio para la mejor vista.'},
+      {name:'Journey of Water (Moana)',intensity:'green',must:true,desc:'Recorrido interactivo al aire libre con el agua como protagonista. Podés jugar y controlar chorros de agua. Perfecto para refrescarse. No es una atracción tradicional sino una experiencia inmersiva.'},
+      {name:'Nemo & Friends',intensity:'green',must:true,desc:'Paseo en concha marina bajo el mar buscando a Nemo. Al final accedés al acuario real The Seas con peces, tortugas, rayas y delfines. Muy tranquilo y hermoso.'},
+      {name:'Figment',intensity:'green',desc:'Paseo imaginativo con Figment, el dragón púrpura símbolo de EPCOT. Recorre los sentidos humanos. Nostálgico para fans de Disney. La tienda al final tiene merch exclusivo de Figment muy buscado.'},
+      {name:'Pixar Short Film Festival',intensity:'green',show:true,desc:'3 cortos de Pixar en formato 4D con efectos de agua y aire. Incluye cortos de Up, Inside Out y Coco. 20 min. Perfecto para el calor o para descansar los pies.'},
+      {name:'Spaceship Earth',intensity:'green',desc:'El viaje por la historia de la comunicación humana dentro de la icónica bola de EPCOT. 15 min. Suave y educativo. Imperdible por ser el símbolo del parque. La bajada al revés es particular.'},
+      {name:'Living with the Land',intensity:'green',desc:'Paseo en bote por los invernaderos reales de Disney. Ven cómo cultivan frutas y vegetales que luego sirven en los restaurantes del parque. 14 min. Interesante e inesperadamente entretenido.'},
+      {name:'Mission: SPACE Verde (leve)',intensity:'yellow',height:'102cm',desc:'Simulador espacial en modo suave. Sin giros ni centrifugación. Podés ver el espacio exterior sin mareos. Apto para casi todos.'},
+      {name:'Mission: SPACE Naranja (intensa)',intensity:'red',height:'112cm',desc:'La versión intensa del simulador espacial. Centrífuga real que simula gravedad aumentada. Varios se marean — no comer antes. La más intensa de EPCOT. No recomendada para problemas cardíacos o de presión.'},
+    ]},
+    {name:'World Showcase — Países',at:[
+      {name:'🇲🇽 México — Gran Fiesta Tour (Pato Donald)',intensity:'green',must:true,desc:'Paseo tranquilo en bote por el interior de la pirámide mexicana. Pato Donald desaparece antes de un concierto. 8 min. Muy fresco y relajante. El pabellón de México también tiene uno de los mejores restaurantes de EPCOT.'},
+      {name:'🇳🇴 Noruega — Frozen Ever After',intensity:'yellow',must:true,desc:'Paseo en bote por el mundo de Frozen con Anna, Elsa y Olaf. Canciones del film. Una pequeña caída al final. Actualizado en 2024 con nuevos animatrónicos de Kristoff, Anna y Elsa. Siempre con fila larga.'},
+      {name:"🇫🇷 Francia — Remy's Ratatouille Adventure",intensity:'green',must:true,desc:'Encogerás hasta el tamaño de Remy y correrás por el restaurante Gusteau. Atracción familiar suave con pantallas y sets físicos. Muy divertida y de alta calidad. Fila moderada.'},
+      {name:'🇯🇵 Japón — Tienda más divertida + paseo',intensity:'green',desc:'El pabellón de Japón tiene la tienda más increíble de todo EPCOT: snacks japoneses, figuras, ropa, papel washi y más. No tiene atracción propia pero vale mucho la visita.'},
+      {name:'🇩🇪 Alemania · 🇮🇹 Italia · 🇺🇸 EEUU · 🇲🇦 Marruecos · 🇬🇧 UK · 🇨🇦 Canadá · 🇨🇳 China',intensity:'green',desc:'Pabellones de degustación y cultura. No tienen atracciones de rides pero tienen comida, tiendas y shows callejeros. El pabellón de China y Canadá tienen películas circulares de 360°.'},
+    ]},
+  ],
+  shows:['🌟 Luminous: The Symphony of Us — Show nocturno sobre el lago. Fuegos, proyecciones en agua, drones y láseres. ~15 min. Mejor spot: frente al pabellón de América.','💡 Walt Disney Statue en Dreamers Point — ¡Pasá a saludar a Walt al entrar!','🎭 Festivales anuales incluidos con la entrada: Arts (ene-feb) · Flower & Garden (mar-jun) · Food & Wine (jul-nov, el más popular) · Holidays (nov-ene)'],
+  rr:[{name:'Biergarten (Alemania)',desc:'Buffet alemán con show musical en vivo'},{name:'Garden Grill (Future World)',desc:'Giratório con Chip & Dale y Mickey. Muy recomendado.'},{name:'Coral Reef (Future World)',desc:'Con acuario gigante. Mariscos excelentes.'},{name:'San Angel Inn (México)',desc:'Dentro del pabellón. Ambiente oscuro y romántico.'},{name:'Akershus (Noruega)',desc:'Princesas Disney. Buffet noruego.'},{name:'Le Cellier Steakhouse (Canadá)',desc:'El mejor bife de todo Disney. Muy difícil conseguir reserva.'},{name:'Space 220 (Future World)',desc:'Temática de espacio exterior. El bar sin reserva es más accesible.'}],
+  rl:[{name:'Les Halles Boulangerie (Francia)',desc:'Croissants, crepes, quiches y café. El mejor desayuno del parque.'},{name:'Sunshine Season (Future World)',desc:'Patio de comidas con opciones frescas'},{name:'Tangierine Café (Marruecos)',desc:'Shawarma, falafel y comida del Medio Oriente'},{name:'Regal Eagle Smokehouse (EEUU)',desc:'BBQ americano. Buenas porciones.'},{name:'Katsura Grill (Japón)',desc:'Sushi y ramen en el jardín japonés'}]},
+  ak:{how:'Auto, Bus',areas:[
+    {name:'Pandora — Avatar',at:[
+      {name:'Avatar Flight of Passage',intensity:'red',must:true,height:'112cm',single:true,desc:'La mejor atracción de Walt Disney World. Montás un banshee y volás sobre Pandora en un simulador físico impresionante. Pantalla envolvente, movimiento del cuerpo, aromas. La fila es una obra de arte. Lightning Lane o llegar al abrir — siempre supera 2 horas.'},
+      {name:"Na'Vi River Journey",intensity:'yellow',must:true,desc:'Paseo tranquilo en bote por la jungla bioluminiscente de Pandora de noche. Termina con la animatronica más avanzada de Disney: la Shaman de las Canciones. Absolutamente hermoso. Perfecto para todas las edades.'},
+    ]},
+    {name:'Asia',at:[
+      {name:'Expedition Everest',intensity:'red',must:true,height:'112cm',single:true,desc:'Tren que sube al Himalaya y de repente va en reversa en la oscuridad porque el Yeti destruyó las vías. Rápida, con caída importante. El Yeti (en "modo B") es el animatrónico más grande de Disney. Imperdible.'},
+      {name:'Kali River Rapids',intensity:'yellow',height:'102cm',water:true,desc:'Balsa circular por los ríos de Asia. Te mojás garantizado — hay partes donde el agua cae directo. Mejor hacerla a última hora del día cuando el calor aprieta. Hay secadores pagos afuera.'},
+      {name:'Paseo por zona de tigres',intensity:'green',desc:'Sendero a pie por hábitat real de tigres de Sumatra. Podés verlos muy de cerca. Sin fila, sin ticket extra. Se hace en 10-15 min y es una de las experiencias más sorprendentes del parque.'},
+    ]},
+    {name:'Africa',at:[
+      {name:'Festival of the Lion King',intensity:'green',must:true,show:true,desc:'El mejor show de todo Walt Disney World. Teatro circular de 30 min con acróbatas, bailarines, animatrónicos y las canciones de El Rey León en vivo. Imperdible. Llegar 20 min antes para conseguir buen lugar.'},
+      {name:'Kilimanjaro Safaris',intensity:'green',must:true,desc:'Safari en jeep abierto por 40 hectáreas con animales africanos reales: elefantes, jirafas, rinocerontes, leones, hipopótamos. Los animales están sueltos. 20-25 min. Ir temprano cuando los animales están activos.'},
+      {name:'Gorilla Falls Trail',intensity:'green',desc:'Sendero a pie por hábitat de gorilas, hipopótamos y aves africanas. Los gorilas suelen estar muy cerca del vidrio. Sin fila, gratis con la entrada. 20 min de caminata.'},
+    ]},
+    {name:'Discovery Island',at:[
+      {name:'Zootopia: Better Zoogether! (4D)',intensity:'green',must:true,show:true,isNew:true,note:'Abrió noviembre 2025. Reemplaza a It\'s Tough to Be a Bug con Judy Hopps y Nick Wilde.',desc:'Show 4D con Judy Hopps y Nick Wilde. Efectos de agua, aire y movimiento de silla. Abrió noviembre 2025. Teatro dentro del Árbol de la Vida. Muy divertido y sin susto para los chicos.'},
+      {name:'Tree of Life Awakenings',intensity:'green',note:'Al anochecer el árbol cobra vida con proyecciones. Muy recomendado verlo después del ocaso.',desc:'El Árbol de la Vida tiene 325 animales tallados en su superficie. Al anochecer se proyectan historias animadas sobre él. Sin fila — solo hay que estar ahí a la hora justa. Dura pocos minutos pero es mágico.'},
+    ]},
+    {name:'DinoLand — EN TRANSFORMACIÓN',at:[
+      {name:'DINOSAUR',intensity:'gray',closed:'Cerrado permanente',note:'Cerró el 2/2/2026. Toda la zona se transforma en Tropical Americas (Encanto + Indiana Jones), apertura 2027.',desc:'Atracción cerrada permanentemente. Se reutilizará como Indiana Jones Adventure en el nuevo Tropical Americas.'},
+      {name:'Finding Nemo: The Big Blue... and Beyond!',intensity:'green',must:true,show:true,desc:'Show de 25 min con títeres gigantes del tamaño de un auto, actores en vivo y canciones originales. Marlin, Nemo, Dory, Crush y más. Teatro climatizado. Llegar 20-25 min antes. Una de las producciones más impresionantes de los parques.'},
+    ]},
+  ],
+  shows:['⚠️ Animal Kingdom NO tiene show de fuegos artificiales para preservar a los animales.','⚠️ Es el único parque donde NO se puede entrar con globos.','🌳 El parque cierra antes que los demás. Estrategia: ir de mañana y usar Park Hopper para otro parque a la tarde.'],
+  rr:[{name:'Tusker House (Africa)',desc:'Mickey y amigos vestidos de Safari. Desayuno y almuerzo.'},{name:'Tiffins (Discovery Island)',desc:'El restaurante más gourmet de Animal Kingdom. Arte y viajes.'},{name:'Yak & Yeti (Asia)',desc:'Comida asiática. El único sit-down en zona Asia.'}],
+  rl:[{name:"Satu'li Canteen (Pandora)",desc:'Temático de Avatar. Bowls personalizables. Muy recomendado.'},{name:'Harambe Market (Africa)',desc:'Comida africana al aire libre. Pollo y kebabs.'},{name:'Flame Tree Barbecue (Discovery Island)',desc:'BBQ con las mejores vistas del parque.'},{name:'Rainforest Café',desc:'Temático de selva, en la entrada. Sin ticket de parque.'},{name:'Restaurantosaurus',desc:'🚧 Cerrado permanente desde feb 2026. Era parte de DinoLand.'}]},
+  hs:{how:'Auto, Skyliner, Barco',areas:[
+    {name:"Star Wars: Galaxy's Edge",at:[
+      {name:'Star Wars: Rise of the Resistance',intensity:'red',must:true,height:'102cm',desc:'La atracción más ambiciosa de la historia de Disney. Capturado por el Primer Orden, pasás por múltiples sets físicos y simuladores. 18 min de experiencia. La fila es parte del show. Lightning Lane o ir primero al abrir.'},
+      {name:'Millennium Falcon: Smugglers Run',intensity:'yellow',must:true,desc:'Piloteás el Halcón Milenario en una misión con tu tripulación. Cada asiento tiene un rol distinto. El piloto controla de verdad. La experiencia varía mucho según el rol — pedí ser piloto.'},
+    ]},
+    {name:'Hollywood Boulevard',at:[
+      {name:"Mickey & Minnie's Runaway Railway",intensity:'yellow',must:true,desc:'Primera atracción de Mickey Mouse en la historia de Disney. Sin rieles, sin lentes 3D. Tecnología especial que mezcla sets físicos con proyecciones. Muy creativa y divertida para todas las edades.'},
+    ]},
+    {name:'Sunset Boulevard',at:[
+      {name:"Rock 'n' Roller Coaster — THE MUPPETS",intensity:'gray',height:'122cm',single:true,closed:'Cerrado — reabre verano 2026',note:'La versión Aerosmith cerró permanente el 2/3/2026. Reabre como The Muppets (Electric Mayhem Band).',desc:'Lanzamiento de 0 a 97 km/h en 2.8 segundos en la oscuridad con música. Al reabrir será temática de The Muppets con la Electric Mayhem Band. La intensidad no cambia.'},
+      {name:'Tower of Terror',intensity:'red',must:true,height:'102cm',single:true,desc:'Ascensor embrujado en el Hotel Hollywood Tower. Subís 13 pisos y caés en caída libre múltiple — el patrón de caídas varía en cada viaje. Vista de todo el parque desde arriba antes de caer. Una de las mejores atracciones de Disney.'},
+      {name:'Beauty and the Beast Live',intensity:'green',must:true,show:true,desc:'Show musical de 25 min con actores en vivo, vestuario espectacular y las canciones del clásico. Teatro al aire libre. Llegar 15-20 min antes. De las mejores producciones live de los parques.'},
+      {name:'Disney Villains: Unfairly Ever After',intensity:'green',must:true,show:true,isNew:true,note:'Nuevo desde mayo 2025. Cruella, Garfio y Maléfica con humor y canciones.',desc:'Show cómico con los villanos más icónicos de Disney. Cruella, Garfio y Maléfica compiten por ser el mejor villano. Muy divertido y con humor para adultos también. Abrió mayo 2025.'},
+    ]},
+    {name:'Toy Story Land',at:[
+      {name:'Slinky Dog Dash',intensity:'red',must:true,height:'97cm',desc:'Montaña rusa familiar en forma del perro Slinky. Curvas y subidas y bajadas moderadas. Vista de todo Toy Story Land. Fila siempre larga — ir al abrir o usar Lightning Lane.'},
+      {name:'Toy Story Mania!',intensity:'yellow',desc:'Shooting game en 4D donde competís contra quien viaja con vos lanzando dardos, aros y pelotas a targets. Muy divertido y muy rejugable. Las pantallas detectan los disparos en tiempo real.'},
+      {name:'Alien Swirling Saucers',intensity:'yellow',desc:'Platillos giratorios tipo Dumbo pero más rápido y con giros bruscos. Los aliens del Pizza Planet te atrapan. Más intensa de lo que parece. Puede marear.'},
+    ]},
+    {name:'Echo Lake',at:[
+      {name:'Star Tours',intensity:'yellow',height:'102cm',desc:'Simulador espacial de Star Wars con más de 70 combinaciones de viaje distintas — casi nunca repetís el mismo. 3D con efectos de movimiento. Clásico que sigue siendo muy entretenido.'},
+      {name:'Frozen Sing-Along',intensity:'green',must:true,show:true,desc:'Show de 30 min con actores, presentadores cómicos y canciones de Frozen en pantalla gigante para cantar todos juntos. Muy divertido y fresco. Uno de los shows más populares del parque.'},
+      {name:'The Little Mermaid — A Musical Adventure',intensity:'green',show:true,isNew:true,note:'Nuevo desde mayo 2025. Show en vivo con actores y marionetas.',desc:'Show musical de La Sirenita con actores en vivo, marionetas gigantes y las canciones del clásico. Nuevo desde mayo 2025. Muy recomendado para fans de Ariel.'},
+    ]},
+    {name:'Animation Courtyard — EN TRANSFORMACIÓN',at:[
+      {name:'Star Wars Launch Bay / Disney Jr.',intensity:'gray',closed:'Cerrado permanente',note:'Cerró el 25/9/2025. Reabre como The Walt Disney Studios Lot en verano 2026.',desc:'Zona en transformación. Reabre como The Walt Disney Studios Lot con clases de animación, meet & greets y la nueva atracción The Magic of Disney Animation.'},
+    ]},
+  ],
+  shows:['🌟 Fantasmic! — Show espectacular con agua, fuego y proyecciones. 30 min. Llegar 45-60 min antes.','🎆 Wonderful World of Animation — Proyecciones sobre el Chinese Theater al cerrar el parque.'],
+  rr:[{name:'Hollywood & Vine',desc:'Desayuno: Disney Junior. Almuerzo/cena: Mickey y amigos estacionales.'},{name:'Roundup Rodeo BBQ',desc:'Temático de Toy Story. Todos los personajes del rancho.'},{name:"Sci-Fi Dine-In Theater",desc:'Cenas en autos retro mirando pelis de terror clase B. Muy cool.'},{name:"50's Prime Time Café",desc:'Temático de los años 50. Los mozos te retan si no comés todo.'},{name:"Oga's Cantina",desc:'Bar de Star Wars. Sin reserva es difícil entrar. Límite de 45 min.'}],
+  rl:[{name:'Docking Bay 7',desc:'Comida temática de Star Wars. El mejor quick service del parque.'},{name:'Ronto Roasters',desc:"Sándwiches en Galaxy's Edge. El wrap de pork es icónico."},{name:'Woody\'s Lunch Box',desc:'Sándwiches y empanadas en Toy Story Land. Fila larga pero vale.'},{name:"PizzeRizzo",desc:'🚧 Cerrado permanente.'},{name:"Mama Melrose's",desc:'🚧 Cerrado permanente.'}]},
+  springs:'springs',
+  historia:'historia'
+};
+
+function showDisneyPark(id,btn){
+  document.querySelectorAll('#disney-sub-selector .sub-btn').forEach(b=>{b.classList.remove('active');b.style.background='';b.style.borderColor='';b.style.color='';});
+  btn.classList.add('active');
+  if(id==='springs'){renderSprings();return;}
+  if(id==='historia'){renderHistoria();return;}
+  if(id==='typhoon'){renderTyphoon();return;}
+  if(id==='blizzard'){renderBlizzard();return;}
+  const banners={
+    mk:{emoji:'🏰',name:'Magic Kingdom',sub:'El parque más visitado del mundo · El castillo de Cenicienta',bg:'linear-gradient(135deg,#C8E8F5,#D8EEF8)',border:'#A8D4EC'},
+    epcot:{emoji:'🌍',name:'Epcot',sub:'Tecnología, cultura y gastronomía de 11 países',bg:'linear-gradient(135deg,#D4CEEE,#E4E0F5)',border:'#B8B0E0'},
+    ak:{emoji:'🌳',name:'Animal Kingdom',sub:'El parque más grande de Disney · Animales reales y Pandora',bg:'linear-gradient(135deg,#C8E8D8,#D8F0E4)',border:'#A0D4B8'},
+    hs:{emoji:'🎬',name:'Hollywood Studios',sub:'Star Wars, Toy Story y los mejores shows del complejo',bg:'linear-gradient(135deg,#EAD4EE,#F0E0F5)',border:'#D0A8DC'},
+  };
+  const b=banners[id];
+  const p=DP[id];
+  let h=`<div class="park-header-banner" style="background:${b.bg};border:1.5px solid ${b.border}">
+    <div style="font-size:11px;letter-spacing:3px;opacity:.6;text-transform:uppercase;margin-bottom:6px;color:var(--text)">Walt Disney World</div>
+    <h1>${b.emoji} ${b.name}</h1><p>${b.sub}</p>
+  </div>`;
+  h+=`<div class="alert-box alert-blue"><span style="font-size:18px">🚌</span><p><strong>Cómo llegar</strong> ${p.how}</p></div>`;
+  h+=`<div class="legend"><div class="legend-item"><div class="intensity-dot dot-red"></div>Alta adrenalina</div><div class="legend-item"><div class="intensity-dot dot-yellow"></div>Media</div><div class="legend-item"><div class="intensity-dot dot-green"></div>Suave</div><div class="legend-item"><div class="intensity-dot dot-gray"></div>Cerrado</div></div>`;
+  p.areas.forEach(a=>{h+=`<div class="section-label">${a.name}</div><div class="attraction-list">`;a.at.forEach(x=>{h+=renderA(x);});h+='</div>';});
+  if(p.shows){h+=`<div class="section-label">Shows & Especiales</div>`;p.shows.forEach(s=>{h+=`<div class="alert-box alert-gold"><span>🌟</span><p>${s}</p></div>`;});}
+  if(p.rr){h+=`<div class="section-label">Restaurantes con Reserva</div><div class="alert-box alert-coral"><span>📅</span><p>Reservas con <strong>60 días de anticipación.</strong></p></div>`;p.rr.forEach(r=>{h+=`<div class="restaurant-item"><div class="restaurant-name">${r.name}</div><div class="restaurant-desc">${r.desc}</div><span class="reserva-tag reserva-si">Requiere reserva</span></div>`;});}
+  if(p.rl){h+=`<div class="section-label">Restaurantes sin Reserva</div>`;p.rl.forEach(r=>{h+=`<div class="restaurant-item"><div class="restaurant-name">${r.name}</div><div class="restaurant-desc">${r.desc}</div><span class="reserva-tag reserva-no">Sin reserva</span></div>`;});}
+  document.getElementById('disney-park-content').innerHTML=h;
+}
+
+function renderSprings(){
+  document.getElementById('disney-park-content').innerHTML=`
+  <div class="alert-box alert-green"><span style="font-size:20px">✅</span><p><strong>Entrada y estacionamiento gratuitos.</strong> No necesitás ticket de parque. Garajes Orange y Lime.</p></div>
+  <div class="alert-box alert-blue"><span>🚌</span><p><strong>Cómo llegar</strong>Buses gratuitos desde todos los hoteles Disney · Barco desde Old Key West, Saratoga Springs y Port Orleans · Uber directo a la entrada.</p></div>
+  <div class="alert-box alert-coral"><span>🕐</span><p><strong>Horarios</strong>Generalmente 10am–11pm. Verificar en app My Disney Experience.</p></div>
+  <div class="section-label">THE MARKETPLACE — Familiar y compras</div>
+  <div class="restaurant-item"><div class="restaurant-name">🌍 World of Disney</div><div class="restaurant-desc">La tienda de merchandise Disney más grande del mundo. +5.000 productos. Imprescindible.</div></div>
+  <div class="restaurant-item"><div class="restaurant-name">🧱 LEGO Store</div><div class="restaurant-desc">Una de las más grandes de EEUU. Construcciones gigantes en el exterior.</div></div>
+  <div class="restaurant-item"><div class="restaurant-name">🦕 T-REX Restaurant</div><div class="restaurant-desc">Temático de dinosaurios. Muy popular con niños. Lista de espera.</div></div>
+  <div class="restaurant-item"><div class="restaurant-name">🌿 Rainforest Café</div><div class="restaurant-desc">Animales animatrónicos, perfecto para chicos pequeños.</div></div>
+  <div class="restaurant-item"><div class="restaurant-name">🎂 Amorette's Patisserie</div><div class="restaurant-desc">Tortas y postres Disney artesanales temáticos.</div></div>
+  <div class="section-label">THE LANDING — Adultos, gastronomía, bares</div>
+  <div class="restaurant-item"><div class="restaurant-name">⚓ The BOATHOUSE</div><div class="restaurant-desc">Mariscos y carnes de alta gama sobre el agua. Amphicars (autos anfibios).</div><span class="reserva-tag reserva-si">Reserva recomendada</span></div>
+  <div class="restaurant-item"><div class="restaurant-name">🍀 Raglan Road Irish Pub</div><div class="restaurant-desc">Pub irlandés real con música y danza en vivo cada noche. Muy recomendado.</div></div>
+  <div class="restaurant-item"><div class="restaurant-name">🍜 Morimoto Asia</div><div class="restaurant-desc">Chef Iron Chef Morimoto. Cocina panasiática de alta gama.</div><span class="reserva-tag reserva-si">Reserva recomendada</span></div>
+  <div class="restaurant-item"><div class="restaurant-name">🍪 Gideon's Bakehouse</div><div class="restaurant-desc">La cookie más famosa de Disney Springs. Enorme y excepcional. Requiere virtual queue desde la app — tomarlo apenas llegues.</div></div>
+  <div class="restaurant-item"><div class="restaurant-name">🎩 Jock Lindsey's Hangar Bar</div><div class="restaurant-desc">Bar temático de Indiana Jones. Para fans es un must.</div></div>
+  <div class="section-label">TOWN CENTER — Marcas internacionales</div>
+  <div class="restaurant-item"><div class="restaurant-name">🛍️ Tiendas</div><div class="restaurant-desc">Zara · Uniqlo · Anthropologie · MAC · Pandora · Columbia · Free People</div></div>
+  <div class="restaurant-item"><div class="restaurant-name">🍖 The Polite Pig</div><div class="restaurant-desc">BBQ sureño. Excelente relación calidad-precio. Sin reserva.</div></div>
+  <div class="restaurant-item"><div class="restaurant-name">🍷 Wine Bar George</div><div class="restaurant-desc">+130 vinos. Master Sommelier George Miliotes. Imperdible para fanáticos del vino.</div></div>
+  <div class="section-label">WEST SIDE — Entretenimiento nocturno</div>
+  <div class="restaurant-item"><div class="restaurant-name">🎪 Cirque du Soleil: Drawn to Life</div><div class="restaurant-desc">El único Cirque temático Disney del mundo. 90 min. ~$70-130 por persona.</div><span class="reserva-tag reserva-si">Ticket aparte</span></div>
+  <div class="restaurant-item"><div class="restaurant-name">🎳 Splitsville Luxury Lanes</div><div class="restaurant-desc">Boliche 2 pisos con restaurante y bares. Ideal para día de descanso.</div></div>
+  <div class="restaurant-item"><div class="restaurant-name">🎵 House of Blues</div><div class="restaurant-desc">Música en vivo casi todas las noches: blues, rock, soul.</div></div>
+  <div class="section-label">Experiencias únicas</div>
+  <div class="alert-box alert-gold"><span>🎈</span><p><strong>Globo aerostático Aerophile</strong>Sube 120 metros con vistas de 360° incluyendo los parques. ~$20-25 por persona. 8-10 min.</p></div>
+  <div class="alert-box alert-gold"><span>🚗</span><p><strong>Amphicar Tours</strong>Autos anfibios de los años '60. Recorridos por los canales. ~$125 por auto (4 personas). Solo 8 autos — reservar con anticipación.</p></div>
+  <div class="alert-box alert-blue"><span>🎟️</span><p><strong>Tip clave</strong>Podés retirar los tickets de Disney en el Ticket Center de Disney Springs antes del primer día de parque, evitando las colas en la boletería.</p></div>`;
+}
+
+function renderHistoria(){
+  document.getElementById('disney-park-content').innerHTML=`
+  <div class="alert-box alert-gold"><span>🎬</span><p><strong>Walt Disney</strong>Nacido en Chicago en 1901. Creció en Marceline, Missouri — ese pueblo inspiró Main Street USA. A los 16 quiso ir a la 1a Guerra Mundial, lo rechazaron por menor. Su mamá falsificó su partida para que entrara a la Cruz Roja. Pasó un año en Francia manejando una ambulancia que decoró de punta a punta con sus dibujos.</p></div>
+  <div class="alert-box alert-gold"><span>🐭</span><p><strong>Mickey Mouse</strong>En 1928 creó a Mickey — el primer personaje animado con sonido sincronizado. Antes estuvo Oswald the Lucky Rabbit, que perdió en un conflicto legal. Walt tiene el récord histórico de más Premios Oscar: 22 premios, 59 nominaciones.</p></div>
+  <div class="alert-box alert-gold"><span>🌎</span><p><strong>El secreto de Florida</strong>Walt compró 43 millas cuadradas en Florida (el doble de Manhattan) a través de empresas ficticias. Pagó apenas $5 millones — con su nombre, el precio hubiera sido astronómico. La empresa se llamaba Retlaw Enterprises. Retlaw es Walter al revés.</p></div>
+  <div class="alert-box alert-gold"><span>😔</span><p><strong>Walt nunca pisó Florida</strong>Murió el 15/12/1966 de cáncer de pulmón, a los 65 años. Fue cremado (el rumor de la criogenización es falso). Su hermano Roy terminó el proyecto, insistió en llamarlo Walt Disney World y fue el primero en subir al monorriel cuando abrió en 1971. Roy murió apenas 2 meses después.</p></div>
+  <div class="section-title">Curiosidades imperdibles</div>
+  <div class="section-card">
+    <div class="curiosity-item"><div class="curiosity-icon">🚇</div><div class="curiosity-text"><strong>Los Utilidors (túneles subterráneos)</strong>Debajo de Magic Kingdom hay túneles donde transitan los empleados para que los personajes no aparezcan en la zona incorrecta. Florida tiene napa freática alta — no se podía cavar. La solución: construyeron los túneles a nivel del suelo y levantaron todo el parque 4,5 metros encima. El suelo del parque es el techo de los túneles.</div></div>
+    <div class="curiosity-item"><div class="curiosity-icon">🏰</div><div class="curiosity-text"><strong>Perspectiva forzada</strong>Los edificios de Main Street tienen la planta baja a escala real, el 1er piso a 3/4, el 2do a 1/2... El Castillo parece más alto de lo que es. Mide 57,6m — justo debajo de los 60m que requerían luz de aviso para aviones. Walt no quería esa luz arruinando la magia.</div></div>
+    <div class="curiosity-item"><div class="curiosity-icon">🗑️</div><div class="curiosity-text"><strong>Basureros cada 30 metros</strong>Walt calculó esa distancia en Disneyland observando cuántos pasos caminaba la gente antes de tirar algo al suelo.</div></div>
+    <div class="curiosity-item"><div class="curiosity-icon">🌀</div><div class="curiosity-text"><strong>Basura a 100 km/h</strong>La basura de Magic Kingdom se mueve por tubos neumáticos (sistema AVAC) a 100 km/h. Uno de los dos únicos lugares del mundo con este sistema.</div></div>
+    <div class="curiosity-item"><div class="curiosity-icon">💰</div><div class="curiosity-text"><strong>El precio original</strong>La entrada en 1971 costaba $3,50. Hoy supera los $109. Los mosaicos del castillo tienen 300.000 piezas de vidrio cortado a mano con pan de oro y plata reales.</div></div>
+    <div class="curiosity-item"><div class="curiosity-icon">🦕</div><div class="curiosity-text"><strong>Animal Kingdom es el más grande del mundo</strong>225 hectáreas — cinco veces Magic Kingdom. El safari tiene animales reales. El Yeti de Everest costó millones y no funciona actualmente — los fans lo llaman "modo B".</div></div>
+    <div class="curiosity-item"><div class="curiosity-icon">🎭</div><div class="curiosity-text"><strong>Hollywood Studios nació por Universal</strong>Disney lo construyó a tiempo récord como respuesta directa a Universal Studios Florida en 1989. El All-New Mickey Mouse Club de los '90 se grabó ahí — ahí empezaron Britney Spears, Justin Timberlake y Christina Aguilera.</div></div>
+    <div class="curiosity-item"><div class="curiosity-icon">🔍</div><div class="curiosity-text"><strong>Hidden Mickeys</strong>Hay más de 1.000 Hidden Mickeys (tres círculos formando la cabeza de Mickey) escondidos en todo Walt Disney World. Buscarlos es un juego para toda la familia.</div></div>
+  </div>`;
+}
+
+// ===== UNIVERSAL =====
+const UP={
+  studios:{at:[
+    {name:'Harry Potter & The Escape from Gringotts',intensity:'red',must:true,height:'107cm',single:true,desc:'La joya de Diagon Alley. Combina montaña rusa, pantallas 3D y sets físicos en una aventura con Harry, Ron y Hermione. El dragón que escupe fuego al salir es icónico. Fila espectacular dentro del banco.'},
+    {name:'Revenge of the Mummy',intensity:'red',height:'144cm',single:true,desc:'Coaster en la oscuridad total con Imhotep. Acelera de 0 a 72 km/h, va en reversa sin previo aviso, tiene efectos de fuego. Una de las mejores atracciones de interior del mundo. Clásico imprescindible.'},
+    {name:'Hogwarts Express — King\'s Cross',intensity:'green',must:true,desc:'El tren de Harry Potter conecta Universal Studios Florida con Islands of Adventure. El viaje incluye efectos de sonido, sombras y escenas distintas según la dirección. Requiere ticket de 2 parques. Es parte de la experiencia HP — no te la pierdas.'},
+    {name:'TRANSFORMERS: The Ride-3D',intensity:'yellow',height:'102cm',single:true,desc:'Simulador de combate con Optimus Prime y Bumblebee en 3D. Similar en tecnología a Spider-Man pero con más velocidad y efectos. Muy inmersivo. Buena para hacer con Single Rider.'},
+    {name:'MEN IN BLACK Alien Attack!',intensity:'yellow',height:'102cm',single:true,desc:'Shooting game interactivo donde disparás aliens en las calles de Nueva York. Competís con el vehículo de al lado. Score al final. Muy divertido y repetible. La fila es rápida.'},
+    {name:'The Simpsons Ride',intensity:'yellow',height:'102cm',single:true,desc:'Simulador en Springfield con Bart y la familia. Humor clásico de Los Simpsons en pantalla gigante. El parque previo con los personajes es interactivo. Puede marear un poco.'},
+    {name:'Fast & Furious Supercharged',intensity:'yellow',height:'102cm',single:true,desc:'Tour de estudio que termina en persecución con Vin Diesel y The Rock. Más show que atracción. Cierra en 2027 para dar lugar a algo nuevo.'},
+    {name:'Despicable Me Minion Mayhem',intensity:'green',height:'102cm',desc:'Te convertís en Minion para pasar los entrenamientos de Gru. Simulador familiar con humor de los Minions. Muy apropiado para chicos. La zona de Minion Land afuera tiene muchas fotos.'},
+    {name:"Villain-Con Minion Blast",intensity:'green',height:'122cm',desc:'Shooting game de Minions con pistola de mano. Anda por el recorrido disparando a villanos. Más movimiento que los shooters clásicos. Nueva en Minion Land.'},
+    {name:'Race Through New York (Jimmy Fallon)',intensity:'green',height:'102cm',desc:'Show + simulador con Jimmy Fallon. La sala de espera tiene el mejor sistema de reserva del parque: te dan un color y esperás sentado viendo videos hasta que llaman tu turno. Sin fila de pie.'},
+    {name:'E.T. Adventure',intensity:'green',height:'87cm',desc:'Clásico de 1990 que sigue abierto. Volás en bicicleta para ayudar a E.T. a volver a su planeta. Al final E.T. te llama por tu nombre. Nostálgico, entrañable y único. No lo salteen.'},
+    {name:'Trolls Trollercoaster — DreamWorks Land',intensity:'green',height:'91cm',desc:'Montaña rusa familiar en el Caterbus de Trolls escapando de arañas malvadas. Parte de DreamWorks Land, la nueva zona temática con Shrek, Trolls y Kung Fu Panda. Ideal para chicos. Abrió junio 2024.'},
+    {name:"Kang & Kodos' Twirl 'n' Hurl",intensity:'green',desc:'Platillos voladores de los aliens de Los Simpsons. Giratorio tranquilo, controlás la altura. Ideal para los más pequeños o para tomar aire entre atracciones intensas.'},
+    {name:'Hollywood Rip Ride Rockit',intensity:'gray',closed:'Cerrado permanente',desc:'Cerró el 18/8/2025. Lo reemplaza Fast & Furious: Hollywood Drift, que abre en 2027.'},
+  ],shows:[
+    {n:'The Bourne Stuntacular',d:'EL mejor show del complejo. Artistas en vivo + pantallas gigantes + pirotecnia. IMPERDIBLE. No lo salteen bajo ningún concepto.'},
+    {n:'DreamWorks Imagination Celebration',d:'Show multisensorial en el DreamWorks Theater con personajes de Shrek, Trolls y Kung Fu Panda. Actores en vivo, tecnología avanzada y música. Perfecto para chicos.'},
+    {n:'Ollivanders — Diagon Alley',d:'Experiencia de selección de varita de Harry Potter. Un niño es elegido por la varita. 15 min. Imprescindible para fans de HP. Teatro pequeño — ir temprano.'},
+    {n:'Universal Superstar Parade',d:'Desfile con personajes de Minions, DreamWorks y más. Verificar horario en la app.'},
+    {n:'Animal Actors on Location!',d:'Show con animales entrenados reales: perros, gatos, aves y más. Muy entretenido para toda la familia. 20 min. Teatro al aire libre.'},
+    {n:'Horror Make-Up Show 🚧',d:'Cerrado desde enero 2026 para reimaginación. Reabre en algún momento de 2026 con nueva versión actualizada.'},
+  ],strategy:["Rock 'n' Roller Coaster",'Minions Land (2 atracciones)','Transformers','Harry Potter / Gringotts','Men in Black','The Simpsons','E.T. Adventure','— Almuerzo —','Bourne Stuntacular (show)','Desfile','Jimmy Fallon','La Momia (esperas bajan al cerrar)'],
+  rest:[
+    {n:"Leaky Cauldron",d:'Must fans HP. Comida estilo pub británico en Diagon Alley.',r:false},
+    {n:"Lombard's Seafood Grille",d:'El restaurante sit-down principal. Mariscos y americano. Vista al lago.',r:true},
+    {n:'Minions Cafe',d:'Temático de Minions en Minion Land. The Antidote (bebida de banana) y papas Minion.',r:false},
+    {n:'Krusty Burger',d:'Must fans Simpsons. El Clogger Burger y el Ribwich son icónicos.',r:false},
+    {n:"Finnegan's Bar & Grill",d:'🚧 Cerrado hasta fines de 2026 por renovación.',r:false},
+    {n:'Central Park Crepes',d:'Kiosco junto al lago. Crepes dulces y saladas. Buena parada.',r:false},
+  ]},
+  ioa:{at:[
+    {name:'Jurassic World VelociCoaster',intensity:'red',must:true,height:'129.5cm',single:true,desc:'La montaña rusa más intensa de Universal Orlando. 2 lanzamientos, inversión de 155° y loop de alta velocidad. Sin historia ni pantallas — pura adrenalina. La más rápida del complejo. Hacer con Single Rider para ahorrar tiempo.'},
+    {name:"Hagrid's Magical Creatures Motorbike",intensity:'red',must:true,height:'123cm',desc:'La atracción más querida de Universal. Motocicleta + sidecar por el Bosque Prohibido con Hagrid. Magia, criaturas animatrónicas, una caída en reversa inesperada. Sin fila virtual — la espera siempre es larga pero vale absolutamente cada minuto.'},
+    {name:'The Incredible Hulk Coaster',intensity:'red',height:'137cm',single:true,desc:'Lanzamiento electromagnético a 64 km/h seguido de 7 inversiones. El rugido del Hulk al salir es icónico. Clásico de Islands of Adventure. Una de las mejores entradas de montaña rusa del mundo.'},
+    {name:"Doctor Doom's Fearfall",intensity:'red',height:'132cm',desc:'Torres de caída libre de 60 metros. Te lanzás hacia arriba con un golpe de aire comprimido y luego caés. Intensa y corta (30 segundos). Vista increíble desde arriba mientras esperás la caída.'},
+    {name:'Harry Potter & The Forbidden Journey',intensity:'yellow',must:true,height:'122cm',single:true,desc:'La atracción de Harry Potter original. Volás sobre Hogwarts en una escoba junto a Harry, Hermione y Ron. Combinación de brazo robótico y pantallas 4K. La fila dentro del castillo es un tour de Hogwarts. Imprescindible.'},
+    {name:'Hogwarts Express — Hogsmeade',intensity:'green',must:true,desc:'El tren conecta Islands of Adventure con Universal Studios Florida. El viaje tiene escenas distintas según la dirección. Requiere ticket de 2 parques. Parte esencial de la experiencia del mundo mágico.'},
+    {name:'Jurassic Park River Adventure',intensity:'gray',height:'122cm',water:true,single:true,closed:'Cerrada hasta nov 2026',note:'Cerró el 5/1/2026 por refurbishment de 11 meses. Reabre el 20/11/2026.',desc:'Paseo en bote por Jurassic Park que termina con una caída de 26 metros mientras los dinosaurios te persiguen. Cuando reabre vendrá renovada con $14.8 millones de inversión.'},
+    {name:'Skull Island: Reign of Kong',intensity:'yellow',height:'91.5cm',single:true,desc:'Expedición en jeep por la isla de Kong. Mezcla de animatrónico gigante de King Kong y pantallas 3D. Oscuro y con sustos. Puede asustar a los más chicos. 5 min.'},
+    {name:"Dudley Do-Right's Ripsaw Falls",intensity:'yellow',height:'112cm',water:true,desc:'La caída de agua más larga de Islands of Adventure. 15 metros de caída final. Te empapás de verdad. Hay secadores afuera ($5). Hacer con ropa de repuesto o al final del día.'},
+    {name:"Popeye & Bluto's Bilge-Rat Barges",intensity:'yellow',height:'112cm',water:true,desc:'Balsa circular por los canales de Sweethaven. Chorros de agua desde todos lados. Más mojante que Kali River Rapids. Los espectadores pueden activar chorros extra desde afuera. Llegás empapado garantizado.'},
+    {name:'The Amazing Adventures of Spider-Man',intensity:'yellow',height:'101.5cm',single:true,desc:'Clásico que inventó el género simulador + sets físicos en 1999. Aún se mantiene como referencia. Luchás contra los villanos con Spider-Man en las calles de Nueva York. 3D con efectos físicos.'},
+    {name:'Flight of the Hippogriff',intensity:'yellow',height:'91.5cm',desc:'Mini montaña rusa familiar en Hogsmeade. Corta (60 segundos) pero divertida con giros y pequeña caída. Vista del castillo de Hogwarts desde arriba. Ideal como primera coaster para chicos.'},
+    {name:'The Cat in the Hat — Seuss Landing',intensity:'green',desc:'Paseo en vehículo giratorio por la historia del Gato en el Sombrero. Sets coloridos y personajes del clásico. Perfecto para chicos pequeños. Sin altura mínima.'},
+    {name:'One Fish Two Fish Red Fish Blue Fish',intensity:'green',desc:'Peces voladores giratorios que subís y bajás vos mismo. Algunos chorros de agua te mojan si no esquivás a tiempo. Ideal para los más chiquitos.'},
+    {name:'Caro-Seuss-el',intensity:'green',desc:'Carrusel temático de Dr. Seuss con criaturas de los cuentos. Sin altura mínima. Perfecto para bebés y niños pequeños.'},
+    {name:'The High in the Sky Seuss Trolley Train Ride',intensity:'green',height:'102cm',desc:'Tren elevado que recorre Seuss Landing con efectos de sonido y vistas del parque. 10 min. Entretenido y relajante para toda la familia.'},
+  ],shows:[
+    {n:'Raptor Encounter',d:'Foto con un velociraptor vivo (Blue de Jurassic World). Sin fila de ride — solo hacés la cola para la foto. Uno de los momentos más únicos del parque. Los actores son increíbles. Verificar horarios en la app.'},
+    {n:'Hogwarts Always — Castle Show',d:'Proyección nocturna sobre el castillo de Hogwarts con música y efectos de luz. Solo se hace de noche. Muy recomendado quedarse a verlo al cerrar el parque.'},
+    {n:'Frog Choir / Triwizard Spirit Rally',d:'Shows en vivo en Hogsmeade. El Frog Choir tiene personajes con ranas gigantes cantando canciones del mundo mágico. El Triwizard Rally tiene actores de Durmstrang y Beauxbatons. Verificar horarios en la app.'},
+  ],shows:[
+    {n:'Raptor Encounter',d:'Foto con velociraptor vivo. Visitarlo después del almuerzo.'},
+    {n:'Meet Spider-Man & Marvel Super Heroes',d:'Paseás por Marvel Island y te cruzás con los personajes.'},
+  ],strategy:['VelociCoaster o Hagrid (primero)','King Kong (Skull Island)','Flight of the Hippogriff','Harry Potter Forbidden Journey','Dudley o Popeye (si querés mojarte)','Jurassic Park River Adventure','Raptor Encounter','— Almuerzo —','La coaster que no hicieron primero','Dr. Seuss Land (niños)','Spider-Man','Hulk'],
+  rest:[
+    {n:'Mythos Restaurant',d:'Uno de los mejores restaurantes de parques temáticos del mundo. Reservá.',r:true},
+    {n:'The Three Broomsticks',d:'Must fans HP. Gran festín con pollo y costillas. En Hogsmeade.',r:false},
+    {n:'Thunder Falls Terrace',d:'Pollo y bowls de arroz en zona Jurassic Park. Muy recomendado.',r:false},
+    {n:'Confisco Grille',d:'Variedad de cocinas del mundo. Buena opción familiar.',r:false},
+    {n:'Skull Island Snacks',d:'Comida rápida cerca de King Kong.',r:false},
+  ]}
+};
+
+function showUniversalPark(id,btn){
+  document.querySelectorAll('#universal-sub-selector .sub-btn').forEach(b=>{b.classList.remove('active');b.style.background='';b.style.borderColor='';b.style.color='';});
+  btn.style.background='var(--lavender-mid)';btn.style.borderColor='var(--lavender-mid)';btn.style.color='white';
+  if(id==='epic'){renderEpicInUniversal();return;}
+  if(id==='citywalk'){renderCityWalk();return;}
+  if(id==='volcano'){renderVolcano();return;}
+  const ubanners={
+    studios:{emoji:'🎬',name:'Universal Studios Florida',sub:'Harry Potter (Diagon Alley) · Los Simpsons · Minions · DreamWorks',bg:'linear-gradient(135deg,#D4CEEE,#E4E0F5)',border:'#B8B0E0'},
+    ioa:{emoji:'🏝️',name:'Islands of Adventure',sub:'Harry Potter (Hogsmeade) · Marvel · Jurassic Park · Toon Lagoon · Seuss Landing',bg:'linear-gradient(135deg,#C8E8D8,#D8F0E4)',border:'#A0D4B8'},
+  };
+  const ub=ubanners[id];
+  const p=UP[id];
+  let h=`<div class="park-header-banner" style="background:${ub.bg};border:1.5px solid ${ub.border}">
+    <div style="font-size:11px;letter-spacing:3px;opacity:.6;text-transform:uppercase;margin-bottom:6px;color:var(--text)">Universal Orlando Resort</div>
+    <h1>${ub.emoji} ${ub.name}</h1><p>${ub.sub}</p>
+  </div>`;
+  h+=`<div class="legend"><div class="legend-item"><div class="intensity-dot dot-red"></div>Muy alta</div><div class="legend-item"><div class="intensity-dot dot-yellow"></div>Alta/Media</div><div class="legend-item"><div class="intensity-dot dot-green"></div>Baja/Suave</div></div>`;
+  h+=`<div class="section-label">Atracciones</div><div class="attraction-list">`;p.at.forEach(a=>{h+=renderA(a);});h+='</div>';
+  h+=`<div class="section-label">Shows</div>`;p.shows.forEach(s=>{h+=`<div style="background:linear-gradient(135deg,#D4CEEE,#E4E0F5);border:1.5px solid #B8B0E0;border-radius:14px;padding:14px 16px;margin-bottom:8px"><div style="font-weight:600;color:var(--text);font-size:14px">🎭 ${s.n}</div><div style="font-size:12px;color:var(--muted);margin-top:4px">${s.d}</div></div>`;});
+  h+=`<div class="section-label">Estrategia sugerida</div><div class="section-card"><div style="font-size:13px">`;
+  p.strategy.forEach((s,i)=>{if(s.startsWith('—')){h+=`<div style="text-align:center;color:var(--muted);font-size:12px;padding:8px 0;font-style:italic">${s}</div>`;}else{h+=`<div style="display:flex;gap:10px;align-items:center;padding:7px 0;border-bottom:1px solid var(--border)"><span style="font-size:12px;font-weight:700;color:var(--lavender-mid);min-width:20px">${i+1}</span><span>${s}</span></div>`;}});
+  h+='</div></div>';
+  h+=`<div class="section-label">Dónde Comer</div>`;p.rest.forEach(r=>{h+=`<div class="restaurant-item"><div class="restaurant-name">${r.n}</div><div class="restaurant-desc">${r.d}</div><span class="reserva-tag ${r.r?'reserva-si':'reserva-no'}">${r.r?'Requiere reserva':'Sin reserva'}</span></div>`;});
+  document.getElementById('universal-park-content').innerHTML=h;
+}
+
+// ===== EPIC =====
+const EW=[
+  {id:'celestial',name:'Celestial Park',desc:'El centro cósmico. Estrellas, carruseles y montañas rusas.',emoji:'⭐',cls:'portal-celestial',
+    at:[{name:'Stardust Racers',intensity:'red',height:'122cm',must:true,single:true,note:'MÁS intensa que VelociCoaster. 2 montañas rusas en una (la verde es la más intensa).'},{name:'Constellation Carousel',intensity:'green',note:'Carrusel galáctico con criaturas fantásticas. Hacelo de noche.'}],
+    rest:['Atlantic — Mariscos y carnes elegante','The Blue Dragon — Cocina panasiática estilo mercado nocturno','Pizza Moon — La pizzería más linda del viaje 🍕'],
+    extras:['El parque se ilumina de noche con faroles y fuentes danzantes. ¡Muy recomendado pasear a la tarde-noche!','Hay 2 Starbucks y lugares con alcohol.']},
+  {id:'harry',name:'Wizarding World — Ministry of Magic',desc:'Ministerio Británico + mundo mágico de París años 20.',emoji:'⚡',cls:'portal-harry',
+    at:[{name:'Battle at the Ministry',intensity:'red',height:'102cm',must:true,single:true,note:'Fila virtual — reservar desde la app a las 11, 14 o 18hs.'},{name:'Le Cirque Arcanus',intensity:'green',must:true,show:true,note:'Show mágico en vivo estilo circo oscuro. IMPERDIBLE.'}],
+    rest:["Café L'Air de la Sirène — Cafetería francesa con crêpes de Butterbeer",'Le Gobelet Noir — Restaurante oscuro con platos potentes'],
+    extras:['Varitas interactivas: hay zonas donde podés hacer "magia" si comprás una varita.']},
+  {id:'nintendo',name:'Super Nintendo World',desc:'Entrás por un tubo verde al Reino Champiñón.',emoji:'🎮',cls:'portal-nintendo',
+    at:[{name:"Mario Kart: Bowser's Challenge",intensity:'yellow',height:'102cm',must:true,single:true,note:'Carrera con realidad aumentada.'},{name:'Mine-Cart Madness (Donkey Kong)',intensity:'red',height:'102cm',must:true,single:true,note:'De afuera parece menos de lo que es. ¡Sorprende!'},{name:"Yoshi's Adventure",intensity:'green',height:'86cm',note:'Paseo tranquilo con vistas lindas.'}],
+    rest:['Toadstool Café — Tip: pedí la sopa de hongos. Es exquisita.'],
+    extras:['Power-Up Band (pulsera) para jugar y desbloquear desafíos.','Personajes caminando: Mario, Luigi, Peach, Toad...']},
+  {id:'berk',name:'Isle of Berk — Cómo Entrenar tu Dragón',desc:'Isla vikinga con dragones, laguna y música celta.',emoji:'🐉',cls:'portal-berk',
+    at:[{name:"Hiccup's Wing Gliders",intensity:'yellow',height:'102cm',must:true,single:true,note:'Muy rápida pero sin caídas.'},{name:'Fyre Drill',intensity:'green',water:true,note:'Guerra de cañones — te empapás.'},{name:"Dragon Racer's Rally",intensity:'yellow',height:'122cm'},{name:'Viking Training Camp',intensity:'green',note:'Plaza para los más pequeños.'}],
+    rest:['Mead Hall — Costillares, cervezas y ambiente vikingo rústico','Spit Fyre Grill — Bowls y carnes rápidas',"Hooligan's Grog & Gruel — Conos de mac & cheese en pan. Es furor."],
+    extras:['Encuentro con Chimuello — animatronic interactivo increíble.','The Untrainable Dragon — Show de dragones animatrónicos en vivo. Es INCREÍBLE. No te lo pierdas. Horarios en la app.']},
+  {id:'dark',name:'Dark Universe',desc:'Frankenstein, Drácula, Hombre Lobo.',emoji:'🧛',cls:'portal-dark',
+    at:[{name:'Monsters Unchained: The Frankenstein Experiment',intensity:'red',height:'122cm',must:true,single:true,note:'Sin caídas pero movimientos bruscos. La fila y la atracción dan bastante miedo — cuidado con los chicos.'},{name:'Curse of the Werewolf',intensity:'yellow',height:'102cm',single:true,note:'Montaña rusa giratoria, rápida y divertida.'}],
+    rest:['The Burning Blade Tavern — Taberna medieval con molino que se prende fuego de noche','Das Stakehaus — Probá la hamburguesa negra o el plato plant based de fideos.'],
+    extras:['Darkmoor Monster Makeup Experience: maquillate como el monstruo que elijas. (Maquillados no pueden consumir alcohol aunque sean mayores de 21).']},
+];
+
+function renderEpic(){
+  let h=`<div class="alert-box alert-gold"><span>⚠️</span><p><strong>Recomendación de Sofi</strong>Es inmenso. Sin Express Pass en un día no llegás a ver todo. Ideal: 2 días O 1 día con Express Pass ($125–$300 USD/persona).</p></div><div class="section-label">Los 5 Mundos</div>`;
+  EW.forEach(w=>{
+    h+=`<div class="world-portal ${w.cls}" onclick="toggleWorld('${w.id}')"><div class="portal-name">${w.emoji} ${w.name}</div><div class="portal-desc">${w.desc}</div><div class="portal-icon">${w.emoji}</div></div>
+    <div id="world-detail-${w.id}" style="display:none;background:white;border-radius:0 0 16px 16px;border:1px solid var(--border);border-top:none;padding:16px;margin-top:-10px;margin-bottom:12px">
+      <div class="section-label" style="margin-top:0">Atracciones</div><div class="attraction-list">${w.at.map(a=>renderA(a)).join('')}</div>
+      ${w.rest?`<div class="section-label">Dónde comer</div>`+w.rest.map(r=>`<div class="restaurant-item"><div class="restaurant-name">${r.split(' — ')[0]}</div><div class="restaurant-desc">${r.split(' — ')[1]||''}</div></div>`).join(''):''}
+      ${w.extras?`<div class="section-label">Extras</div>`+w.extras.map(e=>`<div class="alert-box alert-gold"><span>✨</span><p>${e}</p></div>`).join(''):''}
+    </div>`;
+  });
+  h+=`<div class="section-label">Estrategia sin Early Access</div><div class="section-card"><div style="font-size:13px">
+    <div style="color:var(--muted);font-size:11px;margin-bottom:10px">Todos van a Nintendo y Celestial — nosotros vamos al lado opuesto primero.</div>
+    <div style="padding:7px 0;border-bottom:1px solid var(--border)"><span style="font-weight:700;color:var(--epic-gold)">1</span> → Dark Universe: Monsters Unchained + Curse of the Werewolf (Single Rider)</div>
+    <div style="padding:7px 0;border-bottom:1px solid var(--border)"><span style="font-weight:700;color:var(--epic-gold)">2</span> → Isle of Berk: Hiccup's Wing Gliders + Dragon Racer's Rally (Single Rider)</div>
+    <div style="padding:7px 0;border-bottom:1px solid var(--border)"><span style="font-weight:700;color:var(--epic-gold)">3</span> → Super Nintendo World: Mario Kart + Donkey Kong (Single Rider)</div>
+    <div style="padding:7px 0;border-bottom:1px solid var(--border)"><span style="font-weight:700;color:var(--epic-gold)">4</span> → Harry Potter según fila virtual asignada</div>
+    <div style="padding:7px 0"><span style="font-weight:700;color:var(--epic-gold)">5</span> → Celestial Park de noche: carrusel + fuentes danzantes</div>
+  </div></div>`;
+  h+=`<div class="section-label">Fila Virtual Harry Potter</div><div class="alert-box alert-gold"><span>📲</span><p><strong>Horarios: 11hs, 14hs y 18hs.</strong> Ponete alarmas. Vinculá tickets en WALLET de la app antes. Las reservas se agotan rapidísimo.</p></div>`;
+  document.getElementById('epic-park-content').innerHTML=h;
+}
+function toggleWorld(id){const el=document.getElementById('world-detail-'+id);el.style.display=el.style.display==='none'?'block':'none';}
+
+function renderEpicInUniversal(){
+  let h=`<div class="park-header-banner" style="background:linear-gradient(135deg,#1a1a4e,#2d2d8a);border:1.5px solid #4040a0">
+    <div style="font-size:11px;letter-spacing:3px;opacity:.6;text-transform:uppercase;margin-bottom:6px;color:rgba(255,255,255,.7)">Universal Orlando Resort</div>
+    <h1 style="color:white">✨ Epic Universe</h1><p style="color:rgba(255,255,255,.75)">5 mundos inmersivos · El parque más ambicioso de la historia · Abrió mayo 2025</p>
+  </div>`;
+  h+=`<div class="alert-box alert-gold"><span>⚠️</span><p><strong>Mi recomendación</strong>Es inmenso. Sin Express Pass en un día no llegás a ver todo. Ideal: 2 días O 1 día con Express Pass ($125–$300 USD/persona).</p></div><div class="section-label">Los 5 Mundos</div>`;
+  EW.forEach(w=>{
+    h+=`<div class="world-portal ${w.cls}" onclick="toggleWorld('${w.id}')"><div class="portal-name">${w.emoji} ${w.name}</div><div class="portal-desc">${w.desc}</div><div class="portal-icon">${w.emoji}</div></div>
+    <div id="world-detail-${w.id}" style="display:none;background:white;border-radius:0 0 16px 16px;border:1px solid var(--border);border-top:none;padding:16px;margin-top:-10px;margin-bottom:12px">
+      <div class="section-label" style="margin-top:0">Atracciones</div><div class="attraction-list">${w.at.map(a=>renderA(a)).join('')}</div>
+      ${w.rest?`<div class="section-label">Dónde comer</div>`+w.rest.map(r=>`<div class="restaurant-item"><div class="restaurant-name">${r.split(' — ')[0]}</div><div class="restaurant-desc">${r.split(' — ')[1]||''}</div></div>`).join(''):''}
+      ${w.extras?`<div class="section-label">Extras</div>`+w.extras.map(e=>`<div class="alert-box alert-gold"><span>✨</span><p>${e}</p></div>`).join(''):''}
+    </div>`;
+  });
+  h+=`<div class="section-label">Estrategia sin Early Access</div><div class="section-card"><div style="font-size:13px">
+    <div style="color:var(--muted);font-size:11px;margin-bottom:10px">Todos van a Nintendo y Celestial — nosotros vamos al lado opuesto primero.</div>
+    <div style="padding:7px 0;border-bottom:1px solid var(--border)"><span style="font-weight:700;color:var(--epic-gold)">1</span> → Dark Universe: Monsters Unchained + Curse of the Werewolf (Single Rider)</div>
+    <div style="padding:7px 0;border-bottom:1px solid var(--border)"><span style="font-weight:700;color:var(--epic-gold)">2</span> → Isle of Berk: Hiccup's Wing Gliders + Dragon Racer's Rally (Single Rider)</div>
+    <div style="padding:7px 0;border-bottom:1px solid var(--border)"><span style="font-weight:700;color:var(--epic-gold)">3</span> → Super Nintendo World: Mario Kart + Donkey Kong (Single Rider)</div>
+    <div style="padding:7px 0;border-bottom:1px solid var(--border)"><span style="font-weight:700;color:var(--epic-gold)">4</span> → Harry Potter según fila virtual asignada</div>
+    <div style="padding:7px 0"><span style="font-weight:700;color:var(--epic-gold)">5</span> → Celestial Park de noche: carrusel + fuentes danzantes</div>
+  </div></div>`;
+  h+=`<div class="section-label">Fila Virtual Harry Potter</div><div class="alert-box alert-gold"><span>📲</span><p><strong>Horarios: 11hs, 14hs y 18hs.</strong> Ponete alarmas. Vinculá tickets en WALLET de la app antes. Las reservas se agotan rapidísimo.</p></div>`;
+  document.getElementById('universal-park-content').innerHTML=h;
+}
+
+function renderCityWalk(){
+  document.getElementById('universal-park-content').innerHTML=`
+  <div class="alert-box alert-green"><span style="font-size:20px">✅</span><p><strong>Entrada y estacionamiento gratuitos.</strong> No necesitás ticket de parque. Podés ir cualquier día.</p></div>
+  <div class="alert-box alert-blue"><span>🚌</span><p><strong>Cómo llegar</strong>En auto ($27 estacionamiento, gratis después de las 6pm) · Uber directo a la entrada · Buses gratuitos desde hoteles de Universal.</p></div>
+  <div class="section-label">Restaurantes y Bares</div>
+  <div class="restaurant-item"><div class="restaurant-name">🍕 Vivo Italian Kitchen</div><div class="restaurant-desc">Pastas y pizzas con show de cocina en vivo. Muy recomendado.</div><span class="reserva-tag reserva-no">Sin reserva</span></div>
+  <div class="restaurant-item"><div class="restaurant-name">🌮 Antojitos Authentic Mexican Food</div><div class="restaurant-desc">Comida mexicana con mariachis en vivo. Gran ambiente.</div><span class="reserva-tag reserva-no">Sin reserva</span></div>
+  <div class="restaurant-item"><div class="restaurant-name">🍔 Hard Rock Cafe</div><div class="restaurant-desc">El más grande del mundo. Guitarras y memorabilia icónica.</div><span class="reserva-tag reserva-no">Sin reserva</span></div>
+  <div class="restaurant-item"><div class="restaurant-name">🦞 Red Oven Pizza Bakery</div><div class="restaurant-desc">Pizzas artesanales en horno de leña. Rápido y rico.</div><span class="reserva-tag reserva-no">Sin reserva</span></div>
+  <div class="restaurant-item"><div class="restaurant-name">🍺 NBC Sports Grill & Brew</div><div class="restaurant-desc">Pantallas gigantes, deportes y buena cerveza.</div><span class="reserva-tag reserva-no">Sin reserva</span></div>
+  <div class="restaurant-item"><div class="restaurant-name">🎵 Pat O'Brien's</div><div class="restaurant-desc">Bar de New Orleans con piano en vivo y Hurricane cocktail.</div><span class="reserva-tag reserva-no">Sin reserva</span></div>
+  <div class="section-label">Entretenimiento</div>
+  <div class="alert-box alert-coral"><span>🎬</span><p><strong>Universal Cinemark</strong>Cine de 20 salas con las últimas películas. Buena opción para días de lluvia.</p></div>
+  <div class="alert-box alert-coral"><span>🎭</span><p><strong>Shows en vivo</strong>La mayoría de los bares tienen música en vivo los fines de semana. Consultá la cartelera en la app de Universal.</p></div>
+  <div class="section-label">Tiendas</div>
+  <div class="restaurant-item"><div class="restaurant-name">🛍️ Universal Studios Store</div><div class="restaurant-desc">La tienda más grande del complejo. Todo el merchandising oficial.</div></div>
+  <div class="restaurant-item"><div class="restaurant-name">⚡ Universal Orlando's Horror Make-Up Show Store</div><div class="restaurant-desc">Efectos especiales y maquillaje de Halloween.</div></div>
+  <div class="alert-box alert-gold"><span>💡</span><p><strong>Tip clave</strong>CityWalk es ideal para la noche después de los parques. Los restaurantes tienen mucho ambiente entre las 7 y las 11pm.</p></div>`;
+}
+
+function renderVolcano(){
+  document.getElementById('universal-park-content').innerHTML=`
+  <div class="park-header-banner" style="background:linear-gradient(135deg,#7c2d12,#dc2626);margin-bottom:16px">
+    <div style="font-size:11px;letter-spacing:3px;opacity:.7;text-transform:uppercase;margin-bottom:6px">Parque Acuático</div>
+    <h1 style="font-family:'Playfair Display',serif;font-size:24px;font-weight:900;color:white">🌋 Volcano Bay</h1>
+    <p style="font-size:13px;opacity:.75;color:white;margin-top:6px">Sin filas físicas · Pulsera TapuTapu · El volcán Ko'okiri</p>
+  </div>
+  <div class="alert-box alert-blue"><span>🚌</span><p><strong>Cómo llegar</strong>Buses gratuitos desde los hoteles de Universal. En auto el estacionamiento es $27/día.</p></div>
+  <div class="alert-box alert-gold"><span>⌚</span><p><strong>Sistema TapuTapu</strong>Al entrar te dan una pulsera. La usás para "reservar turno" en los toboganes — cuando llegue tu turno vibra. No hacés fila de pie, esperás en la pileta o playa. Es el sistema más inteligente de parques acuáticos del mundo.</p></div>
+  <div class="section-label">Atracciones principales</div>
+  <div class="attraction-list">
+    <div class="attraction-item" onclick="toggleDesc('vb1')" style="cursor:pointer;flex-direction:column;align-items:flex-start;gap:6px">
+      <div style="display:flex;align-items:center;gap:12px;width:100%"><div class="intensity-dot dot-red"></div><div class="attraction-name" style="flex:1">Ko'okiri Body Plunge</div><div><span class="badge badge-height">📏 122cm</span></div><span id="arr-vb1" style="color:var(--muted);font-size:12px">▼</span></div>
+      <div id="vb1" style="display:none;font-size:12px;color:#555;line-height:1.5;padding:6px 10px;background:#f8f7f5;border-radius:8px;width:100%">La estrella del parque. Caída casi vertical de 38 metros desde la cima del volcán. Piso se abre bajo tus pies — caés sin avisar. Una de las experiencias más intensas de cualquier parque acuático del mundo. Solo para valientes.</div>
+    </div>
+    <div class="attraction-item" onclick="toggleDesc('vb2')" style="cursor:pointer;flex-direction:column;align-items:flex-start;gap:6px">
+      <div style="display:flex;align-items:center;gap:12px;width:100%"><div class="intensity-dot dot-red"></div><div class="attraction-name" style="flex:1">Krakatau Aqua Coaster</div><div><span class="badge badge-height">📏 107cm</span></div><span id="arr-vb2" style="color:var(--muted);font-size:12px">▼</span></div>
+      <div id="vb2" style="display:none;font-size:12px;color:#555;line-height:1.5;padding:6px 10px;background:#f8f7f5;border-radius:8px;width:100%">La montaña rusa acuática del volcán. Balsa para 4 personas que sube y baja con chorros de agua a presión. Pasa por dentro del volcán con efectos de luz y sonido. La más popular del parque — reservá turno TapuTapu apenas llegues.</div>
+    </div>
+    <div class="attraction-item" onclick="toggleDesc('vb3')" style="cursor:pointer;flex-direction:column;align-items:flex-start;gap:6px">
+      <div style="display:flex;align-items:center;gap:12px;width:100%"><div class="intensity-dot dot-red"></div><div class="attraction-name" style="flex:1">Punga Racers</div><div><span class="badge badge-height">📏 107cm</span></div><span id="arr-vb3" style="color:var(--muted);font-size:12px">▼</span></div>
+      <div id="vb3" style="display:none;font-size:12px;color:#555;line-height:1.5;padding:6px 10px;background:#f8f7f5;border-radius:8px;width:100%">Cuatro toboganes paralelos en los que competís de espaldas en colchoneta. Rápidos y muy divertidos para grupos. Los 4 llegan casi al mismo tiempo — el margen es mínimo.</div>
+    </div>
+    <div class="attraction-item" onclick="toggleDesc('vb4')" style="cursor:pointer;flex-direction:column;align-items:flex-start;gap:6px">
+      <div style="display:flex;align-items:center;gap:12px;width:100%"><div class="intensity-dot dot-yellow"></div><div class="attraction-name" style="flex:1">Honu & Ika Moana</div><div></div><span id="arr-vb4" style="color:var(--muted);font-size:12px">▼</span></div>
+      <div id="vb4" style="display:none;font-size:12px;color:#555;line-height:1.5;padding:6px 10px;background:#f8f7f5;border-radius:8px;width:100%">Dos toboganes tipo bowl gigantes. Honu (la tortuga) es para balsas de 4-5 personas. Ika Moana (la ballena) es para balsas de 2. Giran dentro de la figura antes de caer. Ideal para familias.</div>
+    </div>
+    <div class="attraction-item" onclick="toggleDesc('vb5')" style="cursor:pointer;flex-direction:column;align-items:flex-start;gap:6px">
+      <div style="display:flex;align-items:center;gap:12px;width:100%"><div class="intensity-dot dot-green"></div><div class="attraction-name" style="flex:1">Piscina de olas — Waturi Beach</div><div></div><span id="arr-vb5" style="color:var(--muted);font-size:12px">▼</span></div>
+      <div id="vb5" style="display:none;font-size:12px;color:#555;line-height:1.5;padding:6px 10px;background:#f8f7f5;border-radius:8px;width:100%">La playa principal del parque al pie del volcán. Olas constantes pero más suaves que Typhoon. Arena de verdad. El mejor lugar para pasar el día en familia. Vista al volcán Ko'okiri todo el tiempo.</div>
+    </div>
+    <div class="attraction-item" onclick="toggleDesc('vb6')" style="cursor:pointer;flex-direction:column;align-items:flex-start;gap:6px">
+      <div style="display:flex;align-items:center;gap:12px;width:100%"><div class="intensity-dot dot-green"></div><div class="attraction-name" style="flex:1">Río lento — Kopiko Wai Winding River</div><div></div><span id="arr-vb6" style="color:var(--muted);font-size:12px">▼</span></div>
+      <div id="vb6" style="display:none;font-size:12px;color:#555;line-height:1.5;padding:6px 10px;background:#f8f7f5;border-radius:8px;width:100%">Río tranquilo que recorre el parque pasando por dentro del volcán en la oscuridad con efectos de luz. El único río lento del mundo que pasa por dentro de un volcán. Muy relajante y único.</div>
+    </div>
+  </div>
+  <div class="section-label">Tips clave</div>
+  <div class="alert-box alert-coral"><span>⌚</span><p><strong>TapuTapu strategy</strong>Al entrar, reservá turno en Ko'okiri y Krakatau inmediatamente. Son los más demandados. Mientras esperás el turno, hacé las atracciones con fila corta.</p></div>
+  <div class="alert-box alert-green"><span>🍔</span><p><strong>Comida</strong>Podés traer tu comida. Dancing Dragons Boat Bar tiene los mejores cócteles tropicales. Kohola Reef es el restaurante principal.</p></div>
+  <div class="alert-box alert-blue"><span>🩱</span><p><strong>Qué llevar</strong>Ojotas, protector solar resistente al agua, toalla, ropa de cambio y tarjeta (sin efectivo — todo es cashless con la pulsera TapuTapu).</p></div>`;
+}
+
+
+function renderTyphoon(){
+  document.getElementById('disney-park-content').innerHTML=`
+  <div class="park-header-banner" style="background:linear-gradient(135deg,#0284c7,#06b6d4);margin-bottom:16px">
+    <div style="font-size:11px;letter-spacing:3px;opacity:.7;text-transform:uppercase;margin-bottom:6px">Parque Acuático</div>
+    <h1 style="font-family:'Playfair Display',serif;font-size:24px;font-weight:900;color:white">🌊 Typhoon Lagoon</h1>
+    <p style="font-size:13px;opacity:.75;color:white;margin-top:6px">El parque acuático más popular de Disney · Olas gigantes</p>
+  </div>
+  <div class="alert-box alert-blue"><span>🚌</span><p><strong>Cómo llegar</strong>Bus gratuito desde todos los hoteles Disney y parques temáticos.</p></div>
+  <div class="alert-box alert-gold"><span>💡</span><p><strong>El highlight</strong>La piscina de olas de Typhoon Lagoon genera olas de hasta 1,8 metros — las más grandes de cualquier parque acuático de Florida. Se sienten de verdad.</p></div>
+  <div class="section-label">Atracciones principales</div>
+  <div class="attraction-list">
+    <div class="attraction-item" onclick="toggleDesc('tl1')" style="cursor:pointer;flex-direction:column;align-items:flex-start;gap:6px">
+      <div style="display:flex;align-items:center;gap:12px;width:100%"><div class="intensity-dot dot-red"></div><div class="attraction-name" style="flex:1">Crush 'n' Gusher</div><div><span class="badge badge-height">📏 122cm</span></div><span id="arr-tl1" style="color:var(--muted);font-size:12px">▼</span></div>
+      <div id="tl1" style="display:none;font-size:12px;color:#555;line-height:1.5;padding:6px 10px;background:#f8f7f5;border-radius:8px;width:100%">Tobogán acuático único que va hacia ARRIBA gracias a chorros de agua a presión. Tres tubos distintos: Coconut Plunge, Pineapple Plunger y Banana Blaster. La sensación de subir en tobogán es rara e impresionante.</div>
+    </div>
+    <div class="attraction-item" onclick="toggleDesc('tl2')" style="cursor:pointer;flex-direction:column;align-items:flex-start;gap:6px">
+      <div style="display:flex;align-items:center;gap:12px;width:100%"><div class="intensity-dot dot-red"></div><div class="attraction-name" style="flex:1">Humunga Kowabunga</div><div><span class="badge badge-height">📏 122cm</span></div><span id="arr-tl2" style="color:var(--muted);font-size:12px">▼</span></div>
+      <div id="tl2" style="display:none;font-size:12px;color:#555;line-height:1.5;padding:6px 10px;background:#f8f7f5;border-radius:8px;width:100%">Caída casi vertical a 60 km/h en tubo cerrado. 5 segundos de oscuridad total y caída libre. La más intensa del parque. No apta para cardíacos.</div>
+    </div>
+    <div class="attraction-item" onclick="toggleDesc('tl3')" style="cursor:pointer;flex-direction:column;align-items:flex-start;gap:6px">
+      <div style="display:flex;align-items:center;gap:12px;width:100%"><div class="intensity-dot dot-yellow"></div><div class="attraction-name" style="flex:1">Summit Plummets (Blizzard Beach)</div><div></div><span id="arr-tl3" style="color:var(--muted);font-size:12px">▼</span></div>
+      <div id="tl3" style="display:none;font-size:12px;color:#555;line-height:1.5;padding:6px 10px;background:#f8f7f5;border-radius:8px;width:100%">Ver Blizzard Beach para este. Typhoon tiene sus propios toboganes de velocidad: Stern Burner y Jib Jammer para grupos o en pareja.</div>
+    </div>
+    <div class="attraction-item" onclick="toggleDesc('tl4')" style="cursor:pointer;flex-direction:column;align-items:flex-start;gap:6px">
+      <div style="display:flex;align-items:center;gap:12px;width:100%"><div class="intensity-dot dot-green"></div><div class="attraction-name" style="flex:1">Piscina de olas — Miss Adventure Falls</div><div></div><span id="arr-tl4" style="color:var(--muted);font-size:12px">▼</span></div>
+      <div id="tl4" style="display:none;font-size:12px;color:#555;line-height:1.5;padding:6px 10px;background:#f8f7f5;border-radius:8px;width:100%">La laguna principal genera olas de hasta 1,8 metros cada 90 segundos. Miss Adventure Falls es el tobogán familiar más largo del parque — balsa para 4 personas a través de una historia de piratas.</div>
+    </div>
+    <div class="attraction-item" onclick="toggleDesc('tl5')" style="cursor:pointer;flex-direction:column;align-items:flex-start;gap:6px">
+      <div style="display:flex;align-items:center;gap:12px;width:100%"><div class="intensity-dot dot-green"></div><div class="attraction-name" style="flex:1">Río lento — Castaway Creek</div><div></div><span id="arr-tl5" style="color:var(--muted);font-size:12px">▼</span></div>
+      <div id="tl5" style="display:none;font-size:12px;color:#555;line-height:1.5;padding:6px 10px;background:#f8f7f5;border-radius:8px;width:100%">Río tranquilo que recorre todo el parque en flotador. 760 metros. Perfecto para descansar entre toboganes. Algunos tramos tienen chorros de agua sorpresa.</div>
+    </div>
+  </div>
+  <div class="section-label">Tips clave</div>
+  <div class="alert-box alert-coral"><span>🌅</span><p><strong>Llegá temprano</strong>Las sillas cerca del agua se agotan en los primeros 30 min. Llegar al abrir es clave.</p></div>
+  <div class="alert-box alert-green"><span>🍔</span><p><strong>Comida</strong>Podés traer tu propia comida y bebidas (sin vidrio). Hay lockers pagos en la entrada para guardar cosas. Letuces' y Happy Landings son las mejores opciones de comida dentro.</p></div>
+  <div class="alert-box alert-blue"><span>🩱</span><p><strong>Qué llevar</strong>Ojotas, protector solar resistente al agua, toalla, ropa de cambio y efectivo o tarjeta para lockers y alquiler de flotadores.</p></div>`;
+}
+
+function renderBlizzard(){
+  document.getElementById('disney-park-content').innerHTML=`
+  <div class="park-header-banner" style="background:linear-gradient(135deg,#1e40af,#3b82f6);margin-bottom:16px">
+    <div style="font-size:11px;letter-spacing:3px;opacity:.7;text-transform:uppercase;margin-bottom:6px">Parque Acuático</div>
+    <h1 style="font-family:'Playfair Display',serif;font-size:24px;font-weight:900;color:white">❄️ Blizzard Beach</h1>
+    <p style="font-size:13px;opacity:.75;color:white;margin-top:6px">Temática de montaña nevada derretida · El tobogán más alto de Disney</p>
+  </div>
+  <div class="alert-box alert-blue"><span>🚌</span><p><strong>Cómo llegar</strong>Bus gratuito desde todos los hoteles Disney y parques temáticos.</p></div>
+  <div class="alert-box alert-gold"><span>💡</span><p><strong>El highlight</strong>Summit Plummet es el tobogán más alto de Disney — 37 metros de caída casi vertical. Se llega a 97 km/h. Para los valientes.</p></div>
+  <div class="section-label">Atracciones principales</div>
+  <div class="attraction-list">
+    <div class="attraction-item" onclick="toggleDesc('bb1')" style="cursor:pointer;flex-direction:column;align-items:flex-start;gap:6px">
+      <div style="display:flex;align-items:center;gap:12px;width:100%"><div class="intensity-dot dot-red"></div><div class="attraction-name" style="flex:1">Summit Plummet</div><div><span class="badge badge-height">📏 122cm</span></div><span id="arr-bb1" style="color:var(--muted);font-size:12px">▼</span></div>
+      <div id="bb1" style="display:none;font-size:12px;color:#555;line-height:1.5;padding:6px 10px;background:#f8f7f5;border-radius:8px;width:100%">El tobogán más alto y rápido de Disney. 37 metros de altura, caída casi vertical, 97 km/h. Tubo abierto — ves todo mientras caés. La posición del cuerpo importa: brazos cruzados en el pecho. Si vas mal posicionado duele. Impresionante.</div>
+    </div>
+    <div class="attraction-item" onclick="toggleDesc('bb2')" style="cursor:pointer;flex-direction:column;align-items:flex-start;gap:6px">
+      <div style="display:flex;align-items:center;gap:12px;width:100%"><div class="intensity-dot dot-red"></div><div class="attraction-name" style="flex:1">Slush Gusher</div><div><span class="badge badge-height">📏 122cm</span></div><span id="arr-bb2" style="color:var(--muted);font-size:12px">▼</span></div>
+      <div id="bb2" style="display:none;font-size:12px;color:#555;line-height:1.5;padding:6px 10px;background:#f8f7f5;border-radius:8px;width:100%">Segundo tobogán más alto. Más suave que Summit Plummet pero con dos "baches" que te hacen flotar. Buen punto de entrada si no te animás al Summit todavía.</div>
+    </div>
+    <div class="attraction-item" onclick="toggleDesc('bb3')" style="cursor:pointer;flex-direction:column;align-items:flex-start;gap:6px">
+      <div style="display:flex;align-items:center;gap:12px;width:100%"><div class="intensity-dot dot-yellow"></div><div class="attraction-name" style="flex:1">Teamboat Springs</div><div></div><span id="arr-bb3" style="color:var(--muted);font-size:12px">▼</span></div>
+      <div id="bb3" style="display:none;font-size:12px;color:#555;line-height:1.5;padding:6px 10px;background:#f8f7f5;border-radius:8px;width:100%">El tobogán familiar más largo de Disney — 280 metros en balsa para hasta 6 personas. Curvas, caídas suaves y chorros. Ideal para grupos y familias. Fila larga pero vale.</div>
+    </div>
+    <div class="attraction-item" onclick="toggleDesc('bb4')" style="cursor:pointer;flex-direction:column;align-items:flex-start;gap:6px">
+      <div style="display:flex;align-items:center;gap:12px;width:100%"><div class="intensity-dot dot-yellow"></div><div class="attraction-name" style="flex:1">Toboganes Cross Country Creek</div><div></div><span id="arr-bb4" style="color:var(--muted);font-size:12px">▼</span></div>
+      <div id="bb4" style="display:none;font-size:12px;color:#555;line-height:1.5;padding:6px 10px;background:#f8f7f5;border-radius:8px;width:100%">Río lento que rodea todo el parque. Hay una cueva de hielo en el camino que enfría el agua de verdad. Muy refrescante. Podés hacer el circuito completo en ~20 min.</div>
+    </div>
+    <div class="attraction-item" onclick="toggleDesc('bb5')" style="cursor:pointer;flex-direction:column;align-items:flex-start;gap:6px">
+      <div style="display:flex;align-items:center;gap:12px;width:100%"><div class="intensity-dot dot-green"></div><div class="attraction-name" style="flex:1">Tike's Peak — zona para chicos</div><div></div><span id="arr-bb5" style="color:var(--muted);font-size:12px">▼</span></div>
+      <div id="bb5" style="display:none;font-size:12px;color:#555;line-height:1.5;padding:6px 10px;background:#f8f7f5;border-radius:8px;width:100%">Zona exclusiva para menores de 122cm con toboganes mini, chorros y piscina poco profunda. Los grandes no pueden entrar. Perfecta para los más chiquitos.</div>
+    </div>
+  </div>
+  <div class="section-label">Tips clave</div>
+  <div class="alert-box alert-coral"><span>🌅</span><p><strong>Llegá temprano</strong>Las sillas se agotan rápido. El primer turno del Summit Plummet es siempre sin fila — hacelo primero.</p></div>
+  <div class="alert-box alert-green"><span>🍔</span><p><strong>Comida</strong>Podés traer tu propia comida. Lottawatta Lodge es el restaurante principal dentro del parque.</p></div>
+  <div class="alert-box alert-blue"><span>🩱</span><p><strong>Qué llevar</strong>Ojotas, protector solar resistente al agua, toalla, ropa de cambio. Los lockers son pagos.</p></div>`;
+}
+// ===== TIPS =====
+const TI=[
+  {cat:'general',icon:'🎒',title:'Podés traer comida y bebida',text:'Se puede ingresar a los parques con comida y bebida (sin envases de vidrio).'},
+  {cat:'general',icon:'💧',title:'Agua gratis',text:'En cualquier local de comida podés pedir agua gratis. En Starbucks ya hay vasos con agua y hielo listos.'},
+  {cat:'general',icon:'🌧️',title:'Ponchos baratos',text:'Comprá ponchos en Walmart o Target antes de entrar. Dentro del parque cuestan el doble o más.'},
+  {cat:'general',icon:'☀️',title:'Protector solar sí o sí',text:'Hay filas al aire libre largas y el sol de Florida es intenso.'},
+  {cat:'general',icon:'↩️',title:'Podés salir y entrar',text:'En todos los parques podés salir y volver a entrar el mismo día. Muy útil para descansar y volver fresco para los shows.'},
+  {cat:'disney',icon:'📱',title:'App My Disney Experience',text:'Descargá y configurá antes del viaje. Tiempos de espera, mapas, Lightning Lanes, horarios de shows y Mobile Order.'},
+  {cat:'disney',icon:'🛍️',title:'Disney Springs',text:'Entrada y estacionamiento gratuitos. Podés retirar tickets de parque en el Ticket Center.'},
+  {cat:'disney',icon:'🎂',title:'Pines de festejo gratis',text:'Cumple, luna de miel o primera visita: pedí tu PIN gratis a cualquier Cast Member. ¡Puede conseguirte Magical Moments!'},
+  {cat:'disney',icon:'🐭',title:'Foto con Mickey sin fila',text:'El mejor spot es en Pixar Shorts (Epcot). El personaje sale cada 25 min. Muy poca gente lo sabe.'},
+  {cat:'disney',icon:'⚡',title:'Lightning Lane — dónde comprarlo',text:'Multi Pass para Magic Kingdom y Hollywood Studios. En Epcot: Lightning Lane Single Pass de Guardianes de la Galaxia (se compra individual). En Animal Kingdom: Single Pass de Flight of Passage.'},
+  {cat:'disney',icon:'🎪',title:'Festivales de EPCOT',text:'Arts, Flower & Garden, Food & Wine y Holidays están incluidos con la entrada normal. Food & Wine (jul-nov) es el más popular.'},
+  {cat:'filas',icon:'👤',title:'Single Rider — la más rápida',text:'Fila alternativa gratuita con mucho menos espera. Entrás solo/a al vehículo. Disponible en Disney y Universal.'},
+  {cat:'filas',icon:'👶',title:'Child Swap / Rider Switch',text:'Para familias con niños que no alcanzan la altura: uno espera y después pasa directo sin fila.'},
+  {cat:'filas',icon:'📲',title:'Fila Virtual ya no existe en Disney',text:'Disney eliminó la fila virtual el 25/2/2025. Guardianes de la Galaxia y Tiana Bayou Adventure ahora tienen fila standby normal.'},
+  {cat:'filas',icon:'📲',title:'Fila Virtual en Epic Universe',text:'Solo Battle at the Ministry (HP) tiene fila virtual en Epic. Reservás a las 11, 14 o 18hs desde la app.'},
+  {cat:'universal',icon:'🚗',title:'Cómo llegar a Universal',text:'En auto ($27 estacionamiento) o en Uber. Hospedados adentro tienen buses gratuitos.'},
+  {cat:'universal',icon:'🎟️',title:'Retiro de tickets Universal',text:'Retirás el primer día con número de reserva en boleterías. ¡Llevá la tarjeta con la que compraste!'},
+  {cat:'universal',icon:'🥤',title:'Vaso recargable Universal',text:'Para usar las máquinas de Coca-Cola todo el día. Sin vaso igual podés recargar agua gratis.'},
+  {cat:'universal',icon:'😱',title:'Halloween Horror Nights',text:'Si viajás cerca de Halloween, NO te lo podés perder. Los parques se transforman de noche en algo aterrador.'},
+  {cat:'general',icon:'🔋',title:'Cargador portátil — imprescindible',text:'En los parques hay muy pocos enchufes y casi nunca accesibles al público. El celular se usa todo el tiempo (mapas, filas, fotos, Mobile Order). Llevar un power bank cargado es básico — sin él te quedás sin batería antes del mediodía.'},
+  {cat:'bebes',icon:'👶',title:'Menores de 3 años entran gratis',text:'En Disney y Universal los niños menores de 3 años no pagan entrada. Solo necesitás comprar tickets para los mayores de 3.'},
+  {cat:'bebes',icon:'🛺',title:'Cochecitos — todo lo que necesitás saber',text:'Las cochecitos están permitidas en todos los parques. Podés alquilar en la entrada (Disney: ~$20/día, Universal: ~$18/día) o llevar la propia. Hay zonas de estacionamiento de cochecitos en cada atracción. En EPCOT y Animal Kingdom el espacio es ideal para moverse con cochecito.'},
+  {cat:'bebes',icon:'🍼',title:'Baby Care Centers — los conoce poca gente',text:'Cada parque de Disney tiene un Baby Care Center gratuito con: sala de lactancia privada, cambiadores, microondas, heladera, silla de alimentación y venta de artículos de bebé (pañales, leche de fórmula, crema). En Magic Kingdom está cerca de Casey\'s Corner. En EPCOT cerca de la entrada. En Animal Kingdom cerca de Creature Comforts. En Hollywood Studios cerca de la entrada principal.'},
+  {cat:'bebes',icon:'🔄',title:'Rider Switch — para familias con bebés',text:'Si un adulto tiene que quedarse con el bebé porque el nene no llega a la altura, el otro adulto hace la fila y sube. Al terminar, el primero puede subir directo sin hacer fila de nuevo. Pedíselo al Cast Member al entrar a la fila — te dan un pase.'},
+  {cat:'bebes',icon:'🏰',title:'Magic Kingdom — el mejor parque para bebés',text:'Fantasyland es el corazón: It\'s a Small World, Dumbo, Winnie the Pooh, The Little Mermaid, PhilharMagic. Todo es suave, colorido y perfecto para los más chiquitos. El castillo y los personajes generan momentos mágicos incluso para bebés.'},
+  {cat:'bebes',icon:'🌍',title:'EPCOT — el más cómodo para moverse',text:'Es el parque más espacioso — ideal para cochecito. Future World tiene Nemo & Friends y Journey of Water (Moana) aptos para bebés. El World Showcase es perfecto para pasear sin prisa, comer y que los chicos exploren. No hay muchas atracciones de adrenalina así que el ritmo es más tranquilo.'},
+  {cat:'bebes',icon:'🌳',title:'Animal Kingdom — ir de mañana con bebés',text:'Los animales están más activos temprano. El Safari (Kilimanjaro) es ideal para bebés — es un paseo en jeep, sin altura mínima. Na\'Vi River Journey y el Árbol de la Vida son lindos para chiquitos. El parque cierra antes que los demás — ideal para respetar la siesta.'},
+  {cat:'bebes',icon:'🎬',title:'Hollywood Studios — el más difícil con bebés',text:'La mayoría de las atracciones tienen altura mínima alta. Las únicas opciones para bebés son Mickey & Minnie\'s Runaway Railway, Toy Story Mania y los shows (Beauty and the Beast, Frozen Sing-Along). Si el grupo tiene bebés, este parque puede esperar para otro día.'},
+  {cat:'bebes',icon:'🌍',title:'Universal — menos amigable para bebés',text:'Universal está pensado para niños más grandes y adultos. Pocas atracciones son aptas para bebés. E.T. Adventure y los shows son las mejores opciones. Sí tiene Baby Care Center en cada parque. Si viajan con bebé, Disney es mejor opción para empezar.'},
+  {cat:'bebes',icon:'🧳',title:'Qué llevar para bebés en el parque',text:'Protector solar para bebés (factor 50+), pañales extra (adentro son carísimos), snacks propios, agua en termo, ropa de cambio, poncho impermeable para la cochecito, bolsa para ropa mojada si van a atracciones de agua y chupete/juguete favorito para filas.'},
+  {cat:'comida',icon:'🍪',title:"Gideon's Bakehouse (Disney Springs)",text:'La cookie más famosa de Orlando. Tomar el virtual queue desde la app apenas llegás — esperas de 1-2hs pero vale la pena.'},
+  {cat:'comida',icon:'🍺',title:"Duff Brewery (Universal Studios — Springfield)",text:'La cervecería de Los Simpsons. Tomá una Duff Beer con el vaso coleccionable. Ambiente increíble.'},
+  {cat:'comida',icon:'🍺',title:"Tres Escobas / Hog\'s Head (Hogsmeade)",text:'Pedí la Butterbeer caliente en invierno o helada en verano. El Hog\'s Head tiene la versión con alcohol.'},
+  {cat:'comida',icon:'🧃',title:"Butterbeer — dónde y cómo",text:'Está disponible fría, caliente, helada y con alcohol. La versión helada (frozen) es la más popular. Se vende en Hogsmeade (Islands of Adventure) y Diagon Alley (Universal Studios).'},
+  {cat:'comida',icon:'🍕',title:"Mobile Order — usalo siempre",text:'En Disney y Universal podés pedir comida desde la app y retirarla sin hacer fila. En días de mucha gente ahorrás 30-45 minutos por comida.'},
+  {cat:'comida',icon:'🥐',title:"Desayuno antes de entrar",text:'Desayunar antes del parque o en el hotel ahorra tiempo y dinero. Dentro del parque el desayuno es caro y lento. Salir temprano con el estómago lleno es clave para aprovechar las primeras horas.'},
+  {cat:'comida',icon:'💧',title:"Agua gratis en todos los parques",text:'En cualquier local de comida podés pedir agua gratis. En Starbucks ya hay vasos con agua y hielo listos. Llevá una botella reutilizable para rellenar.'},
+  {cat:'comida',icon:'🎒',title:"Podés traer tu propia comida",text:'Se puede ingresar a los parques con comida y bebida (sin envases de vidrio). Una mochila con snacks, sándwiches y agua puede ahorrar mucho dinero.'},
+  {cat:'comida',icon:'🍽️',title:"Character Dining — reservar con anticipación",text:'Desayuno o cena con personajes de Disney. Muy recomendado con niños chicos. Reservar con 60 días de anticipación mínimo. Los más populares: Chef Mickey\'s, Cinderella\'s Royal Table, Garden Grill.'},
+  {cat:'comida',icon:'🌮',title:"Mejor comida por parque",text:'Magic Kingdom: Columbia Harbour House (mariscos). EPCOT: Les Halles (Francia) o Katsura Grill (Japón). Hollywood Studios: Woody\'s Lunch Box. Animal Kingdom: Satu\'li Canteen. Universal Studios: Three Broomsticks. Islands of Adventure: Mythos Restaurant.'},
+  {cat:'vocab',icon:'📖',title:'CAST MEMBER',text:'Los trabajadores de Disney. Están entrenados para hacer magia — si tenés un momento especial (cumple, luna de miel, primera visita) decíselo. Pueden sorprenderte.'},
+  {cat:'vocab',icon:'📖',title:'MAGICAL MOMENT',text:'Cuando un Cast Member te sorprende con algo inesperado: un upgrade, un pin, acceso especial. No se pide — simplemente sucede cuando conectás con el Cast Member.'},
+  {cat:'vocab',icon:'📖',title:'LIGHTNING LANE',text:'Fila rápida de pago en Disney (reemplazó a FastPass). Hay dos versiones: Lightning Lane Multi Pass (varias atracciones) y Lightning Lane Single Pass (una atracción por vez, las más populares).'},
+  {cat:'vocab',icon:'📖',title:'EXPRESS PASS',text:'Fila rápida de pago en Universal. Una vez comprado podés usarlo ilimitadamente en las atracciones incluidas. Los huéspedes de hoteles Premier lo reciben gratis.'},
+  {cat:'vocab',icon:'📖',title:'PARK HOPPER',text:'Entrada que permite visitar más de un parque de Disney en el mismo día. Se activa a partir de las 2pm para el segundo parque.'},
+  {cat:'vocab',icon:'📖',title:'SINGLE RIDER',text:'Fila alternativa gratuita disponible en algunas atracciones. Entrás solo/a al vehículo para completar asientos vacíos. Mucho menos espera que la fila normal.'},
+  {cat:'vocab',icon:'📖',title:'CHILD SWAP / RIDER SWITCH',text:'Para familias con bebés o niños que no alcanzan la altura: un adulto hace la fila y sube. Al terminar, el otro adulto puede subir directo sin hacer fila. Pedíselo al Cast Member al entrar.'},
+  {cat:'vocab',icon:'📖',title:'MAGIC BAND',text:'Pulsera Disney que funciona como ticket de entrada, llave de habitación de hotel y tarjeta de crédito vinculada. Se compra en la app My Disney Experience.'},
+  {cat:'vocab',icon:'📖',title:'MOBILE ORDER',text:'Sistema para pedir comida desde la app sin hacer fila. Seleccionás el local, elegís lo que querés, pagás y retirás cuando está listo. Ahorra mucho tiempo.'},
+  {cat:'vocab',icon:'📖',title:'CHARACTER DINING',text:'Restaurante donde los personajes de Disney pasan mesa por mesa a saludar, sacarse fotos y firmar autógrafos mientras comés. Precio fijo, reserva con anticipación.'},
+  {cat:'vocab',icon:'📖',title:'ROPE DROP',text:'El momento exacto en que abren las puertas del parque. Llegar al rope drop (abrir) permite hacer las atracciones más populares con poca o ninguna espera.'},
+  {cat:'vocab',icon:'📖',title:'STANDBY',text:'La fila normal de una atracción, sin pase rápido. En días de mucha gente puede ser de 60-120 minutos para las atracciones más populares.'},
+  {cat:'vocab',icon:'📖',title:'VIRTUAL QUEUE',text:'Sistema de reserva de lugar en fila desde la app, sin estar físicamente parado. Reservás tu turno y volvés cuando te llaman. En 2025 solo queda en Epic Universe (Battle at the Ministry).'},
+  {cat:'vocab',icon:'📖',title:'EARLY PARK ADMISSION',text:'Beneficio para huéspedes de hoteles de Disney o Universal: podés entrar al parque 30 minutos antes que el público general. Ideal para hacer las atracciones más populares sin fila.'},
+];
+
+function renderTips(cat){
+  const f=cat==='all'?TI:TI.filter(t=>t.cat===cat);
+  if(cat==='vocab'){
+    document.getElementById('tips-container').innerHTML=`<div class="section-card" style="padding:8px 16px">${f.map(t=>`<div class="vocab-item"><div class="vocab-term">${t.title}</div><div class="vocab-def">${t.text}</div></div>`).join('')}</div>`;
+  }else{
+    document.getElementById('tips-container').innerHTML=f.map(t=>`<div style="background:white;border-radius:14px;padding:14px;border:1px solid var(--border);display:flex;gap:12px;align-items:flex-start;margin-bottom:8px"><span style="font-size:24px">${t.icon}</span><div><div style="font-weight:600;font-size:13px;margin-bottom:3px">${t.title}</div><div style="font-size:13px;color:#444;line-height:1.5">${t.text}</div></div></div>`).join('');
+  }
+}
+function filterTips(cat,btn){document.querySelectorAll('.filter-chip').forEach(b=>b.classList.remove('active'));btn.classList.add('active');renderTips(cat);}
+
+// ===== CHECKLIST =====
+const CI=[
+  {cat:'Antes del viaje',items:[
+    {text:'Descargar app My Disney Experience',sub:'Configurar y explorar el mapa'},
+    {text:'Descargar app Universal FL',sub:'Para tiempos de espera y pedir comida'},
+    {text:'Hacer reservas de restaurantes Disney',sub:'Con 60 días de anticipación'},
+    {text:'Guardar número de confirmación Disney',sub:'Para retirar tickets el primer día'},
+    {text:'Guardar número de confirmación Universal',sub:'Para retirar tickets en boleterías'},
+  ]},
+  {cat:'Qué llevar',items:[
+    {text:'Protector solar',sub:'Obligatorio para filas al aire libre'},
+    {text:'Ponchos de agua',sub:'Comprá en Walmart o Target'},
+    {text:'Paraguas chico y liviano',sub:'Para lluvia o filas con sol fuerte'},
+    {text:'Ropa extra',sub:'Para atracciones de agua en Universal'},
+    {text:'Snacks y bebidas',sub:'Sin envases de vidrio'},
+    {text:'Zapatillas cómodas',sub:'Se camina muchísimo'},
+  ]},
+  {cat:'En los parques — Disney',items:[
+    {text:'Foto con Mickey en Pixar Shorts (Epcot)',sub:'Sale cada 25 min, sin fila larga'},
+    {text:'Pedir PIN de festejo si corresponde',sub:'Cumple, luna de miel, primera visita...'},
+    {text:'Ver Happily Ever After (fuegos MK)',sub:'Llegar 30-45 min antes'},
+    {text:'Luminous (show nocturno Epcot)',sub:'Mejor spot frente al pabellón de América'},
+    {text:'Fantasmic! (Hollywood Studios)',sub:'Llegar 45-60 min antes'},
+    {text:'Festival of the Lion King (Animal Kingdom)',sub:'El mejor show de Disney. 30 min.'},
+    {text:'Disney Starlight desfile nocturno (MK)',sub:'Nuevo desde julio 2025'},
+  ]},
+  {cat:'En los parques — Universal y Epic',items:[
+    {text:'Raptor Encounter (Islands of Adventure)',sub:'Foto con velociraptor vivo'},
+    {text:'Bourne Stuntacular (Universal Studios)',sub:'El mejor show del complejo'},
+    {text:'The Untrainable Dragon (Epic — Isle of Berk)',sub:'Dragones animatrónicos en vivo. Increíble.'},
+    {text:'Pizza Moon (Epic — Celestial Park)',sub:'La pizzería más linda del viaje'},
+    {text:'Le Cirque Arcanus (Epic — Ministry of Magic)',sub:'Show de circo oscuro. IMPERDIBLE.'},
+    {text:'Fila virtual Harry Potter (Epic)',sub:'Reservar a las 11, 14 o 18hs en la app'},
+  ]},
+];
+
+function renderChecklist(){
+  let h='';
+  CI.forEach(s=>{
+    h+=`<div style="margin-bottom:24px"><div class="section-label">${s.cat}</div><div class="section-card" style="padding:4px 16px">`;
+    s.items.forEach((item,i)=>{
+      const id=`chk-${s.cat.replace(/\s/g,'-')}-${i}`;
+      h+=`<div class="checklist-item" id="${id}" onclick="toggleCheck('${id}')"><div class="check-box" id="box-${id}"></div><div><div class="check-text">${item.text}</div><div class="check-sub">${item.sub}</div></div></div>`;
+    });
+    h+='</div></div>';
+  });
+  document.getElementById('checklist-container').innerHTML=h;
+  updateProgress();
+}
+function toggleCheck(id){
+  const el=document.getElementById(id);const box=document.getElementById('box-'+id);
+  el.classList.toggle('checked');box.innerHTML=el.classList.contains('checked')?'✓':'';updateProgress();
+}
+function updateProgress(){
+  const total=document.querySelectorAll('.checklist-item').length;
+  const done=document.querySelectorAll('.checklist-item.checked').length;
+  document.getElementById('checklist-progress-label').textContent=`${done} de ${total} completados`;
+  document.getElementById('checklist-progress-bar').style.width=total?(done/total*100)+'%':'0%';
+}
+
+// ===== HEIGHTS =====
+const HD={
+  disney:[
+    {park:'Magic Kingdom',name:'TRON Lightcycle Run',height:'122cm'},
+    {park:'Magic Kingdom',name:'Space Mountain',height:'112cm'},
+    {park:'Magic Kingdom',name:"Tiana's Bayou Adventure",height:'102cm'},
+    {park:'Magic Kingdom',name:'Big Thunder Mountain',height:'102cm',closed:true},
+    {park:'Magic Kingdom',name:'Seven Dwarfs Mine Train',height:'97cm'},
+    {park:'Magic Kingdom',name:'Buzz Lightyear Spin',height:'102cm',closed:true},
+    {park:'Magic Kingdom',name:'Tomorrowland Speedway',height:'81cm'},
+    {park:'Epcot',name:'Mission: SPACE Naranja',height:'112cm'},
+    {park:'Epcot',name:'Guardians of the Galaxy',height:'106cm'},
+    {park:'Epcot',name:'Test Track',height:'102cm'},
+    {park:'Epcot',name:"Soarin'",height:'102cm'},
+    {park:'Epcot',name:'Mission: SPACE Verde',height:'102cm'},
+    {park:'Animal Kingdom',name:'Expedition Everest',height:'112cm'},
+    {park:'Animal Kingdom',name:'Avatar Flight of Passage',height:'112cm'},
+    {park:'Animal Kingdom',name:'Kali River Rapids',height:'102cm'},
+    {park:'Animal Kingdom',name:'DINOSAUR',height:'102cm',closed:true},
+    {park:'Hollywood Studios',name:"Rock 'n' Roller Coaster",height:'122cm',closed:true},
+    {park:'Hollywood Studios',name:'Tower of Terror',height:'102cm'},
+    {park:'Hollywood Studios',name:'Star Tours',height:'102cm'},
+    {park:'Hollywood Studios',name:'Rise of the Resistance',height:'102cm'},
+    {park:'Hollywood Studios',name:'Slinky Dog Dash',height:'97cm'},
+  ],
+  universal:[
+    {park:'Universal Studios',name:'Revenge of the Mummy',height:'144cm'},
+    {park:'Universal Studios',name:'Harry Potter Gringotts',height:'107cm'},
+    {park:'Universal Studios',name:'TRANSFORMERS 3D',height:'102cm'},
+    {park:'Universal Studios',name:'MEN IN BLACK',height:'102cm'},
+    {park:'Universal Studios',name:'The Simpsons Ride',height:'102cm'},
+    {park:'Universal Studios',name:'Fast & Furious',height:'102cm'},
+    {park:'Universal Studios',name:'Despicable Me Minions',height:'102cm'},
+    {park:'Universal Studios',name:'E.T. Adventure',height:'87cm'},
+    {park:'Universal Studios',name:'Trolls Trollercoaster',height:'91cm'},
+    {park:'Islands of Adventure',name:'The Incredible Hulk',height:'137cm'},
+    {park:'Islands of Adventure',name:"Doctor Doom's Fearfall",height:'132cm'},
+    {park:'Islands of Adventure',name:'VelociCoaster',height:'129.5cm'},
+    {park:'Islands of Adventure',name:"Hagrid's Motorbike",height:'123cm'},
+    {park:'Islands of Adventure',name:'Harry Potter Forbidden Journey',height:'122cm'},
+    {park:'Islands of Adventure',name:'Jurassic Park River Adv.',height:'122cm',closed:true},
+    {park:'Islands of Adventure',name:"Dudley Do-Right's Falls",height:'112cm'},
+    {park:'Islands of Adventure',name:'Popeye Bilge-Rat Barges',height:'112cm'},
+    {park:'Islands of Adventure',name:'The High in Sky Trolley Train',height:'102cm'},
+    {park:'Islands of Adventure',name:'Spider-Man',height:'101.5cm'},
+    {park:'Islands of Adventure',name:'Skull Island: Kong',height:'91.5cm'},
+    {park:'Islands of Adventure',name:'Flight of the Hippogriff',height:'91.5cm'},
+  ],
+  epic:[
+    {park:'Celestial Park',name:'Stardust Racers',height:'122cm'},
+    {park:'Dark Universe',name:'Monsters Unchained: Frankenstein',height:'122cm'},
+    {park:'Isle of Berk',name:"Dragon Racer's Rally",height:'122cm'},
+    {park:'Ministry of Magic',name:'Battle at the Ministry (HP)',height:'102cm'},
+    {park:'Super Nintendo World',name:"Mario Kart: Bowser's Challenge",height:'102cm'},
+    {park:'Super Nintendo World',name:'Mine-Cart Madness (Donkey Kong)',height:'102cm'},
+    {park:'Dark Universe',name:'Curse of the Werewolf',height:'102cm'},
+    {park:'Isle of Berk',name:"Hiccup's Wing Gliders",height:'102cm'},
+    {park:'Super Nintendo World',name:"Yoshi's Adventure",height:'86cm'},
+  ]
+};
+
+function renderHeights(filter){
+  const groups=filter==='all'?[...HD.disney,...HD.universal,...HD.epic]:HD[filter];
+  const byPark={};groups.forEach(a=>{if(!byPark[a.park])byPark[a.park]=[];byPark[a.park].push(a);});
+  let h='';
+  Object.entries(byPark).forEach(([park,items])=>{
+    h+=`<div class="section-label">${park}</div><div class="height-table">`;
+    items.sort((a,b)=>parseFloat(b.height)-parseFloat(a.height));
+    items.forEach(a=>{
+      const cm=parseFloat(a.height);let color='var(--success)';
+      if(cm>=120)color='var(--danger)';else if(cm>=100)color='var(--warning)';
+      const cl=a.closed?`<span style="font-size:10px;color:#C0392B"> (🚧 cerrada)</span>`:'';
+      h+=`<div class="height-row ${a.closed?'closed-row':''}"><div class="height-attraction">${a.name}${cl}</div><div class="height-cm" style="color:${color}">${a.height}</div></div>`;
+    });
+    h+='</div>';
+  });
+  document.getElementById('heights-container').innerHTML=h;
+}
+function filterHeights(filter,btn){
+  document.querySelectorAll('.height-park-btn').forEach(b=>{b.className='height-park-btn';});
+  if(filter==='disney')btn.classList.add('active-disney');
+  else if(filter==='universal')btn.classList.add('active-universal');
+  else if(filter==='epic')btn.classList.add('active-epic');
+  else btn.classList.add('active-disney');
+  renderHeights(filter);
+}
+
+function initApp(){
+  showDisneyPark('mk',document.querySelector('#disney-sub-selector .sub-btn'));
+  showUniversalPark('studios',document.querySelector('#universal-sub-selector .sub-btn'));
+  renderTips('disney');renderChecklist();renderHeights('disney');
+}</script>
+</body>
+</html>
