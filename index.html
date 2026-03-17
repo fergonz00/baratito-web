@@ -4,6 +4,15 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Baratito · Ofertas 0km | Tito González Automotores · Concesionario Oficial VW</title>
+  <!-- Google Ads: Etiqueta de Google -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=AW-838466974"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'AW-838466974');
+  </script>
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;800;900&family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -62,6 +71,13 @@
             const nombre = card.querySelector('.nombre-auto')?.textContent?.trim() || '';
             const msg = '[WEB | BT] Hola! Me interesa el ' + nombre + ' (' + formatPrecio(info.precio) + '). Vi la oferta en baratito.com.ar';
             btn.href = 'https://wa.me/5491137573604?text=' + encodeURIComponent(msg);
+            btn.addEventListener('click', function() {
+              gtag('event', 'conversion', {
+                'send_to': 'AW-838466974/TH7cCMbbzoocEJ77548D',
+                'value': 1.0,
+                'currency': 'ARS'
+              });
+            });
           }
           card.classList.toggle('sin-stock', info.stock.includes('sin stock'));
         });
@@ -140,7 +156,7 @@
     <span>Tasa 0% en cuotas</span>
     <span>Incluye flete y formularios</span>
   </div>
-  <a class="btn-hero" href="https://wa.me/5491137573604?text=%5BWEB%20%7C%20BT%5D%20Hola!%20Vi%20las%20ofertas%20en%20baratito.com.ar%20y%20quiero%20asesoramiento">Quiero asesoramiento gratis</a>
+  <a class="btn-hero" href="https://wa.me/5491137573604?text=%5BWEB%20%7C%20BT%5D%20Hola!%20Vi%20las%20ofertas%20en%20baratito.com.ar%20y%20quiero%20asesoramiento" onclick="gtag('event','conversion',{'send_to':'AW-838466974/TH7cCMbbzoocEJ77548D','value':1.0,'currency':'ARS'})">Quiero asesoramiento gratis</a>
 </section>
 
 <!-- POLO -->
@@ -687,7 +703,7 @@
   <div class="footer-links">
     <a href="https://baratito.com.ar">baratito.com.ar</a>
     <a href="https://titovw.com.ar">titovw.com.ar</a>
-    <a href="https://wa.me/5491137573604">WhatsApp</a>
+    <a href="https://wa.me/5491137573604" onclick="gtag('event','conversion',{'send_to':'AW-838466974/TH7cCMbbzoocEJ77548D','value':1.0,'currency':'ARS'})">WhatsApp</a>
     <a href="https://instagram.com/titogonzalezvw">Instagram</a>
   </div>
   <p>Tito González Automotores · Av. Entre Ríos 1338 / Cochabamba 1760, CABA</p>
