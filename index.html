@@ -106,11 +106,17 @@
     .hero { background: var(--azul-vw); color: var(--blanco); padding: 28px 24px 36px; text-align: center; }
     .hero-logos { display: none; }
     .hero-header { display: flex; align-items: center; justify-content: center; gap: 32px; flex-wrap: wrap; }
-    .hero-header { display: flex; align-items: center; justify-content: space-between; width: 100%; padding: 0 32px; flex-wrap: nowrap; }
-    .hero-logo-tito { height: 50px; object-fit: contain; }
+    .hero-header { display: flex; align-items: center; justify-content: space-between; width: 100%; padding: 0 32px; flex-wrap: nowrap; position: relative; }
+    .hero-tito-texto { font-family: 'VWHead', 'Barlow', sans-serif; font-size: clamp(1.2rem, 2.5vw, 2rem); font-weight: bold; color: var(--dorado); letter-spacing: 0.02em; line-height: 1; }
     .hero-logo-vw { height: 80px; object-fit: contain; }
-    .hero-logo-centenario { height: 130px; object-fit: contain; }
-    .hero-tito-texto { font-family: 'Barlow Condensed', sans-serif; font-size: clamp(1.8rem, 4vw, 3rem); font-weight: 900; color: var(--dorado); text-transform: uppercase; letter-spacing: 0.05em; line-height: 1; }
+    .hero-logo-centenario { height: 130px; object-fit: contain; position: absolute; left: 50%; transform: translateX(-50%); }
+    @font-face {
+      font-family: 'VWHead';
+      src: url('https://www.volkswagen.com.ar/es/vw-fonts/_jcr_content/root/main/parsys/responsivegrid/parsys/vwheadboldwoff2.coredownload.inline.res/VWHead-Bold.woff2') format('woff2'),
+           url('https://www.volkswagen.com.ar/es/vw-fonts/_jcr_content/root/main/parsys/responsivegrid/parsys/vwheadboldwoff.coredownload.inline.res/VWHead-Bold.woff') format('woff');
+      font-weight: bold;
+    }
+    .hero-tito-texto { font-family: 'VWHead', 'Barlow', sans-serif; font-size: clamp(2rem, 4vw, 3.2rem); font-weight: bold; color: var(--dorado); text-transform: none; letter-spacing: 0.02em; line-height: 1; }
     .hero-linea-dorada { width: 100%; height: 2px; background: linear-gradient(90deg, transparent, var(--dorado) 20%, var(--dorado) 80%, transparent); margin: 16px 0 20px; }
     .badge-concesionario { font-size: 11px; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; color: var(--dorado); margin-bottom: 16px; }
     .hero h1 { font-family: 'Barlow Condensed', sans-serif; font-size: clamp(2.2rem, 8vw, 3.6rem); font-weight: 900; line-height: 1; text-transform: uppercase; }
