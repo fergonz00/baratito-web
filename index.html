@@ -93,7 +93,6 @@
       --radio: 12px;
     }
     body { font-family: 'Barlow', sans-serif; background: var(--gris-claro); color: #111; min-height: 100vh; }
-
     .hero { background: var(--azul-vw); color: var(--blanco); padding: 28px 24px 36px; text-align: center; }
     .hero-logos { display: flex; align-items: center; justify-content: center; gap: 16px; margin-bottom: 12px; }
     .hero-logos img { height: 48px; object-fit: contain; }
@@ -105,14 +104,11 @@
     .checkmarks span::before { content: '✓ '; color: var(--dorado); }
     .btn-hero { display: inline-block; background: var(--dorado); color: var(--azul-vw); font-weight: 700; font-size: 15px; padding: 14px 32px; border-radius: 100px; text-decoration: none; transition: transform .15s, background .15s; }
     .btn-hero:hover { transform: scale(1.04); background: var(--dorado-claro); }
-
     .seccion { max-width: 1100px; margin: 0 auto; padding: 40px 16px 8px; }
     .seccion-titulo { font-family: 'Barlow Condensed', sans-serif; font-size: clamp(1.6rem, 5vw, 2.4rem); font-weight: 900; text-transform: uppercase; color: var(--azul-vw); display: flex; align-items: center; gap: 12px; margin-bottom: 4px; }
     .badge-tasa { font-size: 11px; font-weight: 700; background: var(--dorado); color: var(--azul-vw); padding: 3px 10px; border-radius: 100px; }
     .badge-nuevo { font-size: 11px; font-weight: 700; background: #E8F5E9; color: #2E7D32; border: 1px solid #2E7D32; padding: 3px 10px; border-radius: 100px; }
-
     .grilla { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; padding: 20px 0 32px; }
-
     .tarjeta { background: var(--blanco); border-radius: var(--radio); overflow: hidden; border: 1px solid rgba(0,0,0,.07); display: flex; flex-direction: column; transition: box-shadow .2s, transform .2s; }
     .tarjeta:hover { box-shadow: 0 8px 32px rgba(0,30,80,.12); transform: translateY(-2px); }
     .tarjeta.sin-stock { opacity: .55; filter: grayscale(.4); }
@@ -128,7 +124,6 @@
     .financiacion strong { color: var(--azul-mid); }
     .btn-quiero { display: block; background: var(--azul-vw); color: var(--blanco); text-align: center; font-weight: 700; font-size: 14px; padding: 12px; border-radius: 8px; text-decoration: none; margin-top: 12px; transition: background .15s; }
     .btn-quiero:hover { background: var(--azul-mid); }
-
     footer { background: var(--azul-vw); color: rgba(255,255,255,.7); text-align: center; padding: 28px 20px; font-size: 12px; line-height: 1.8; margin-top: 24px; }
     footer a { color: var(--dorado); text-decoration: none; }
     .footer-links { display: flex; justify-content: center; gap: 24px; margin-bottom: 16px; }
@@ -140,8 +135,8 @@
 
 <section class="hero">
   <div class="hero-logos">
-    <img src="imagenes/logo Tito 100 años.png" alt="Tito González 100 años">
-    <img src="imagenes/logo VW dorado.png" alt="Volkswagen">
+    <img src="imagenes/logo%20Tito%20100%20a%C3%B1os.png" alt="Tito González 100 años">
+    <img src="imagenes/logo%20VW%20dorado.png" alt="Volkswagen">
   </div>
   <p class="badge-concesionario">✦ Concesionario Oficial VW · CABA</p>
   <h1>0KM a precio <em>baratito</em></h1>
@@ -160,7 +155,7 @@
   <div class="grilla">
 
     <div class="tarjeta" data-modelo="VW Polo Track MSI MT G1 MY26" data-precio-base="$28.158.600">
-      <img src="imagenes/polo track.webp" alt="Polo Track">
+      <img src="imagenes/polo%20track.webp" alt="Polo Track">
       <div class="tarjeta-body">
         <div class="nombre-auto">Polo Track</div>
         <div class="spec-auto">1.6 MSI MT · Hatchback 5P</div>
@@ -171,7 +166,7 @@
     </div>
 
     <div class="tarjeta" data-modelo="VW Nuevo Polo Comfortline 170 TSI AT G1 MY26" data-precio-base="$35.686.918">
-      <img src="imagenes/polo comfortline.webp" alt="Polo Comfortline">
+      <img src="imagenes/polo%20comfortline.webp" alt="Polo Comfortline">
       <div class="tarjeta-body">
         <div class="nombre-auto">Polo Comfortline</div>
         <div class="spec-auto">170 TSI AT · Hatchback · Automático</div>
@@ -182,7 +177,7 @@
     </div>
 
     <div class="tarjeta" data-modelo="VW Nuevo Polo Highline 170TSI AT MY26" data-precio-base="$40.876.986">
-      <img src="imagenes/polo highline.webp" alt="Polo Highline">
+      <img src="imagenes/polo%20highline.webp" alt="Polo Highline">
       <div class="tarjeta-body">
         <div class="nombre-auto">Polo Highline</div>
         <div class="spec-auto">170 TSI AT · Hatchback · Automático</div>
@@ -201,7 +196,7 @@
   <div class="grilla">
 
     <div class="tarjeta" data-modelo="VW Tera Trend MSI MT" data-precio-base="$31.249.305">
-      <img src="imagenes/tera trendline.webp" alt="Tera Trend">
+      <img src="imagenes/tera%20trendline.webp" alt="Tera Trend">
       <div class="tarjeta-body">
         <div class="nombre-auto">Tera Trend</div>
         <div class="spec-auto">170 MSI MT · SUV Compacto</div>
@@ -212,7 +207,7 @@
     </div>
 
     <div class="tarjeta" data-modelo="VW Tera Comfort 170TS AT" data-precio-base="$36.645.296">
-      <img src="imagenes/tera comfort.webp" alt="Tera Comfort">
+      <img src="imagenes/tera%20comfort.webp" alt="Tera Comfort">
       <div class="tarjeta-body">
         <div class="nombre-auto">Tera Comfort</div>
         <div class="spec-auto">170 TSI AT · SUV Compacto · Automático</div>
@@ -223,7 +218,7 @@
     </div>
 
     <div class="tarjeta" data-modelo="VW Tera High 170TS AT" data-precio-base="$41.702.366">
-      <img src="imagenes/tera high.webp" alt="Tera High">
+      <img src="imagenes/tera%20high.webp" alt="Tera High">
       <div class="tarjeta-body">
         <div class="nombre-auto">Tera High</div>
         <div class="spec-auto">170 TSI AT · SUV Compacto · Automático</div>
@@ -234,7 +229,7 @@
     </div>
 
     <div class="tarjeta" data-modelo="VW Tera Outfit 170TS AT" data-precio-base="$43.182.975">
-      <img src="imagenes/tera outfit.webp" alt="Tera Outfit">
+      <img src="imagenes/tera%20outfit.webp" alt="Tera Outfit">
       <div class="tarjeta-body">
         <div class="nombre-auto">Tera Outfit</div>
         <div class="spec-auto">170 TSI AT · SUV Compacto · Automático</div>
@@ -253,7 +248,7 @@
   <div class="grilla">
 
     <div class="tarjeta" data-modelo="VW Virtus MSI MT G1 MY26" data-precio-base="$38.767.744">
-      <img src="imagenes/virtus MSI.webp" alt="Virtus MSI">
+      <img src="imagenes/virtus%20MSI.webp" alt="Virtus MSI">
       <div class="tarjeta-body">
         <div class="nombre-auto">Virtus MSI</div>
         <div class="spec-auto">MSI MT · Sedán</div>
@@ -264,7 +259,7 @@
     </div>
 
     <div class="tarjeta" data-modelo="VW Virtus Trendline 170TSI AT G1 MY26" data-precio-base="$40.858.954">
-      <img src="imagenes/virtus trendline.webp" alt="Virtus Trendline">
+      <img src="imagenes/virtus%20trendline.webp" alt="Virtus Trendline">
       <div class="tarjeta-body">
         <div class="nombre-auto">Virtus Trendline</div>
         <div class="spec-auto">170 TSI AT · Sedán · Automático</div>
@@ -275,7 +270,7 @@
     </div>
 
     <div class="tarjeta" data-modelo="VW Nuevo Virtus Comfortline MSI MT MY26" data-precio-base="$45.354.045">
-      <img src="imagenes/virtus trendline.webp" alt="Virtus Comfortline">
+      <img src="imagenes/virtus%20trendline.webp" alt="Virtus Comfortline">
       <div class="tarjeta-body">
         <div class="nombre-auto">Virtus Comfortline</div>
         <div class="spec-auto">MSI MT · Sedán</div>
@@ -286,7 +281,7 @@
     </div>
 
     <div class="tarjeta" data-modelo="VW Nuevo Virtus Highline 170TSI AT MY26" data-precio-base="$45.246.551">
-      <img src="imagenes/virtus highline.webp" alt="Virtus Highline">
+      <img src="imagenes/virtus%20highline.webp" alt="Virtus Highline">
       <div class="tarjeta-body">
         <div class="nombre-auto">Virtus Highline</div>
         <div class="spec-auto">170 TSI AT · Sedán · Automático</div>
@@ -297,7 +292,7 @@
     </div>
 
     <div class="tarjeta" data-modelo="VW Virtus Exclusive 250TSI AT" data-precio-base="$50.855.809">
-      <img src="imagenes/virtus exclusive.webp" alt="Virtus Exclusive">
+      <img src="imagenes/virtus%20exclusive.webp" alt="Virtus Exclusive">
       <div class="tarjeta-body">
         <div class="nombre-auto">Virtus Exclusive</div>
         <div class="spec-auto">250 TSI AT · Sedán · Automático</div>
@@ -316,7 +311,7 @@
   <div class="grilla">
 
     <div class="tarjeta" data-modelo="VW Nivus Trendline 170TSI MT G1" data-precio-base="$33.775.950">
-      <img src="imagenes/nivus trendline.webp" alt="Nivus Trendline MT">
+      <img src="imagenes/nivus%20trendline.webp" alt="Nivus Trendline MT">
       <div class="tarjeta-body">
         <div class="nombre-auto">Nivus Trendline MT</div>
         <div class="spec-auto">170 TSI MT · SUV Coupé</div>
@@ -327,7 +322,7 @@
     </div>
 
     <div class="tarjeta" data-modelo="VW Nivus Trendline 200 TSI AT G1" data-precio-base="$36.246.890">
-      <img src="imagenes/nivus trendline.webp" alt="Nivus Trendline AT">
+      <img src="imagenes/nivus%20trendline.webp" alt="Nivus Trendline AT">
       <div class="tarjeta-body">
         <div class="nombre-auto">Nivus Trendline AT</div>
         <div class="spec-auto">200 TSI AT · SUV Coupé · Automático</div>
@@ -338,7 +333,7 @@
     </div>
 
     <div class="tarjeta" data-modelo="VW Nivus Comfortline 200 TSI AT G1" data-precio-base="$38.284.526">
-      <img src="imagenes/nivus comfortline.webp" alt="Nivus Comfortline">
+      <img src="imagenes/nivus%20comfortline.webp" alt="Nivus Comfortline">
       <div class="tarjeta-body">
         <div class="nombre-auto">Nivus Comfortline</div>
         <div class="spec-auto">200 TSI AT · SUV Coupé · Automático</div>
@@ -349,7 +344,7 @@
     </div>
 
     <div class="tarjeta" data-modelo="VW Nivus Highline 200 TSI AT G1" data-precio-base="$41.513.972">
-      <img src="imagenes/nivus highline.webp" alt="Nivus Highline">
+      <img src="imagenes/nivus%20highline.webp" alt="Nivus Highline">
       <div class="tarjeta-body">
         <div class="nombre-auto">Nivus Highline</div>
         <div class="spec-auto">200 TSI AT · SUV Coupé · Automático</div>
@@ -360,7 +355,7 @@
     </div>
 
     <div class="tarjeta" data-modelo="VW Nivus Outfit 200TSI AT G1" data-precio-base="$42.712.407">
-      <img src="imagenes/nivus outfit.webp" alt="Nivus Outfit">
+      <img src="imagenes/nivus%20outfit.webp" alt="Nivus Outfit">
       <div class="tarjeta-body">
         <div class="nombre-auto">Nivus Outfit</div>
         <div class="spec-auto">200 TSI AT · SUV Coupé · Automático</div>
@@ -379,7 +374,7 @@
   <div class="grilla">
 
     <div class="tarjeta" data-modelo="VW T-Cross Trendline 170TSI MT G1 MY26" data-precio-base="$36.138.920">
-      <img src="imagenes/t-cross trendline mt.webp" alt="T-Cross Trendline MT">
+      <img src="imagenes/t-cross%20trendline%20mt.webp" alt="T-Cross Trendline MT">
       <div class="tarjeta-body">
         <div class="nombre-auto">T-Cross Trendline MT</div>
         <div class="spec-auto">170 TSI MT · SUV Compacto</div>
@@ -390,7 +385,7 @@
     </div>
 
     <div class="tarjeta" data-modelo="VW T-Cross Trendline 200TSI AT G1 MY26" data-precio-base="$38.208.996">
-      <img src="imagenes/t-cross trendline at.webp" alt="T-Cross Trendline AT">
+      <img src="imagenes/t-cross%20trendline%20at.webp" alt="T-Cross Trendline AT">
       <div class="tarjeta-body">
         <div class="nombre-auto">T-Cross Trendline AT</div>
         <div class="spec-auto">200 TSI AT · SUV Compacto · Automático</div>
@@ -401,7 +396,7 @@
     </div>
 
     <div class="tarjeta" data-modelo="VW T-Cross Comfortline 200TSI AT G1 MY26" data-precio-base="$40.370.412">
-      <img src="imagenes/t-cross comfortline.webp" alt="T-Cross Comfortline">
+      <img src="imagenes/t-cross%20comfortline.webp" alt="T-Cross Comfortline">
       <div class="tarjeta-body">
         <div class="nombre-auto">T-Cross Comfortline</div>
         <div class="spec-auto">200 TSI AT · SUV Compacto · Automático</div>
@@ -412,7 +407,7 @@
     </div>
 
     <div class="tarjeta" data-modelo="VW T-Cross Highline 200TSI AT G1 MY26" data-precio-base="$44.764.091">
-      <img src="imagenes/t-cross highline.webp" alt="T-Cross Highline">
+      <img src="imagenes/t-cross%20highline.webp" alt="T-Cross Highline">
       <div class="tarjeta-body">
         <div class="nombre-auto">T-Cross Highline</div>
         <div class="spec-auto">200 TSI AT · SUV Compacto · Automático</div>
@@ -423,7 +418,7 @@
     </div>
 
     <div class="tarjeta" data-modelo="VW T-Cross Extreme 200TSI AT G1 MY26" data-precio-base="$46.187.942">
-      <img src="imagenes/t-cross extreme.webp" alt="T-Cross Extreme">
+      <img src="imagenes/t-cross%20extreme.webp" alt="T-Cross Extreme">
       <div class="tarjeta-body">
         <div class="nombre-auto">T-Cross Extreme</div>
         <div class="spec-auto">200 TSI AT · SUV Compacto · Automático</div>
@@ -442,7 +437,7 @@
   <div class="grilla">
 
     <div class="tarjeta" data-modelo="VW Taos Comfortline 250TSI AT MY26" data-precio-base="$45.969.321">
-      <img src="imagenes/taos comfortline.webp" alt="Taos Comfortline">
+      <img src="imagenes/taos%20comfortline.webp" alt="Taos Comfortline">
       <div class="tarjeta-body">
         <div class="nombre-auto">Taos Comfortline</div>
         <div class="spec-auto">250 TSI AT · SUV · Automático</div>
@@ -453,7 +448,7 @@
     </div>
 
     <div class="tarjeta" data-modelo="VW Taos Highline 250 TSI AT MY26" data-precio-base="$52.831.458">
-      <img src="imagenes/taos highline.webp" alt="Taos Highline">
+      <img src="imagenes/taos%20highline.webp" alt="Taos Highline">
       <div class="tarjeta-body">
         <div class="nombre-auto">Taos Highline</div>
         <div class="spec-auto">250 TSI AT · SUV · Automático</div>
@@ -464,7 +459,7 @@
     </div>
 
     <div class="tarjeta" data-modelo="VW Taos Highline Bitono 250 TSI AT MY26" data-precio-base="$54.165.320">
-      <img src="imagenes/taos highline bitono.webp" alt="Taos Highline Bitono">
+      <img src="imagenes/taos%20highline%20bitono.webp" alt="Taos Highline Bitono">
       <div class="tarjeta-body">
         <div class="nombre-auto">Taos Highline Bitono</div>
         <div class="spec-auto">250 TSI AT · SUV · Automático · Bitono</div>
@@ -481,9 +476,8 @@
 <section class="seccion">
   <div class="seccion-titulo">Vento <span class="badge-tasa">Tasa 0%</span></div>
   <div class="grilla">
-
     <div class="tarjeta" data-modelo="VW Vento GLI 350TSI DSG G2 MY26" data-precio-base="$66.158.805">
-      <img src="imagenes/vento gli.webp" alt="Vento GLI">
+      <img src="imagenes/vento%20gli.webp" alt="Vento GLI">
       <div class="tarjeta-body">
         <div class="nombre-auto">Vento GLI</div>
         <div class="spec-auto">350 TSI DSG · Sedán · Automático</div>
@@ -492,7 +486,6 @@
         <a class="btn-quiero" href="#">Quiero este</a>
       </div>
     </div>
-
   </div>
 </section>
 
@@ -500,9 +493,8 @@
 <section class="seccion">
   <div class="seccion-titulo">Tiguan <span class="badge-tasa">Tasa 0%</span></div>
   <div class="grilla">
-
     <div class="tarjeta" data-modelo="VW Tiguan Life 350 TSI DSG 4X4 MY25" data-precio-base="$76.225.976">
-      <img src="imagenes/tiguan rline.webp" alt="Tiguan R-Line">
+      <img src="imagenes/tiguan%20rline.webp" alt="Tiguan R-Line">
       <div class="tarjeta-body">
         <div class="nombre-auto">Tiguan R-Line</div>
         <div class="spec-auto">250 TSI DSG · SUV · Automático</div>
@@ -511,7 +503,6 @@
         <a class="btn-quiero" href="#">Quiero este</a>
       </div>
     </div>
-
   </div>
 </section>
 
@@ -519,9 +510,8 @@
 <section class="seccion">
   <div class="seccion-titulo">Saveiro <span class="badge-tasa">Tasa 0%</span></div>
   <div class="grilla">
-
     <div class="tarjeta" data-modelo="VW Saveiro Comfortline CD" data-precio-base="$35.121.510">
-      <img src="imagenes/saveiro comfortline.webp" alt="Saveiro Comfortline CD">
+      <img src="imagenes/saveiro%20comfortline.webp" alt="Saveiro Comfortline CD">
       <div class="tarjeta-body">
         <div class="nombre-auto">Saveiro Comfortline CD</div>
         <div class="spec-auto">MSI MT · Pick-up · Doble Cabina</div>
@@ -530,7 +520,6 @@
         <a class="btn-quiero" href="#">Quiero este</a>
       </div>
     </div>
-
   </div>
 </section>
 
@@ -540,7 +529,7 @@
   <div class="grilla">
 
     <div class="tarjeta" data-modelo="VW Amarok Trendline" data-precio-base="$42.620.089">
-      <img src="imagenes/amarok trendline 4x2.webp" alt="Amarok Trendline">
+      <img src="imagenes/amarok%20trendline%204x2.webp" alt="Amarok Trendline">
       <div class="tarjeta-body">
         <div class="nombre-auto">Amarok Trendline</div>
         <div class="spec-auto">TDI MT · Pick-up 4×2</div>
@@ -551,7 +540,7 @@
     </div>
 
     <div class="tarjeta" data-modelo="VW Amarok Comfortline MT" data-precio-base="$52.323.960">
-      <img src="imagenes/amarok comfortline mt 4x2.webp" alt="Amarok Comfortline MT">
+      <img src="imagenes/amarok%20comfortline%20mt%204x2.webp" alt="Amarok Comfortline MT">
       <div class="tarjeta-body">
         <div class="nombre-auto">Amarok Comfortline MT</div>
         <div class="spec-auto">TDI MT · Pick-up 4×2</div>
@@ -562,7 +551,7 @@
     </div>
 
     <div class="tarjeta" data-modelo="VW Amarok Comfortline AT" data-precio-base="$53.081.088">
-      <img src="imagenes/amarok comfortline at 4x2.webp" alt="Amarok Comfortline AT">
+      <img src="imagenes/amarok%20comfortline%20at%204x2.webp" alt="Amarok Comfortline AT">
       <div class="tarjeta-body">
         <div class="nombre-auto">Amarok Comfortline AT</div>
         <div class="spec-auto">TDI AT · Pick-up 4×2 · Automático</div>
@@ -573,7 +562,7 @@
     </div>
 
     <div class="tarjeta" data-modelo="VW Amarok Comfortline V6" data-precio-base="$58.911.035">
-      <img src="imagenes/amarok comfortline v6.webp" alt="Amarok Comfortline V6">
+      <img src="imagenes/amarok%20comfortline%20v6.webp" alt="Amarok Comfortline V6">
       <div class="tarjeta-body">
         <div class="nombre-auto">Amarok Comfortline V6</div>
         <div class="spec-auto">V6 AT 4×4 · Automático</div>
@@ -584,7 +573,7 @@
     </div>
 
     <div class="tarjeta" data-modelo="VW Amarok Highline V6" data-precio-base="$68.896.048">
-      <img src="imagenes/amarok highline v6.webp" alt="Amarok Highline V6">
+      <img src="imagenes/amarok%20highline%20v6.webp" alt="Amarok Highline V6">
       <div class="tarjeta-body">
         <div class="nombre-auto">Amarok Highline V6</div>
         <div class="spec-auto">V6 AT 4×4 · Automático</div>
@@ -595,7 +584,7 @@
     </div>
 
     <div class="tarjeta" data-modelo="VW Amarok Extreme V6" data-precio-base="$73.945.781">
-      <img src="imagenes/amarok extreme v6.webp" alt="Amarok Extreme V6">
+      <img src="imagenes/amarok%20extreme%20v6.webp" alt="Amarok Extreme V6">
       <div class="tarjeta-body">
         <div class="nombre-auto">Amarok Extreme V6</div>
         <div class="spec-auto">V6 AT 4×4 · Automático</div>
@@ -606,7 +595,7 @@
     </div>
 
     <div class="tarjeta" data-modelo="VW Amarok Black Style V6" data-precio-base="$76.631.884">
-      <img src="imagenes/amarok blackstyle v6.webp" alt="Amarok Black Style V6">
+      <img src="imagenes/amarok%20blackstyle%20v6.webp" alt="Amarok Black Style V6">
       <div class="tarjeta-body">
         <div class="nombre-auto">Amarok Black Style V6</div>
         <div class="spec-auto">V6 AT 4×4 · Automático · Ed. especial</div>
