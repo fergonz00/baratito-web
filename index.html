@@ -104,8 +104,12 @@
     }
     body { font-family: 'Barlow', sans-serif; background: var(--gris-claro); color: #111; min-height: 100vh; }
     .hero { background: var(--azul-vw); color: var(--blanco); padding: 28px 24px 36px; text-align: center; }
-    .hero-logos { display: flex; align-items: center; justify-content: center; gap: 16px; margin-bottom: 12px; }
-    .hero-logos img { height: 48px; object-fit: contain; }
+    .hero-logos { display: none; }
+    .hero-header { display: flex; align-items: center; justify-content: center; gap: 32px; flex-wrap: wrap; }
+    .hero-logo-tito { height: 36px; object-fit: contain; filter: brightness(0) invert(1) sepia(1) saturate(3) hue-rotate(5deg) brightness(0.9); }
+    .hero-logo-vw { height: 52px; object-fit: contain; filter: brightness(0) invert(1) sepia(1) saturate(4) hue-rotate(5deg) brightness(0.85); }
+    .hero-logo-centenario { height: 80px; object-fit: contain; }
+    .hero-linea-dorada { width: 100%; height: 2px; background: linear-gradient(90deg, transparent, var(--dorado) 20%, var(--dorado) 80%, transparent); margin: 16px 0 20px; }
     .badge-concesionario { font-size: 11px; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; color: var(--dorado); margin-bottom: 16px; }
     .hero h1 { font-family: 'Barlow Condensed', sans-serif; font-size: clamp(2.2rem, 8vw, 3.6rem); font-weight: 900; line-height: 1; text-transform: uppercase; }
     .hero h1 em { font-style: normal; color: var(--dorado); }
@@ -144,10 +148,12 @@
 <body>
 
 <section class="hero">
-  <div class="hero-logos">
-    <img src="imagenes/logo%20Tito%20100%20a%C3%B1os.png" alt="Tito González 100 años">
-    <img src="imagenes/logo%20VW%20dorado.png" alt="Volkswagen">
+  <div class="hero-header">
+    <img class="hero-logo-tito" src="imagenes/logo_tito_gonzalez.jpg" alt="Tito González">
+    <img class="hero-logo-vw" src="imagenes/logo_vw.jpg" alt="Volkswagen">
+    <img class="hero-logo-centenario" src="imagenes/logo_centenario.jpg" alt="100 Aniversario">
   </div>
+  <div class="hero-linea-dorada"></div>
   <p class="badge-concesionario">✦ Concesionario Oficial VW · CABA</p>
   <h1>0KM a precio <em>baratito</em></h1>
   <p class="hero-sub">Entrega inmediata. Precios válidos patentando en <span id="mes-hero"></span>. Stock limitado.</p>
