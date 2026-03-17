@@ -9,11 +9,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;800;900&family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet">
 
   <script>
-    const SHEET_ID   = '1CCzLO3VBqmPNVyhn9ejinAsXU9p_jDhkMKU5WeXoB64';
-    const SHEET_NAME = 'oferta vigente';
-    // Exportación CSV directa — funciona con "visible para cualquiera con el vínculo"
-    const GID        = '1432576316';
-    const SHEET_URL  = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTD40FCkAXCrVNslz1OtxnYm1DRhDulVOHaCxJ81-kiQL17KnfimCOPn3hJDHAvJsF9ROEZdePuRw2E/pub?gid=1432576316&single=true&output=csv';
+    const SHEET_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTD40FCkAXCrVNslz1OtxnYm1DRhDulVOHaCxJ81-kiQL17KnfimCOPn3hJDHAvJsF9ROEZdePuRw2E/pub?gid=1432576316&single=true&output=csv';
 
     function formatPrecio(n) {
       if (!n && n !== 0) return null;
@@ -21,11 +17,17 @@
     }
 
     function parsearCSV(texto) {
-      const lineas = texto.trim().split('
-');
-      const filas  = [];
-      for (const linea of lineas) {
-        const cols = linea.split(',').map(c => c.trim().replace(/^"|"$/g, ''));
+      const filas = [];
+      for (const linea of texto.trim().split('\n')) {
+        const cols = [];
+        let dentro = false, celda = '';
+        for (let i = 0; i < linea.length; i++) {
+          const c = linea[i];
+          if (c === '"') { dentro = !dentro; }
+          else if (c === ',' && !dentro) { cols.push(celda.trim()); celda = ''; }
+          else { celda += c; }
+        }
+        cols.push(celda.trim());
         filas.push(cols);
       }
       return filas;
@@ -33,58 +35,42 @@
 
     async function cargarPrecios() {
       try {
-        const res   = await fetch(SHEET_URL);
+        const res = await fetch(SHEET_URL);
         if (!res.ok) throw new Error('HTTP ' + res.status);
-        const text  = await res.text();
+        const text = await res.text();
         const filas = parsearCSV(text);
-
         const precios = {};
         for (let i = 1; i < filas.length; i++) {
           const fila = filas[i];
           if (!fila || !fila[0]) continue;
-          const modelo    = fila[0].trim();
-          // Columna C (índice 2) = "oferta vigente con fyf"
-          // Los números vienen como "$28.346.438" — limpiamos y parseamos
-          // El CSV viene con formato "$37,567,500" (comas como separadores de miles)
+          const modelo = fila[0].trim();
           const precioStr = (fila[2] || '').replace(/[$,]/g, '').trim();
-          const precio    = precioStr ? parseFloat(precioStr) : null;
-          const stock     = (fila[3] || '').trim().toLowerCase();
+          const precio = precioStr ? parseFloat(precioStr) : null;
+          const stock = (fila[3] || '').trim().toLowerCase();
           if (modelo) precios[modelo] = { precio, stock };
         }
-
         document.querySelectorAll('[data-modelo]').forEach(card => {
-          const clave = card.getAttribute('data-modelo');
-          const info  = precios[clave];
+          const info = precios[card.getAttribute('data-modelo')];
           if (!info) return;
-
           const precioEl = card.querySelector('.precio');
           if (precioEl && info.precio !== null) {
             precioEl.textContent = formatPrecio(info.precio);
             precioEl.classList.remove('precio-loader');
           }
-
-          const whatsappEl = card.querySelector('a.btn-quiero');
-          if (whatsappEl && info.precio !== null) {
-            const nombre = card.querySelector('.nombre-auto')?.textContent?.trim() || clave;
-            const msg    = `[WEB | BT] Hola! Me interesa el ${nombre} (${formatPrecio(info.precio)}). Vi la oferta en baratito.com.ar`;
-            whatsappEl.href = `https://wa.me/5491137573604?text=${encodeURIComponent(msg)}`;
+          const btn = card.querySelector('a.btn-quiero');
+          if (btn && info.precio !== null) {
+            const nombre = card.querySelector('.nombre-auto')?.textContent?.trim() || '';
+            const msg = '[WEB | BT] Hola! Me interesa el ' + nombre + ' (' + formatPrecio(info.precio) + '). Vi la oferta en baratito.com.ar';
+            btn.href = 'https://wa.me/5491137573604?text=' + encodeURIComponent(msg);
           }
-
-          if (info.stock.includes('sin stock')) {
-            card.classList.add('sin-stock');
-          } else {
-            card.classList.remove('sin-stock');
-          }
+          card.classList.toggle('sin-stock', info.stock.includes('sin stock'));
         });
-
       } catch (err) {
-        console.warn('No se pudieron cargar precios desde Google Sheets:', err);
-        // Fallback: mostrar precios de respaldo hardcodeados en data-precio-base
+        console.warn('Error cargando precios:', err);
         document.querySelectorAll('[data-modelo]').forEach(card => {
-          const precioBase = card.getAttribute('data-precio-base');
-          const precioEl   = card.querySelector('.precio');
-          if (precioBase && precioEl) {
-            precioEl.textContent = precioBase;
+          const precioEl = card.querySelector('.precio');
+          if (precioEl) {
+            precioEl.textContent = card.getAttribute('data-precio-base') || '';
             precioEl.classList.remove('precio-loader');
           }
         });
@@ -106,231 +92,55 @@
       --gris-texto: #555;
       --radio: 12px;
     }
-    body {
-      font-family: 'Barlow', sans-serif;
-      background: var(--gris-claro);
-      color: #111;
-      min-height: 100vh;
-    }
+    body { font-family: 'Barlow', sans-serif; background: var(--gris-claro); color: #111; min-height: 100vh; }
 
-    /* ── HERO ── */
-    .hero {
-      background: var(--azul-vw);
-      color: var(--blanco);
-      padding: 28px 24px 36px;
-      text-align: center;
-    }
-    .hero-logos {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 16px;
-      margin-bottom: 12px;
-    }
+    .hero { background: var(--azul-vw); color: var(--blanco); padding: 28px 24px 36px; text-align: center; }
+    .hero-logos { display: flex; align-items: center; justify-content: center; gap: 16px; margin-bottom: 12px; }
     .hero-logos img { height: 48px; object-fit: contain; }
-    .badge-concesionario {
-      font-family: 'Barlow', sans-serif;
-      font-size: 11px;
-      font-weight: 600;
-      letter-spacing: .12em;
-      text-transform: uppercase;
-      color: var(--dorado);
-      margin-bottom: 16px;
-    }
-    .hero h1 {
-      font-family: 'Barlow Condensed', sans-serif;
-      font-size: clamp(2.2rem, 8vw, 3.6rem);
-      font-weight: 900;
-      line-height: 1;
-      text-transform: uppercase;
-      letter-spacing: .02em;
-    }
-    .hero h1 em {
-      font-style: normal;
-      color: var(--dorado);
-    }
-    .hero-sub {
-      font-size: 14px;
-      color: rgba(255,255,255,.7);
-      margin: 8px 0 20px;
-    }
-    .checkmarks {
-      display: flex;
-      justify-content: center;
-      gap: 16px;
-      flex-wrap: wrap;
-      font-size: 13px;
-      color: rgba(255,255,255,.85);
-      margin-bottom: 24px;
-    }
+    .badge-concesionario { font-size: 11px; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; color: var(--dorado); margin-bottom: 16px; }
+    .hero h1 { font-family: 'Barlow Condensed', sans-serif; font-size: clamp(2.2rem, 8vw, 3.6rem); font-weight: 900; line-height: 1; text-transform: uppercase; }
+    .hero h1 em { font-style: normal; color: var(--dorado); }
+    .hero-sub { font-size: 14px; color: rgba(255,255,255,.7); margin: 8px 0 20px; }
+    .checkmarks { display: flex; justify-content: center; gap: 16px; flex-wrap: wrap; font-size: 13px; color: rgba(255,255,255,.85); margin-bottom: 24px; }
     .checkmarks span::before { content: '✓ '; color: var(--dorado); }
-    .btn-hero {
-      display: inline-block;
-      background: var(--dorado);
-      color: var(--azul-vw);
-      font-family: 'Barlow', sans-serif;
-      font-weight: 700;
-      font-size: 15px;
-      padding: 14px 32px;
-      border-radius: 100px;
-      text-decoration: none;
-      transition: transform .15s, background .15s;
-    }
+    .btn-hero { display: inline-block; background: var(--dorado); color: var(--azul-vw); font-weight: 700; font-size: 15px; padding: 14px 32px; border-radius: 100px; text-decoration: none; transition: transform .15s, background .15s; }
     .btn-hero:hover { transform: scale(1.04); background: var(--dorado-claro); }
 
-    /* ── SECCIONES ── */
-    .seccion {
-      max-width: 1100px;
-      margin: 0 auto;
-      padding: 40px 16px 8px;
-    }
-    .seccion-titulo {
-      font-family: 'Barlow Condensed', sans-serif;
-      font-size: clamp(1.6rem, 5vw, 2.4rem);
-      font-weight: 900;
-      text-transform: uppercase;
-      color: var(--azul-vw);
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      margin-bottom: 4px;
-    }
-    .badge-tasa {
-      font-size: 11px;
-      font-weight: 700;
-      font-family: 'Barlow', sans-serif;
-      background: var(--dorado);
-      color: var(--azul-vw);
-      padding: 3px 10px;
-      border-radius: 100px;
-      letter-spacing: .05em;
-    }
-    .badge-nuevo {
-      font-size: 11px;
-      font-weight: 700;
-      font-family: 'Barlow', sans-serif;
-      background: #E8F5E9;
-      color: #2E7D32;
-      border: 1px solid #2E7D32;
-      padding: 3px 10px;
-      border-radius: 100px;
-    }
+    .seccion { max-width: 1100px; margin: 0 auto; padding: 40px 16px 8px; }
+    .seccion-titulo { font-family: 'Barlow Condensed', sans-serif; font-size: clamp(1.6rem, 5vw, 2.4rem); font-weight: 900; text-transform: uppercase; color: var(--azul-vw); display: flex; align-items: center; gap: 12px; margin-bottom: 4px; }
+    .badge-tasa { font-size: 11px; font-weight: 700; background: var(--dorado); color: var(--azul-vw); padding: 3px 10px; border-radius: 100px; }
+    .badge-nuevo { font-size: 11px; font-weight: 700; background: #E8F5E9; color: #2E7D32; border: 1px solid #2E7D32; padding: 3px 10px; border-radius: 100px; }
 
-    /* ── GRILLA ── */
-    .grilla {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-      gap: 16px;
-      padding: 20px 0 32px;
-    }
+    .grilla { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; padding: 20px 0 32px; }
 
-    /* ── TARJETA ── */
-    .tarjeta {
-      background: var(--blanco);
-      border-radius: var(--radio);
-      overflow: hidden;
-      border: 1px solid rgba(0,0,0,.07);
-      display: flex;
-      flex-direction: column;
-      transition: box-shadow .2s, transform .2s;
-    }
-    .tarjeta:hover {
-      box-shadow: 0 8px 32px rgba(0,30,80,.12);
-      transform: translateY(-2px);
-    }
-    .tarjeta.sin-stock {
-      opacity: .55;
-      filter: grayscale(.4);
-    }
-    .tarjeta img {
-      width: 100%;
-      aspect-ratio: 16/9;
-      object-fit: cover;
-      background: #e8e8e8;
-      display: block;
-    }
-    .tarjeta-body {
-      padding: 16px;
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-    }
-    .nombre-auto {
-      font-family: 'Barlow Condensed', sans-serif;
-      font-size: 1.35rem;
-      font-weight: 800;
-      color: var(--azul-vw);
-      line-height: 1.1;
-    }
-    .spec-auto {
-      font-size: 12px;
-      color: var(--gris-texto);
-    }
+    .tarjeta { background: var(--blanco); border-radius: var(--radio); overflow: hidden; border: 1px solid rgba(0,0,0,.07); display: flex; flex-direction: column; transition: box-shadow .2s, transform .2s; }
+    .tarjeta:hover { box-shadow: 0 8px 32px rgba(0,30,80,.12); transform: translateY(-2px); }
+    .tarjeta.sin-stock { opacity: .55; filter: grayscale(.4); }
+    .tarjeta img { width: 100%; aspect-ratio: 16/9; object-fit: cover; background: #e8e8e8; display: block; }
+    .tarjeta-body { padding: 16px; flex: 1; display: flex; flex-direction: column; gap: 6px; }
+    .nombre-auto { font-family: 'Barlow Condensed', sans-serif; font-size: 1.35rem; font-weight: 800; color: var(--azul-vw); line-height: 1.1; }
+    .spec-auto { font-size: 12px; color: var(--gris-texto); }
     .precio-wrap { margin: 8px 0 4px; }
-    .precio {
-      font-family: 'Barlow Condensed', sans-serif;
-      font-size: 1.9rem;
-      font-weight: 900;
-      color: var(--azul-vw);
-      line-height: 1;
-    }
-    .precio-nota {
-      font-size: 11px;
-      color: var(--gris-texto);
-      line-height: 1.4;
-      margin-top: 2px;
-    }
-    .financiacion {
-      font-size: 12px;
-      color: #333;
-      background: #F0F4FF;
-      border-radius: 6px;
-      padding: 6px 10px;
-      margin-top: 4px;
-    }
+    .precio { font-family: 'Barlow Condensed', sans-serif; font-size: 1.9rem; font-weight: 900; color: var(--azul-vw); line-height: 1; }
+    .precio-loader { color: #aaa; font-size: 1.2rem; }
+    .precio-nota { font-size: 11px; color: var(--gris-texto); line-height: 1.4; margin-top: 2px; }
+    .financiacion { font-size: 12px; color: #333; background: #F0F4FF; border-radius: 6px; padding: 6px 10px; margin-top: 4px; }
     .financiacion strong { color: var(--azul-mid); }
-    .btn-quiero {
-      display: block;
-      margin-top: auto;
-      padding-top: 12px;
-      background: var(--azul-vw);
-      color: var(--blanco);
-      text-align: center;
-      font-weight: 700;
-      font-size: 14px;
-      padding: 12px;
-      border-radius: 8px;
-      text-decoration: none;
-      margin-top: 12px;
-      transition: background .15s;
-    }
+    .btn-quiero { display: block; background: var(--azul-vw); color: var(--blanco); text-align: center; font-weight: 700; font-size: 14px; padding: 12px; border-radius: 8px; text-decoration: none; margin-top: 12px; transition: background .15s; }
     .btn-quiero:hover { background: var(--azul-mid); }
 
-    /* ── FOOTER ── */
-    footer {
-      background: var(--azul-vw);
-      color: rgba(255,255,255,.7);
-      text-align: center;
-      padding: 28px 20px;
-      font-size: 12px;
-      line-height: 1.8;
-      margin-top: 24px;
-    }
+    footer { background: var(--azul-vw); color: rgba(255,255,255,.7); text-align: center; padding: 28px 20px; font-size: 12px; line-height: 1.8; margin-top: 24px; }
     footer a { color: var(--dorado); text-decoration: none; }
-    footer a:hover { text-decoration: underline; }
     .footer-links { display: flex; justify-content: center; gap: 24px; margin-bottom: 16px; }
     .footer-links a { font-size: 14px; font-weight: 600; }
     .mes-actual { color: rgba(255,255,255,.4); }
-    .precio-loader { font-size: 1.2rem; color: #aaa; }
   </style>
 </head>
 <body>
 
-<!-- ── HERO ── -->
 <section class="hero">
   <div class="hero-logos">
-    <img src="imagenes/logo Tito 100 años.png" alt="Tito González · 100 Aniversario · Desde 1926">
+    <img src="imagenes/logo Tito 100 años.png" alt="Tito González 100 años">
     <img src="imagenes/logo VW dorado.png" alt="Volkswagen">
   </div>
   <p class="badge-concesionario">✦ Concesionario Oficial VW · CABA</p>
@@ -341,17 +151,12 @@
     <span>Tasa 0% en cuotas</span>
     <span>Incluye flete y formularios</span>
   </div>
-  <a class="btn-hero" href="https://wa.me/5491137573604?text=%5BWEB%20%7C%20BT%5D%20Hola!%20Vi%20las%20ofertas%20en%20baratito.com.ar%20y%20quiero%20asesoramiento">
-    Quiero asesoramiento gratis
-  </a>
+  <a class="btn-hero" href="https://wa.me/5491137573604?text=%5BWEB%20%7C%20BT%5D%20Hola!%20Vi%20las%20ofertas%20en%20baratito.com.ar%20y%20quiero%20asesoramiento">Quiero asesoramiento gratis</a>
 </section>
 
-<!-- ── POLO ── -->
+<!-- POLO -->
 <section class="seccion">
-  <div class="seccion-titulo">
-    Polo
-    <span class="badge-tasa">Tasa 0%</span>
-  </div>
+  <div class="seccion-titulo">Polo <span class="badge-tasa">Tasa 0%</span></div>
   <div class="grilla">
 
     <div class="tarjeta" data-modelo="VW Polo Track MSI MT G1 MY26" data-precio-base="$28.158.600">
@@ -359,11 +164,8 @@
       <div class="tarjeta-body">
         <div class="nombre-auto">Polo Track</div>
         <div class="spec-auto">1.6 MSI MT · Hatchback 5P</div>
-        <div class="precio-wrap">
-          <div class="precio precio-loader">…</div>
-          <div class="precio-nota">Precio contado · Incluye flete y formularios<br>No incluye sellado, arancel ni gestoría</div>
-        </div>
-        <div class="financiacion">Financiación tasa 0%<br><strong>$15.000.000</strong> en 18 cuotas</div>
+        <div class="precio-wrap"><div class="precio precio-loader">…</div><div class="precio-nota">Precio contado · Incluye flete y formularios<br>No incluye sellado, arancel ni gestoría</div></div>
+        <div class="financiacion">Tasa 0% · <strong>$15.000.000</strong> en 18 cuotas</div>
         <a class="btn-quiero" href="#">Quiero este</a>
       </div>
     </div>
@@ -373,11 +175,8 @@
       <div class="tarjeta-body">
         <div class="nombre-auto">Polo Comfortline</div>
         <div class="spec-auto">170 TSI AT · Hatchback · Automático</div>
-        <div class="precio-wrap">
-          <div class="precio precio-loader">…</div>
-          <div class="precio-nota">Precio contado · Incluye flete y formularios<br>No incluye sellado, arancel ni gestoría</div>
-        </div>
-        <div class="financiacion">Financiación tasa 0%<br><strong>$20.000.000</strong> en 24 cuotas</div>
+        <div class="precio-wrap"><div class="precio precio-loader">…</div><div class="precio-nota">Precio contado · Incluye flete y formularios<br>No incluye sellado, arancel ni gestoría</div></div>
+        <div class="financiacion">Tasa 0% · <strong>$20.000.000</strong> en 24 cuotas</div>
         <a class="btn-quiero" href="#">Quiero este</a>
       </div>
     </div>
@@ -387,11 +186,8 @@
       <div class="tarjeta-body">
         <div class="nombre-auto">Polo Highline</div>
         <div class="spec-auto">170 TSI AT · Hatchback · Automático</div>
-        <div class="precio-wrap">
-          <div class="precio precio-loader">…</div>
-          <div class="precio-nota">Precio contado · Incluye flete y formularios<br>No incluye sellado, arancel ni gestoría</div>
-        </div>
-        <div class="financiacion">Financiación tasa 0%<br><strong>$20.000.000</strong> en 24 cuotas</div>
+        <div class="precio-wrap"><div class="precio precio-loader">…</div><div class="precio-nota">Precio contado · Incluye flete y formularios<br>No incluye sellado, arancel ni gestoría</div></div>
+        <div class="financiacion">Tasa 0% · <strong>$20.000.000</strong> en 24 cuotas</div>
         <a class="btn-quiero" href="#">Quiero este</a>
       </div>
     </div>
@@ -399,13 +195,9 @@
   </div>
 </section>
 
-<!-- ── TERA ── -->
+<!-- TERA -->
 <section class="seccion">
-  <div class="seccion-titulo">
-    🆕 Tera
-    <span class="badge-tasa">Tasa 0%</span>
-    <span class="badge-nuevo">Nuevo</span>
-  </div>
+  <div class="seccion-titulo">🆕 Tera <span class="badge-tasa">Tasa 0%</span> <span class="badge-nuevo">Nuevo</span></div>
   <div class="grilla">
 
     <div class="tarjeta" data-modelo="VW Tera Trend MSI MT" data-precio-base="$31.249.305">
@@ -413,11 +205,8 @@
       <div class="tarjeta-body">
         <div class="nombre-auto">Tera Trend</div>
         <div class="spec-auto">170 MSI MT · SUV Compacto</div>
-        <div class="precio-wrap">
-          <div class="precio precio-loader">…</div>
-          <div class="precio-nota">Precio contado · Incluye flete y formularios<br>No incluye sellado, arancel ni gestoría</div>
-        </div>
-        <div class="financiacion">Financiación tasa 0%<br><strong>$24M</strong> en 12c · <strong>$22M</strong> en 18c · <strong>$20M</strong> en 24c</div>
+        <div class="precio-wrap"><div class="precio precio-loader">…</div><div class="precio-nota">Precio contado · Incluye flete y formularios<br>No incluye sellado, arancel ni gestoría</div></div>
+        <div class="financiacion">Tasa 0% · <strong>$24M</strong> en 12c · <strong>$22M</strong> en 18c · <strong>$20M</strong> en 24c</div>
         <a class="btn-quiero" href="#">Quiero este</a>
       </div>
     </div>
@@ -427,11 +216,8 @@
       <div class="tarjeta-body">
         <div class="nombre-auto">Tera Comfort</div>
         <div class="spec-auto">170 TSI AT · SUV Compacto · Automático</div>
-        <div class="precio-wrap">
-          <div class="precio precio-loader">…</div>
-          <div class="precio-nota">Precio contado · Incluye flete y formularios<br>No incluye sellado, arancel ni gestoría</div>
-        </div>
-        <div class="financiacion">Financiación tasa 0%<br><strong>$24M</strong> en 12c · <strong>$22M</strong> en 18c · <strong>$20M</strong> en 24c</div>
+        <div class="precio-wrap"><div class="precio precio-loader">…</div><div class="precio-nota">Precio contado · Incluye flete y formularios<br>No incluye sellado, arancel ni gestoría</div></div>
+        <div class="financiacion">Tasa 0% · <strong>$24M</strong> en 12c · <strong>$22M</strong> en 18c · <strong>$20M</strong> en 24c</div>
         <a class="btn-quiero" href="#">Quiero este</a>
       </div>
     </div>
@@ -441,11 +227,8 @@
       <div class="tarjeta-body">
         <div class="nombre-auto">Tera High</div>
         <div class="spec-auto">170 TSI AT · SUV Compacto · Automático</div>
-        <div class="precio-wrap">
-          <div class="precio precio-loader">…</div>
-          <div class="precio-nota">Precio contado · Incluye flete y formularios<br>No incluye sellado, arancel ni gestoría</div>
-        </div>
-        <div class="financiacion">Financiación tasa 0%<br><strong>$24M</strong> en 12c · <strong>$22M</strong> en 18c · <strong>$20M</strong> en 24c</div>
+        <div class="precio-wrap"><div class="precio precio-loader">…</div><div class="precio-nota">Precio contado · Incluye flete y formularios<br>No incluye sellado, arancel ni gestoría</div></div>
+        <div class="financiacion">Tasa 0% · <strong>$24M</strong> en 12c · <strong>$22M</strong> en 18c · <strong>$20M</strong> en 24c</div>
         <a class="btn-quiero" href="#">Quiero este</a>
       </div>
     </div>
@@ -455,11 +238,8 @@
       <div class="tarjeta-body">
         <div class="nombre-auto">Tera Outfit</div>
         <div class="spec-auto">170 TSI AT · SUV Compacto · Automático</div>
-        <div class="precio-wrap">
-          <div class="precio precio-loader">…</div>
-          <div class="precio-nota">Precio contado · Incluye flete y formularios<br>No incluye sellado, arancel ni gestoría</div>
-        </div>
-        <div class="financiacion">Financiación tasa 0%<br><strong>$24M</strong> en 12c · <strong>$22M</strong> en 18c · <strong>$20M</strong> en 24c</div>
+        <div class="precio-wrap"><div class="precio precio-loader">…</div><div class="precio-nota">Precio contado · Incluye flete y formularios<br>No incluye sellado, arancel ni gestoría</div></div>
+        <div class="financiacion">Tasa 0% · <strong>$24M</strong> en 12c · <strong>$22M</strong> en 18c · <strong>$20M</strong> en 24c</div>
         <a class="btn-quiero" href="#">Quiero este</a>
       </div>
     </div>
@@ -467,7 +247,7 @@
   </div>
 </section>
 
-<!-- ── VIRTUS ── -->
+<!-- VIRTUS -->
 <section class="seccion">
   <div class="seccion-titulo">Virtus <span class="badge-tasa">Tasa 0%</span></div>
   <div class="grilla">
@@ -477,11 +257,8 @@
       <div class="tarjeta-body">
         <div class="nombre-auto">Virtus MSI</div>
         <div class="spec-auto">MSI MT · Sedán</div>
-        <div class="precio-wrap">
-          <div class="precio precio-loader">…</div>
-          <div class="precio-nota">Precio contado · Incluye flete y formularios<br>No incluye sellado, arancel ni gestoría</div>
-        </div>
-        <div class="financiacion">Financiación tasa 0%<br><strong>$15.000.000</strong> en 18 cuotas</div>
+        <div class="precio-wrap"><div class="precio precio-loader">…</div><div class="precio-nota">Precio contado · Incluye flete y formularios<br>No incluye sellado, arancel ni gestoría</div></div>
+        <div class="financiacion">Tasa 0% · <strong>$15.000.000</strong> en 18 cuotas</div>
         <a class="btn-quiero" href="#">Quiero este</a>
       </div>
     </div>
@@ -491,25 +268,19 @@
       <div class="tarjeta-body">
         <div class="nombre-auto">Virtus Trendline</div>
         <div class="spec-auto">170 TSI AT · Sedán · Automático</div>
-        <div class="precio-wrap">
-          <div class="precio precio-loader">…</div>
-          <div class="precio-nota">Precio contado · Incluye flete y formularios<br>No incluye sellado, arancel ni gestoría</div>
-        </div>
-        <div class="financiacion">Financiación tasa 0%<br><strong>$15.000.000</strong> en 18 cuotas</div>
+        <div class="precio-wrap"><div class="precio precio-loader">…</div><div class="precio-nota">Precio contado · Incluye flete y formularios<br>No incluye sellado, arancel ni gestoría</div></div>
+        <div class="financiacion">Tasa 0% · <strong>$15.000.000</strong> en 18 cuotas</div>
         <a class="btn-quiero" href="#">Quiero este</a>
       </div>
     </div>
 
     <div class="tarjeta" data-modelo="VW Nuevo Virtus Comfortline MSI MT MY26" data-precio-base="$45.354.045">
-      <img src="imagenes/virtus comfortline.webp" alt="Virtus Comfortline">
+      <img src="imagenes/virtus trendline.webp" alt="Virtus Comfortline">
       <div class="tarjeta-body">
         <div class="nombre-auto">Virtus Comfortline</div>
         <div class="spec-auto">MSI MT · Sedán</div>
-        <div class="precio-wrap">
-          <div class="precio precio-loader">…</div>
-          <div class="precio-nota">Precio contado · Incluye flete y formularios<br>No incluye sellado, arancel ni gestoría</div>
-        </div>
-        <div class="financiacion">Financiación tasa 0%<br><strong>$15.000.000</strong> en 18 cuotas</div>
+        <div class="precio-wrap"><div class="precio precio-loader">…</div><div class="precio-nota">Precio contado · Incluye flete y formularios<br>No incluye sellado, arancel ni gestoría</div></div>
+        <div class="financiacion">Tasa 0% · <strong>$15.000.000</strong> en 18 cuotas</div>
         <a class="btn-quiero" href="#">Quiero este</a>
       </div>
     </div>
@@ -519,11 +290,8 @@
       <div class="tarjeta-body">
         <div class="nombre-auto">Virtus Highline</div>
         <div class="spec-auto">170 TSI AT · Sedán · Automático</div>
-        <div class="precio-wrap">
-          <div class="precio precio-loader">…</div>
-          <div class="precio-nota">Precio contado · Incluye flete y formularios<br>No incluye sellado, arancel ni gestoría</div>
-        </div>
-        <div class="financiacion">Financiación tasa 0%<br><strong>$15.000.000</strong> en 18 cuotas</div>
+        <div class="precio-wrap"><div class="precio precio-loader">…</div><div class="precio-nota">Precio contado · Incluye flete y formularios<br>No incluye sellado, arancel ni gestoría</div></div>
+        <div class="financiacion">Tasa 0% · <strong>$15.000.000</strong> en 18 cuotas</div>
         <a class="btn-quiero" href="#">Quiero este</a>
       </div>
     </div>
@@ -533,11 +301,8 @@
       <div class="tarjeta-body">
         <div class="nombre-auto">Virtus Exclusive</div>
         <div class="spec-auto">250 TSI AT · Sedán · Automático</div>
-        <div class="precio-wrap">
-          <div class="precio precio-loader">…</div>
-          <div class="precio-nota">Precio contado · Incluye flete y formularios<br>No incluye sellado, arancel ni gestoría</div>
-        </div>
-        <div class="financiacion">Financiación tasa 0%<br><strong>$15.000.000</strong> en 18 cuotas</div>
+        <div class="precio-wrap"><div class="precio precio-loader">…</div><div class="precio-nota">Precio contado · Incluye flete y formularios<br>No incluye sellado, arancel ni gestoría</div></div>
+        <div class="financiacion">Tasa 0% · <strong>$15.000.000</strong> en 18 cuotas</div>
         <a class="btn-quiero" href="#">Quiero este</a>
       </div>
     </div>
@@ -545,35 +310,29 @@
   </div>
 </section>
 
-<!-- ── NIVUS ── -->
+<!-- NIVUS -->
 <section class="seccion">
   <div class="seccion-titulo">Nivus <span class="badge-tasa">Tasa 0%</span></div>
   <div class="grilla">
 
     <div class="tarjeta" data-modelo="VW Nivus Trendline 170TSI MT G1" data-precio-base="$33.775.950">
-      <img src="imagenes/nivus trendline mt.webp" alt="Nivus Trendline MT">
+      <img src="imagenes/nivus trendline.webp" alt="Nivus Trendline MT">
       <div class="tarjeta-body">
         <div class="nombre-auto">Nivus Trendline MT</div>
         <div class="spec-auto">170 TSI MT · SUV Coupé</div>
-        <div class="precio-wrap">
-          <div class="precio precio-loader">…</div>
-          <div class="precio-nota">Precio contado · Incluye flete y formularios<br>No incluye sellado, arancel ni gestoría</div>
-        </div>
-        <div class="financiacion">Financiación tasa 0%<br><strong>$15.000.000</strong> en 18 cuotas</div>
+        <div class="precio-wrap"><div class="precio precio-loader">…</div><div class="precio-nota">Precio contado · Incluye flete y formularios<br>No incluye sellado, arancel ni gestoría</div></div>
+        <div class="financiacion">Tasa 0% · <strong>$15.000.000</strong> en 18 cuotas</div>
         <a class="btn-quiero" href="#">Quiero este</a>
       </div>
     </div>
 
     <div class="tarjeta" data-modelo="VW Nivus Trendline 200 TSI AT G1" data-precio-base="$36.246.890">
-      <img src="imagenes/nivus trendline at.webp" alt="Nivus Trendline AT">
+      <img src="imagenes/nivus trendline.webp" alt="Nivus Trendline AT">
       <div class="tarjeta-body">
         <div class="nombre-auto">Nivus Trendline AT</div>
         <div class="spec-auto">200 TSI AT · SUV Coupé · Automático</div>
-        <div class="precio-wrap">
-          <div class="precio precio-loader">…</div>
-          <div class="precio-nota">Precio contado · Incluye flete y formularios<br>No incluye sellado, arancel ni gestoría</div>
-        </div>
-        <div class="financiacion">Financiación tasa 0%<br><strong>$15.000.000</strong> en 18 cuotas</div>
+        <div class="precio-wrap"><div class="precio precio-loader">…</div><div class="precio-nota">Precio contado · Incluye flete y formularios<br>No incluye sellado, arancel ni gestoría</div></div>
+        <div class="financiacion">Tasa 0% · <strong>$15.000.000</strong> en 18 cuotas</div>
         <a class="btn-quiero" href="#">Quiero este</a>
       </div>
     </div>
@@ -583,11 +342,8 @@
       <div class="tarjeta-body">
         <div class="nombre-auto">Nivus Comfortline</div>
         <div class="spec-auto">200 TSI AT · SUV Coupé · Automático</div>
-        <div class="precio-wrap">
-          <div class="precio precio-loader">…</div>
-          <div class="precio-nota">Precio contado · Incluye flete y formularios<br>No incluye sellado, arancel ni gestoría</div>
-        </div>
-        <div class="financiacion">Financiación tasa 0%<br><strong>$24M</strong> en 12c · <strong>$22M</strong> en 18c · <strong>$20M</strong> en 24c</div>
+        <div class="precio-wrap"><div class="precio precio-loader">…</div><div class="precio-nota">Precio contado · Incluye flete y formularios<br>No incluye sellado, arancel ni gestoría</div></div>
+        <div class="financiacion">Tasa 0% · <strong>$24M</strong> en 12c · <strong>$22M</strong> en 18c · <strong>$20M</strong> en 24c</div>
         <a class="btn-quiero" href="#">Quiero este</a>
       </div>
     </div>
@@ -597,11 +353,8 @@
       <div class="tarjeta-body">
         <div class="nombre-auto">Nivus Highline</div>
         <div class="spec-auto">200 TSI AT · SUV Coupé · Automático</div>
-        <div class="precio-wrap">
-          <div class="precio precio-loader">…</div>
-          <div class="precio-nota">Precio contado · Incluye flete y formularios<br>No incluye sellado, arancel ni gestoría</div>
-        </div>
-        <div class="financiacion">Financiación tasa 0%<br><strong>$24M</strong> en 12c · <strong>$22M</strong> en 18c · <strong>$20M</strong> en 24c</div>
+        <div class="precio-wrap"><div class="precio precio-loader">…</div><div class="precio-nota">Precio contado · Incluye flete y formularios<br>No incluye sellado, arancel ni gestoría</div></div>
+        <div class="financiacion">Tasa 0% · <strong>$24M</strong> en 12c · <strong>$22M</strong> en 18c · <strong>$20M</strong> en 24c</div>
         <a class="btn-quiero" href="#">Quiero este</a>
       </div>
     </div>
@@ -611,11 +364,8 @@
       <div class="tarjeta-body">
         <div class="nombre-auto">Nivus Outfit</div>
         <div class="spec-auto">200 TSI AT · SUV Coupé · Automático</div>
-        <div class="precio-wrap">
-          <div class="precio precio-loader">…</div>
-          <div class="precio-nota">Precio contado · Incluye flete y formularios<br>No incluye sellado, arancel ni gestoría</div>
-        </div>
-        <div class="financiacion">Financiación tasa 0%<br><strong>$24M</strong> en 12c · <strong>$22M</strong> en 18c · <strong>$20M</strong> en 24c</div>
+        <div class="precio-wrap"><div class="precio precio-loader">…</div><div class="precio-nota">Precio contado · Incluye flete y formularios<br>No incluye sellado, arancel ni gestoría</div></div>
+        <div class="financiacion">Tasa 0% · <strong>$24M</strong> en 12c · <strong>$22M</strong> en 18c · <strong>$20M</strong> en 24c</div>
         <a class="btn-quiero" href="#">Quiero este</a>
       </div>
     </div>
@@ -623,77 +373,62 @@
   </div>
 </section>
 
-<!-- ── T-CROSS ── -->
+<!-- T-CROSS -->
 <section class="seccion">
   <div class="seccion-titulo">T-Cross <span class="badge-tasa">Tasa 0%</span></div>
   <div class="grilla">
 
     <div class="tarjeta" data-modelo="VW T-Cross Trendline 170TSI MT G1 MY26" data-precio-base="$36.138.920">
-      <img src="imagenes/tcross trendline mt.webp" alt="T-Cross Trendline MT">
+      <img src="imagenes/t-cross trendline mt.webp" alt="T-Cross Trendline MT">
       <div class="tarjeta-body">
         <div class="nombre-auto">T-Cross Trendline MT</div>
         <div class="spec-auto">170 TSI MT · SUV Compacto</div>
-        <div class="precio-wrap">
-          <div class="precio precio-loader">…</div>
-          <div class="precio-nota">Precio contado · Incluye flete y formularios<br>No incluye sellado, arancel ni gestoría</div>
-        </div>
-        <div class="financiacion">Financiación tasa 0%<br><strong>$15.000.000</strong> en 18 cuotas</div>
+        <div class="precio-wrap"><div class="precio precio-loader">…</div><div class="precio-nota">Precio contado · Incluye flete y formularios<br>No incluye sellado, arancel ni gestoría</div></div>
+        <div class="financiacion">Tasa 0% · <strong>$15.000.000</strong> en 18 cuotas</div>
         <a class="btn-quiero" href="#">Quiero este</a>
       </div>
     </div>
 
     <div class="tarjeta" data-modelo="VW T-Cross Trendline 200TSI AT G1 MY26" data-precio-base="$38.208.996">
-      <img src="imagenes/tcross trendline at.webp" alt="T-Cross Trendline AT">
+      <img src="imagenes/t-cross trendline at.webp" alt="T-Cross Trendline AT">
       <div class="tarjeta-body">
         <div class="nombre-auto">T-Cross Trendline AT</div>
         <div class="spec-auto">200 TSI AT · SUV Compacto · Automático</div>
-        <div class="precio-wrap">
-          <div class="precio precio-loader">…</div>
-          <div class="precio-nota">Precio contado · Incluye flete y formularios<br>No incluye sellado, arancel ni gestoría</div>
-        </div>
-        <div class="financiacion">Financiación tasa 0%<br><strong>$15.000.000</strong> en 18 cuotas</div>
+        <div class="precio-wrap"><div class="precio precio-loader">…</div><div class="precio-nota">Precio contado · Incluye flete y formularios<br>No incluye sellado, arancel ni gestoría</div></div>
+        <div class="financiacion">Tasa 0% · <strong>$15.000.000</strong> en 18 cuotas</div>
         <a class="btn-quiero" href="#">Quiero este</a>
       </div>
     </div>
 
     <div class="tarjeta" data-modelo="VW T-Cross Comfortline 200TSI AT G1 MY26" data-precio-base="$40.370.412">
-      <img src="imagenes/tcross comfortline.webp" alt="T-Cross Comfortline">
+      <img src="imagenes/t-cross comfortline.webp" alt="T-Cross Comfortline">
       <div class="tarjeta-body">
         <div class="nombre-auto">T-Cross Comfortline</div>
         <div class="spec-auto">200 TSI AT · SUV Compacto · Automático</div>
-        <div class="precio-wrap">
-          <div class="precio precio-loader">…</div>
-          <div class="precio-nota">Precio contado · Incluye flete y formularios<br>No incluye sellado, arancel ni gestoría</div>
-        </div>
-        <div class="financiacion">Financiación tasa 0%<br><strong>$24M</strong> en 12c · <strong>$22M</strong> en 18c · <strong>$20M</strong> en 24c</div>
+        <div class="precio-wrap"><div class="precio precio-loader">…</div><div class="precio-nota">Precio contado · Incluye flete y formularios<br>No incluye sellado, arancel ni gestoría</div></div>
+        <div class="financiacion">Tasa 0% · <strong>$24M</strong> en 12c · <strong>$22M</strong> en 18c · <strong>$20M</strong> en 24c</div>
         <a class="btn-quiero" href="#">Quiero este</a>
       </div>
     </div>
 
     <div class="tarjeta" data-modelo="VW T-Cross Highline 200TSI AT G1 MY26" data-precio-base="$44.764.091">
-      <img src="imagenes/tcross highline.webp" alt="T-Cross Highline">
+      <img src="imagenes/t-cross highline.webp" alt="T-Cross Highline">
       <div class="tarjeta-body">
         <div class="nombre-auto">T-Cross Highline</div>
         <div class="spec-auto">200 TSI AT · SUV Compacto · Automático</div>
-        <div class="precio-wrap">
-          <div class="precio precio-loader">…</div>
-          <div class="precio-nota">Precio contado · Incluye flete y formularios<br>No incluye sellado, arancel ni gestoría</div>
-        </div>
-        <div class="financiacion">Financiación tasa 0%<br><strong>$24M</strong> en 12c · <strong>$22M</strong> en 18c · <strong>$20M</strong> en 24c</div>
+        <div class="precio-wrap"><div class="precio precio-loader">…</div><div class="precio-nota">Precio contado · Incluye flete y formularios<br>No incluye sellado, arancel ni gestoría</div></div>
+        <div class="financiacion">Tasa 0% · <strong>$24M</strong> en 12c · <strong>$22M</strong> en 18c · <strong>$20M</strong> en 24c</div>
         <a class="btn-quiero" href="#">Quiero este</a>
       </div>
     </div>
 
     <div class="tarjeta" data-modelo="VW T-Cross Extreme 200TSI AT G1 MY26" data-precio-base="$46.187.942">
-      <img src="imagenes/tcross extreme.webp" alt="T-Cross Extreme">
+      <img src="imagenes/t-cross extreme.webp" alt="T-Cross Extreme">
       <div class="tarjeta-body">
         <div class="nombre-auto">T-Cross Extreme</div>
         <div class="spec-auto">200 TSI AT · SUV Compacto · Automático</div>
-        <div class="precio-wrap">
-          <div class="precio precio-loader">…</div>
-          <div class="precio-nota">Precio contado · Incluye flete y formularios<br>No incluye sellado, arancel ni gestoría</div>
-        </div>
-        <div class="financiacion">Financiación tasa 0%<br><strong>$24M</strong> en 12c · <strong>$22M</strong> en 18c · <strong>$20M</strong> en 24c</div>
+        <div class="precio-wrap"><div class="precio precio-loader">…</div><div class="precio-nota">Precio contado · Incluye flete y formularios<br>No incluye sellado, arancel ni gestoría</div></div>
+        <div class="financiacion">Tasa 0% · <strong>$24M</strong> en 12c · <strong>$22M</strong> en 18c · <strong>$20M</strong> en 24c</div>
         <a class="btn-quiero" href="#">Quiero este</a>
       </div>
     </div>
@@ -701,7 +436,7 @@
   </div>
 </section>
 
-<!-- ── TAOS ── -->
+<!-- TAOS -->
 <section class="seccion">
   <div class="seccion-titulo">Taos <span class="badge-tasa">Tasa 0%</span></div>
   <div class="grilla">
@@ -711,11 +446,8 @@
       <div class="tarjeta-body">
         <div class="nombre-auto">Taos Comfortline</div>
         <div class="spec-auto">250 TSI AT · SUV · Automático</div>
-        <div class="precio-wrap">
-          <div class="precio precio-loader">…</div>
-          <div class="precio-nota">Precio contado · Incluye flete y formularios<br>No incluye sellado, arancel ni gestoría</div>
-        </div>
-        <div class="financiacion">Financiación tasa 0%<br><strong>$15.000.000</strong> en 18 cuotas</div>
+        <div class="precio-wrap"><div class="precio precio-loader">…</div><div class="precio-nota">Precio contado · Incluye flete y formularios<br>No incluye sellado, arancel ni gestoría</div></div>
+        <div class="financiacion">Tasa 0% · <strong>$15.000.000</strong> en 18 cuotas</div>
         <a class="btn-quiero" href="#">Quiero este</a>
       </div>
     </div>
@@ -725,25 +457,19 @@
       <div class="tarjeta-body">
         <div class="nombre-auto">Taos Highline</div>
         <div class="spec-auto">250 TSI AT · SUV · Automático</div>
-        <div class="precio-wrap">
-          <div class="precio precio-loader">…</div>
-          <div class="precio-nota">Precio contado · Incluye flete y formularios<br>No incluye sellado, arancel ni gestoría</div>
-        </div>
-        <div class="financiacion">Financiación tasa 0%<br><strong>$15.000.000</strong> en 18 cuotas</div>
+        <div class="precio-wrap"><div class="precio precio-loader">…</div><div class="precio-nota">Precio contado · Incluye flete y formularios<br>No incluye sellado, arancel ni gestoría</div></div>
+        <div class="financiacion">Tasa 0% · <strong>$15.000.000</strong> en 18 cuotas</div>
         <a class="btn-quiero" href="#">Quiero este</a>
       </div>
     </div>
 
     <div class="tarjeta" data-modelo="VW Taos Highline Bitono 250 TSI AT MY26" data-precio-base="$54.165.320">
-      <img src="imagenes/taos bitono.webp" alt="Taos Highline Bitono">
+      <img src="imagenes/taos highline bitono.webp" alt="Taos Highline Bitono">
       <div class="tarjeta-body">
         <div class="nombre-auto">Taos Highline Bitono</div>
         <div class="spec-auto">250 TSI AT · SUV · Automático · Bitono</div>
-        <div class="precio-wrap">
-          <div class="precio precio-loader">…</div>
-          <div class="precio-nota">Precio contado · Incluye flete y formularios<br>No incluye sellado, arancel ni gestoría</div>
-        </div>
-        <div class="financiacion">Financiación tasa 0%<br><strong>$15.000.000</strong> en 18 cuotas</div>
+        <div class="precio-wrap"><div class="precio precio-loader">…</div><div class="precio-nota">Precio contado · Incluye flete y formularios<br>No incluye sellado, arancel ni gestoría</div></div>
+        <div class="financiacion">Tasa 0% · <strong>$15.000.000</strong> en 18 cuotas</div>
         <a class="btn-quiero" href="#">Quiero este</a>
       </div>
     </div>
@@ -751,81 +477,97 @@
   </div>
 </section>
 
-<!-- ── VENTO ── -->
+<!-- VENTO -->
 <section class="seccion">
   <div class="seccion-titulo">Vento <span class="badge-tasa">Tasa 0%</span></div>
   <div class="grilla">
+
     <div class="tarjeta" data-modelo="VW Vento GLI 350TSI DSG G2 MY26" data-precio-base="$66.158.805">
       <img src="imagenes/vento gli.webp" alt="Vento GLI">
       <div class="tarjeta-body">
         <div class="nombre-auto">Vento GLI</div>
         <div class="spec-auto">350 TSI DSG · Sedán · Automático</div>
-        <div class="precio-wrap">
-          <div class="precio precio-loader">…</div>
-          <div class="precio-nota">Precio contado · Incluye flete y formularios<br>No incluye sellado, arancel ni gestoría</div>
-        </div>
-        <div class="financiacion">Financiación tasa 0%<br><strong>$15.000.000</strong> en 18 cuotas</div>
+        <div class="precio-wrap"><div class="precio precio-loader">…</div><div class="precio-nota">Precio contado · Incluye flete y formularios<br>No incluye sellado, arancel ni gestoría</div></div>
+        <div class="financiacion">Tasa 0% · <strong>$15.000.000</strong> en 18 cuotas</div>
         <a class="btn-quiero" href="#">Quiero este</a>
       </div>
     </div>
+
   </div>
 </section>
 
-<!-- ── TIGUAN ── -->
+<!-- TIGUAN -->
 <section class="seccion">
   <div class="seccion-titulo">Tiguan <span class="badge-tasa">Tasa 0%</span></div>
   <div class="grilla">
+
     <div class="tarjeta" data-modelo="VW Tiguan Life 350 TSI DSG 4X4 MY25" data-precio-base="$76.225.976">
       <img src="imagenes/tiguan rline.webp" alt="Tiguan R-Line">
       <div class="tarjeta-body">
         <div class="nombre-auto">Tiguan R-Line</div>
         <div class="spec-auto">250 TSI DSG · SUV · Automático</div>
-        <div class="precio-wrap">
-          <div class="precio precio-loader">…</div>
-          <div class="precio-nota">Precio contado · Incluye flete y formularios<br>No incluye sellado, arancel ni gestoría</div>
-        </div>
-        <div class="financiacion">Financiación tasa 0%<br><strong>$15.000.000</strong> en 18 cuotas</div>
+        <div class="precio-wrap"><div class="precio precio-loader">…</div><div class="precio-nota">Precio contado · Incluye flete y formularios<br>No incluye sellado, arancel ni gestoría</div></div>
+        <div class="financiacion">Tasa 0% · <strong>$15.000.000</strong> en 18 cuotas</div>
         <a class="btn-quiero" href="#">Quiero este</a>
       </div>
     </div>
+
   </div>
 </section>
 
-<!-- ── SAVEIRO ── -->
+<!-- SAVEIRO -->
 <section class="seccion">
   <div class="seccion-titulo">Saveiro <span class="badge-tasa">Tasa 0%</span></div>
   <div class="grilla">
+
     <div class="tarjeta" data-modelo="VW Saveiro Comfortline CD" data-precio-base="$35.121.510">
-      <img src="imagenes/saveiro comfortline cd.webp" alt="Saveiro Comfortline CD">
+      <img src="imagenes/saveiro comfortline.webp" alt="Saveiro Comfortline CD">
       <div class="tarjeta-body">
         <div class="nombre-auto">Saveiro Comfortline CD</div>
         <div class="spec-auto">MSI MT · Pick-up · Doble Cabina</div>
-        <div class="precio-wrap">
-          <div class="precio precio-loader">…</div>
-          <div class="precio-nota">Precio contado · Incluye flete y formularios<br>No incluye sellado, arancel ni gestoría</div>
-        </div>
-        <div class="financiacion">Financiación tasa 0%<br><strong>$15.000.000</strong> en 18 cuotas</div>
+        <div class="precio-wrap"><div class="precio precio-loader">…</div><div class="precio-nota">Precio contado · Incluye flete y formularios<br>No incluye sellado, arancel ni gestoría</div></div>
+        <div class="financiacion">Tasa 0% · <strong>$15.000.000</strong> en 18 cuotas</div>
         <a class="btn-quiero" href="#">Quiero este</a>
       </div>
     </div>
+
   </div>
 </section>
 
-<!-- ── AMAROK ── -->
+<!-- AMAROK -->
 <section class="seccion">
   <div class="seccion-titulo">Amarok <span class="badge-tasa">Tasa 0%</span></div>
   <div class="grilla">
 
     <div class="tarjeta" data-modelo="VW Amarok Trendline" data-precio-base="$42.620.089">
-      <img src="imagenes/amarok trendline.webp" alt="Amarok Trendline">
+      <img src="imagenes/amarok trendline 4x2.webp" alt="Amarok Trendline">
       <div class="tarjeta-body">
         <div class="nombre-auto">Amarok Trendline</div>
         <div class="spec-auto">TDI MT · Pick-up 4×2</div>
-        <div class="precio-wrap">
-          <div class="precio precio-loader">…</div>
-          <div class="precio-nota">Precio contado · Incluye flete y formularios<br>No incluye sellado, arancel ni gestoría</div>
-        </div>
-        <div class="financiacion">Financiación tasa 0%<br><strong>$15.000.000</strong> en 18 cuotas</div>
+        <div class="precio-wrap"><div class="precio precio-loader">…</div><div class="precio-nota">Precio contado · Incluye flete y formularios<br>No incluye sellado, arancel ni gestoría</div></div>
+        <div class="financiacion">Tasa 0% · <strong>$15.000.000</strong> en 18 cuotas</div>
+        <a class="btn-quiero" href="#">Quiero este</a>
+      </div>
+    </div>
+
+    <div class="tarjeta" data-modelo="VW Amarok Comfortline MT" data-precio-base="$52.323.960">
+      <img src="imagenes/amarok comfortline mt 4x2.webp" alt="Amarok Comfortline MT">
+      <div class="tarjeta-body">
+        <div class="nombre-auto">Amarok Comfortline MT</div>
+        <div class="spec-auto">TDI MT · Pick-up 4×2</div>
+        <div class="precio-wrap"><div class="precio precio-loader">…</div><div class="precio-nota">Precio contado · Incluye flete y formularios<br>No incluye sellado, arancel ni gestoría</div></div>
+        <div class="financiacion">Tasa 0% · <strong>$15.000.000</strong> en 18 cuotas</div>
+        <a class="btn-quiero" href="#">Quiero este</a>
+      </div>
+    </div>
+
+    <div class="tarjeta" data-modelo="VW Amarok Comfortline AT" data-precio-base="$53.081.088">
+      <img src="imagenes/amarok comfortline at 4x2.webp" alt="Amarok Comfortline AT">
+      <div class="tarjeta-body">
+        <div class="nombre-auto">Amarok Comfortline AT</div>
+        <div class="spec-auto">TDI AT · Pick-up 4×2 · Automático</div>
+        <div class="precio-wrap"><div class="precio precio-loader">…</div><div class="precio-nota">Precio contado · Incluye flete y formularios<br>No incluye sellado, arancel ni gestoría</div></div>
+        <div class="financiacion">Tasa 0% · <strong>$15.000.000</strong> en 18 cuotas</div>
         <a class="btn-quiero" href="#">Quiero este</a>
       </div>
     </div>
@@ -835,11 +577,8 @@
       <div class="tarjeta-body">
         <div class="nombre-auto">Amarok Comfortline V6</div>
         <div class="spec-auto">V6 AT 4×4 · Automático</div>
-        <div class="precio-wrap">
-          <div class="precio precio-loader">…</div>
-          <div class="precio-nota">Precio contado · Incluye flete y formularios<br>No incluye sellado, arancel ni gestoría</div>
-        </div>
-        <div class="financiacion">Financiación tasa 0%<br><strong>$15.000.000</strong> en 18 cuotas</div>
+        <div class="precio-wrap"><div class="precio precio-loader">…</div><div class="precio-nota">Precio contado · Incluye flete y formularios<br>No incluye sellado, arancel ni gestoría</div></div>
+        <div class="financiacion">Tasa 0% · <strong>$15.000.000</strong> en 18 cuotas</div>
         <a class="btn-quiero" href="#">Quiero este</a>
       </div>
     </div>
@@ -849,11 +588,8 @@
       <div class="tarjeta-body">
         <div class="nombre-auto">Amarok Highline V6</div>
         <div class="spec-auto">V6 AT 4×4 · Automático</div>
-        <div class="precio-wrap">
-          <div class="precio precio-loader">…</div>
-          <div class="precio-nota">Precio contado · Incluye flete y formularios<br>No incluye sellado, arancel ni gestoría</div>
-        </div>
-        <div class="financiacion">Financiación tasa 0%<br><strong>$15.000.000</strong> en 18 cuotas</div>
+        <div class="precio-wrap"><div class="precio precio-loader">…</div><div class="precio-nota">Precio contado · Incluye flete y formularios<br>No incluye sellado, arancel ni gestoría</div></div>
+        <div class="financiacion">Tasa 0% · <strong>$15.000.000</strong> en 18 cuotas</div>
         <a class="btn-quiero" href="#">Quiero este</a>
       </div>
     </div>
@@ -863,25 +599,19 @@
       <div class="tarjeta-body">
         <div class="nombre-auto">Amarok Extreme V6</div>
         <div class="spec-auto">V6 AT 4×4 · Automático</div>
-        <div class="precio-wrap">
-          <div class="precio precio-loader">…</div>
-          <div class="precio-nota">Precio contado · Incluye flete y formularios<br>No incluye sellado, arancel ni gestoría</div>
-        </div>
-        <div class="financiacion">Financiación tasa 0%<br><strong>$15.000.000</strong> en 18 cuotas</div>
+        <div class="precio-wrap"><div class="precio precio-loader">…</div><div class="precio-nota">Precio contado · Incluye flete y formularios<br>No incluye sellado, arancel ni gestoría</div></div>
+        <div class="financiacion">Tasa 0% · <strong>$15.000.000</strong> en 18 cuotas</div>
         <a class="btn-quiero" href="#">Quiero este</a>
       </div>
     </div>
 
     <div class="tarjeta" data-modelo="VW Amarok Black Style V6" data-precio-base="$76.631.884">
-      <img src="imagenes/amarok black style.webp" alt="Amarok Black Style V6">
+      <img src="imagenes/amarok blackstyle v6.webp" alt="Amarok Black Style V6">
       <div class="tarjeta-body">
         <div class="nombre-auto">Amarok Black Style V6</div>
         <div class="spec-auto">V6 AT 4×4 · Automático · Ed. especial</div>
-        <div class="precio-wrap">
-          <div class="precio precio-loader">…</div>
-          <div class="precio-nota">Precio contado · Incluye flete y formularios<br>No incluye sellado, arancel ni gestoría</div>
-        </div>
-        <div class="financiacion">Financiación tasa 0%<br><strong>$15.000.000</strong> en 18 cuotas</div>
+        <div class="precio-wrap"><div class="precio precio-loader">…</div><div class="precio-nota">Precio contado · Incluye flete y formularios<br>No incluye sellado, arancel ni gestoría</div></div>
+        <div class="financiacion">Tasa 0% · <strong>$15.000.000</strong> en 18 cuotas</div>
         <a class="btn-quiero" href="#">Quiero este</a>
       </div>
     </div>
@@ -889,7 +619,6 @@
   </div>
 </section>
 
-<!-- ── FOOTER ── -->
 <footer>
   <div class="footer-links">
     <a href="https://baratito.com.ar">baratito.com.ar</a>
@@ -903,16 +632,14 @@
   <p class="mes-actual" id="pie-mes"></p>
   <p>No incluyen sellado, arancel ni gestoría. Financiación tasa 0% sujeta a condiciones bancarias vigentes.</p>
   <p>Las imágenes son de referencia. Precios sujetos a actualización sin previo aviso.</p>
-  <p>* Los colores de las imágenes son referenciales. Para conocer el color exacto y disponibilidad, consultá con un asesor.</p>
 </footer>
 
 <script>
-  // Mes dinámico en hero y footer
-  const mesAhora = new Date().toLocaleString('es-AR', { month: 'long', year: 'numeric' });
+  const mes = new Date().toLocaleString('es-AR', { month: 'long', year: 'numeric' });
   const heroMes = document.getElementById('mes-hero');
-  const pieMes  = document.getElementById('pie-mes');
-  if (heroMes) heroMes.textContent = mesAhora;
-  if (pieMes)  pieMes.textContent  = `Precios de contado válidos patentando en ${mesAhora}, hasta agotar stock. Incluyen flete y formularios.`;
+  const pieMes = document.getElementById('pie-mes');
+  if (heroMes) heroMes.textContent = mes;
+  if (pieMes) pieMes.textContent = 'Precios de contado válidos patentando en ' + mes + ', hasta agotar stock. Incluyen flete y formularios.';
 </script>
 
 </body>
