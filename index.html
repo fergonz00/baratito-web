@@ -88,14 +88,14 @@
     }
     body { font-family: 'Barlow', sans-serif; background: var(--gris-claro); color: #111; min-height: 100vh; }
     .hero { background: var(--azul-vw); color: var(--blanco); padding: 16px 24px 28px; text-align: center; }
-    .hero-inner { position: relative; display: flex; align-items: center; justify-content: space-between; max-width: 1100px; margin: 0 auto 16px; min-height: clamp(160px, 20vw, 260px); }
-    .hero-logo-left { flex: 0 0 auto; width: clamp(140px, 16vw, 210px); }
+    .hero-inner { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; max-width: 1100px; margin: 0 auto 16px; gap: 16px; }
+    .hero-logo-left { justify-self: start; width: clamp(120px, 14vw, 190px); }
     .hero-logo-left img { width: 100%; height: auto; display: block; }
-    .hero-logo-center { position: absolute; left: 50%; transform: translateX(-50%); width: clamp(160px, 20vw, 260px); }
+    .hero-logo-center { justify-self: center; width: clamp(150px, 18vw, 240px); }
     .hero-logo-center img { width: 100%; height: auto; display: block; }
-    .hero-logo-right { flex: 0 0 auto; width: clamp(90px, 11vw, 140px); }
+    .hero-logo-right { justify-self: end; width: clamp(80px, 10vw, 130px); }
     .hero-logo-right img { width: 100%; height: auto; display: block; }
-    @media(max-width:650px) { .hero-inner { min-height: 0; margin-bottom: 12px; } .hero-logo-left, .hero-logo-right { display: none; } .hero-logo-center { position: static; transform: none; width: 140px; margin: 0 auto; } }
+    @media(max-width:650px) { .hero-inner { grid-template-columns: 1fr; } .hero-logo-left, .hero-logo-right { display: none; } .hero-logo-center { justify-self: center; width: 140px; } }
     .badge-concesionario { font-size: 11px; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; color: var(--dorado); margin-bottom: 16px; }
     .hero h1 { font-family: 'Barlow Condensed', sans-serif; font-size: clamp(2.2rem, 8vw, 3.6rem); font-weight: 900; line-height: 1; text-transform: uppercase; }
     .hero h1 em { font-style: normal; color: var(--dorado); }
