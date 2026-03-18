@@ -95,7 +95,12 @@
     .hero-logo-center img { width: 100%; height: auto; display: block; }
     .hero-logo-right { justify-self: end; width: clamp(80px, 10vw, 130px); }
     .hero-logo-right img { width: 100%; height: auto; display: block; }
-    @media(max-width:650px) { .hero-inner { grid-template-columns: 1fr; } .hero-logo-left, .hero-logo-right { display: none; } .hero-logo-center { justify-self: center; width: 140px; } }
+    @media(max-width:650px) {
+      .hero { padding: 12px 20px 20px; }
+      .hero-inner { grid-template-columns: 1fr; margin-bottom: 8px; }
+      .hero-logo-left, .hero-logo-right { display: none; }
+      .hero-logo-center { justify-self: center; width: 110px; }
+    }
     .badge-concesionario { font-size: 11px; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; color: var(--dorado); margin-bottom: 16px; }
     .hero h1 { font-family: 'Barlow Condensed', sans-serif; font-size: clamp(2.2rem, 8vw, 3.6rem); font-weight: 900; line-height: 1; text-transform: uppercase; }
     .hero h1 em { font-style: normal; color: var(--dorado); }
