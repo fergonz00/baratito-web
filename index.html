@@ -763,6 +763,11 @@
       <input class="modal-input" id="fc-nombre" type="text" placeholder="Nombre completo *" required>
       <input class="modal-input" id="fc-telefono" type="tel" placeholder="Telefono *" required>
       <input class="modal-input" id="fc-email" type="email" placeholder="Email (opcional)">
+      <div style="display:flex;gap:16px;flex-wrap:wrap;margin:6px 0 12px">
+        <label style="display:flex;align-items:center;gap:6px;font-size:13px;color:#333;cursor:pointer"><input type="checkbox" id="fc-contado"> Contado</label>
+        <label style="display:flex;align-items:center;gap:6px;font-size:13px;color:#333;cursor:pointer"><input type="checkbox" id="fc-financiacion"> Financiación</label>
+        <label style="display:flex;align-items:center;gap:6px;font-size:13px;color:#333;cursor:pointer"><input type="checkbox" id="fc-usado"> Entrega usado</label>
+      </div>
       <button class="modal-btn" id="fc-enviar" onclick="enviarFormulario()">Enviar consulta</button>
       <p class="modal-nota">Al enviar, un vendedor te va a contactar por WhatsApp.</p>
     </div>
@@ -804,6 +809,9 @@
     document.getElementById('fc-nombre').value = '';
     document.getElementById('fc-telefono').value = '';
     document.getElementById('fc-email').value = '';
+    document.getElementById('fc-contado').checked = false;
+    document.getElementById('fc-financiacion').checked = false;
+    document.getElementById('fc-usado').checked = false;
     document.getElementById('fc-enviar').disabled = false;
     document.getElementById('fc-enviar').textContent = 'Enviar consulta';
     document.getElementById('modal-contacto').classList.add('activo');
@@ -823,6 +831,9 @@
     const nombre = document.getElementById('fc-nombre').value.trim();
     const telefono = document.getElementById('fc-telefono').value.trim();
     const email = document.getElementById('fc-email').value.trim();
+    const contado = document.getElementById('fc-contado').checked;
+    const financiacion = document.getElementById('fc-financiacion').checked;
+    const usado = document.getElementById('fc-usado').checked;
     if (!nombre || !telefono) { alert('Nombre y telefono son obligatorios'); return; }
 
     const btn = document.getElementById('fc-enviar');
@@ -833,7 +844,7 @@
       const res = await fetch('https://tito-crm.vercel.app/api/lead-externo', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ nombre, telefono, email, modelo: modeloSeleccionado, precio: precioSeleccionado })
+        body: JSON.stringify({ nombre, telefono, email, modelo: modeloSeleccionado, precio: precioSeleccionado, contado, financiacion, usado })
       });
       const data = await res.json();
 
