@@ -66,14 +66,10 @@
             precioEl.classList.remove('precio-loader');
           }
           const btn = card.querySelector('a.btn-quiero');
-          if (btn) {
+          if (btn && info.precio !== null) {
             const nombre = card.querySelector('.nombre-auto')?.textContent?.trim() || '';
-            const precioTxt = info.precio !== null ? formatPrecio(info.precio) : '';
-            btn.href = '#';
-            btn.onclick = function(ev) {
-              ev.preventDefault();
-              abrirFormulario(nombre, precioTxt);
-            };
+            const msg = '[WEB | BT] Hola! Me interesa el ' + nombre + ' (' + formatPrecio(info.precio) + '). Vi la oferta en baratito.com.ar';
+            btn.href = 'https://wa.me/5491137573604?text=' + encodeURIComponent(msg);
           }
           card.classList.toggle('sin-stock', info.stock.includes('sin stock'));
         });
@@ -147,29 +143,6 @@
     .footer-links { display: flex; justify-content: center; gap: 24px; margin-bottom: 16px; }
     .footer-links a { font-size: 14px; font-weight: 600; }
     .mes-actual { color: rgba(255,255,255,.4); }
-
-    /* Modal contacto */
-    .modal-overlay { display:none; position:fixed; inset:0; background:rgba(0,30,80,.6); z-index:1000; align-items:center; justify-content:center; padding:16px; }
-    .modal-overlay.activo { display:flex; }
-    .modal-box { background:#fff; border-radius:16px; width:100%; max-width:400px; padding:28px 24px; position:relative; box-shadow:0 20px 60px rgba(0,0,0,.3); animation:modalIn .25s ease; }
-    @keyframes modalIn { from{opacity:0;transform:translateY(30px) scale(.97)} to{opacity:1;transform:translateY(0) scale(1)} }
-    .modal-cerrar { position:absolute; top:12px; right:16px; background:none; border:none; font-size:22px; color:#999; cursor:pointer; line-height:1; }
-    .modal-cerrar:hover { color:#333; }
-    .modal-titulo { font-family:'Barlow Condensed',sans-serif; font-size:1.4rem; font-weight:800; color:var(--azul-vw); margin-bottom:2px; }
-    .modal-sub { font-size:13px; color:var(--gris-texto); margin-bottom:16px; }
-    .modal-modelo { font-size:13px; color:var(--azul-mid); font-weight:600; margin-bottom:12px; background:#F0F4FF; padding:8px 12px; border-radius:8px; }
-    .modal-input { width:100%; border:1.5px solid #ddd; border-radius:8px; padding:11px 14px; font-size:14px; font-family:'Barlow',sans-serif; margin-bottom:10px; outline:none; transition:border .15s; }
-    .modal-input:focus { border-color:var(--azul-mid); }
-    .modal-input::placeholder { color:#aaa; }
-    .modal-btn { width:100%; background:var(--azul-vw); color:#fff; border:none; padding:13px; border-radius:8px; font-size:15px; font-weight:700; font-family:'Barlow',sans-serif; cursor:pointer; transition:background .15s; margin-top:4px; }
-    .modal-btn:hover { background:var(--azul-mid); }
-    .modal-btn:disabled { opacity:.5; cursor:not-allowed; }
-    .modal-ok { text-align:center; }
-    .modal-ok h3 { font-family:'Barlow Condensed',sans-serif; font-size:1.3rem; font-weight:800; color:#14532d; margin:8px 0 4px; }
-    .modal-ok p { font-size:13px; color:var(--gris-texto); margin-bottom:14px; }
-    .modal-wa { display:inline-flex; align-items:center; gap:8px; background:#25D366; color:#fff; padding:12px 24px; border-radius:100px; text-decoration:none; font-weight:700; font-size:14px; transition:opacity .15s; }
-    .modal-wa:hover { opacity:.9; }
-    .modal-nota { font-size:11px; color:#999; margin-top:12px; }
   </style>
 </head>
 <body>
@@ -194,7 +167,7 @@
     <span>Tasa 0% en cuotas</span>
     <span>Incluye flete y formularios</span>
   </div>
-  <a class="btn-hero" href="#" onclick="event.preventDefault(); abrirFormulario('', '')">Quiero asesoramiento gratis</a>
+  <a class="btn-hero" href="https://wa.me/5491137573604?text=%5BWEB%20%7C%20BT%5D%20Hola!%20Vi%20las%20ofertas%20en%20baratito.com.ar%20y%20quiero%20asesoramiento">Quiero asesoramiento gratis</a>
 </section>
 
 <!-- POLO -->
@@ -752,121 +725,12 @@
   <p>Las imágenes son de referencia. Precios sujetos a actualización sin previo aviso.</p>
 </footer>
 
-<!-- Modal contacto -->
-<div class="modal-overlay" id="modal-contacto">
-  <div class="modal-box">
-    <button class="modal-cerrar" onclick="cerrarModal()">&times;</button>
-    <div id="modal-form">
-      <div class="modal-titulo">Solicitar contacto</div>
-      <div class="modal-sub">Dejanos tus datos y un asesor te contacta al instante.</div>
-      <div class="modal-modelo" id="modal-modelo-info" style="display:none"></div>
-      <input class="modal-input" id="fc-nombre" type="text" placeholder="Nombre completo *" required>
-      <input class="modal-input" id="fc-telefono" type="tel" placeholder="Telefono *" required>
-      <input class="modal-input" id="fc-email" type="email" placeholder="Email (opcional)">
-      <div style="display:flex;gap:16px;flex-wrap:wrap;margin:6px 0 12px">
-        <label style="display:flex;align-items:center;gap:6px;font-size:13px;color:#333;cursor:pointer"><input type="checkbox" id="fc-contado"> Contado</label>
-        <label style="display:flex;align-items:center;gap:6px;font-size:13px;color:#333;cursor:pointer"><input type="checkbox" id="fc-financiacion"> Financiación</label>
-        <label style="display:flex;align-items:center;gap:6px;font-size:13px;color:#333;cursor:pointer"><input type="checkbox" id="fc-usado"> Entrega usado</label>
-      </div>
-      <button class="modal-btn" id="fc-enviar" onclick="enviarFormulario()">Enviar consulta</button>
-      <p class="modal-nota">Al enviar, un vendedor te va a contactar por WhatsApp.</p>
-    </div>
-    <div id="modal-ok" class="modal-ok" style="display:none">
-      <div style="font-size:48px">✅</div>
-      <h3>Consulta enviada</h3>
-      <p id="modal-ok-texto">Tu asesor te va a contactar en breve.</p>
-      <a class="modal-wa" id="modal-wa-link" href="#" target="_blank">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="12" fill="#fff"/><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z" fill="#25D366"/></svg>
-        Chatear por WhatsApp
-      </a>
-      <p class="modal-nota">Tu asesor ya fue asignado y tiene tus datos.</p>
-    </div>
-  </div>
-</div>
-
 <script>
   const mes = new Date().toLocaleString('es-AR', { month: 'long', year: 'numeric' });
   const heroMes = document.getElementById('mes-hero');
   const pieMes = document.getElementById('pie-mes');
   if (heroMes) heroMes.textContent = mes;
   if (pieMes) pieMes.textContent = 'Precios de contado válidos patentando en ' + mes + ', hasta agotar stock. Incluyen flete y formularios.';
-
-  let modeloSeleccionado = '';
-  let precioSeleccionado = '';
-
-  function abrirFormulario(modelo, precio) {
-    modeloSeleccionado = modelo;
-    precioSeleccionado = precio;
-    const info = document.getElementById('modal-modelo-info');
-    if (modelo) {
-      info.textContent = modelo + (precio ? ' · ' + precio : '');
-      info.style.display = 'block';
-    } else {
-      info.style.display = 'none';
-    }
-    document.getElementById('modal-form').style.display = 'block';
-    document.getElementById('modal-ok').style.display = 'none';
-    document.getElementById('fc-nombre').value = '';
-    document.getElementById('fc-telefono').value = '';
-    document.getElementById('fc-email').value = '';
-    document.getElementById('fc-contado').checked = false;
-    document.getElementById('fc-financiacion').checked = false;
-    document.getElementById('fc-usado').checked = false;
-    document.getElementById('fc-enviar').disabled = false;
-    document.getElementById('fc-enviar').textContent = 'Enviar consulta';
-    document.getElementById('modal-contacto').classList.add('activo');
-    document.body.style.overflow = 'hidden';
-  }
-
-  function cerrarModal() {
-    document.getElementById('modal-contacto').classList.remove('activo');
-    document.body.style.overflow = '';
-  }
-
-  document.getElementById('modal-contacto').addEventListener('click', function(ev) {
-    if (ev.target === this) cerrarModal();
-  });
-
-  async function enviarFormulario() {
-    const nombre = document.getElementById('fc-nombre').value.trim();
-    const telefono = document.getElementById('fc-telefono').value.trim();
-    const email = document.getElementById('fc-email').value.trim();
-    const contado = document.getElementById('fc-contado').checked;
-    const financiacion = document.getElementById('fc-financiacion').checked;
-    const usado = document.getElementById('fc-usado').checked;
-    if (!nombre || !telefono) { alert('Nombre y telefono son obligatorios'); return; }
-
-    const btn = document.getElementById('fc-enviar');
-    btn.disabled = true;
-    btn.textContent = 'Enviando...';
-
-    try {
-      const res = await fetch('https://tito-crm.vercel.app/api/lead-externo', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ nombre, telefono, email, modelo: modeloSeleccionado, precio: precioSeleccionado, contado, financiacion, usado })
-      });
-      const data = await res.json();
-
-      if (data.ok && data.vendedor) {
-        const tel = (data.vendedor.telefono || '').replace(/\D/g, '');
-        const telWa = tel.startsWith('54') ? tel : '54' + (tel.startsWith('9') ? tel : '9' + tel);
-        const msg = '[WEB | BT] Hola ' + data.vendedor.nombre + '! Soy ' + nombre + '. Me interesa' + (modeloSeleccionado ? ' el ' + modeloSeleccionado : ' asesoramiento') + (precioSeleccionado ? ' (' + precioSeleccionado + ')' : '') + '. Vi la oferta en baratito.com.ar';
-        document.getElementById('modal-wa-link').href = 'https://wa.me/' + telWa + '?text=' + encodeURIComponent(msg);
-        document.getElementById('modal-ok-texto').textContent = data.vendedor.nombre + ' ' + data.vendedor.apellido + ' va a ser tu asesor.';
-        document.getElementById('modal-form').style.display = 'none';
-        document.getElementById('modal-ok').style.display = 'block';
-      } else {
-        alert('Error: ' + (data.error || 'Intenta de nuevo'));
-        btn.disabled = false;
-        btn.textContent = 'Enviar consulta';
-      }
-    } catch (err) {
-      alert('Error de conexion. Intenta de nuevo.');
-      btn.disabled = false;
-      btn.textContent = 'Enviar consulta';
-    }
-  }
 </script>
 
 </body>
