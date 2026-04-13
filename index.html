@@ -879,10 +879,20 @@
       <button class="sim-btn" onclick="simPaso2()">Continuar</button>
     </div>
 
-    <!-- STEP 2: Elegir campaña, plazo y monto -->
+    <!-- STEP 2: Elegir campaña, plazo, monto y provincia -->
     <div class="sim-step" id="sim-step-2">
       <div class="sim-titulo">Elegí tu financiación</div>
       <div class="sim-sub" id="sim-precio-ref"></div>
+
+      <label class="sim-label">¿Dónde patentás?</label>
+      <select class="sim-select" id="sim-provincia" onchange="simActualizarProvincia()">
+        <option value="CABA">CABA</option>
+        <option value="PBA">Provincia de Buenos Aires</option>
+        <option value="OTRA">Otra provincia</option>
+      </select>
+      <div class="sim-disclaimer" id="sim-pcia-aviso" style="display:none;margin:-4px 0 10px;color:#b45309;font-size:12px;">
+        ⚠️ Los valores de arancel, sellado y sellado de prenda se calculan como referencia con valores de CABA. Cuando hables con tu asesor, se reajustarán a los valores de tu provincia.
+      </div>
 
       <label class="sim-label">Campaña</label>
       <select class="sim-select" id="sim-campana" onchange="simActualizarPlazos()">
@@ -904,30 +914,66 @@
         </div>
       </div>
 
+      <label class="sim-label">Titulares del crédito</label>
+      <select class="sim-select" id="sim-titulares">
+        <option value="1">1 titular</option>
+        <option value="2">2 titulares</option>
+      </select>
+
       <button class="sim-btn" onclick="simCalcular()">Simular</button>
       <button class="sim-btn-outline" onclick="simVolver(1)">← Volver</button>
     </div>
 
-    <!-- STEP 3: Resultado -->
+    <!-- STEP 3: Resultado con desglose -->
     <div class="sim-step" id="sim-step-3">
       <div class="sim-titulo">Tu simulación</div>
       <div class="sim-sub" id="sim-res-campana"></div>
 
       <div class="sim-resultado-grid">
         <div class="sim-resultado-card">
-          <div class="sim-resultado-titulo">Entrega</div>
+          <div class="sim-resultado-titulo">Entrega (contado)</div>
           <div class="sim-resultado-valor" id="sim-res-entrega"></div>
           <div class="sim-resultado-sub">al retirar el 0km</div>
         </div>
         <div class="sim-resultado-card">
-          <div class="sim-resultado-titulo">Cuota</div>
+          <div class="sim-resultado-titulo">Cuota promedio</div>
           <div class="sim-resultado-valor" id="sim-res-cuota"></div>
           <div class="sim-resultado-sub" id="sim-res-cuotas-cant"></div>
         </div>
       </div>
 
-      <div class="sim-disclaimer">
-        Simulación orientativa sujeta a aprobación crediticia de VW Financial Services. No incluye seguro. Valores calculados sobre precio de oferta vigente. Consultá con tu asesor por condiciones finales.
+      <!-- Desglose -->
+      <div style="margin-top:16px">
+        <div style="font-size:13px;font-weight:700;color:var(--azul-vw);margin-bottom:8px;cursor:pointer" onclick="document.getElementById('sim-desglose').style.display=document.getElementById('sim-desglose').style.display==='none'?'block':'none'">
+          ▸ Ver desglose de gastos
+        </div>
+        <div id="sim-desglose" style="display:none">
+          <table style="width:100%;font-size:13px;border-collapse:collapse">
+            <tr><td style="padding:4px 0;color:var(--gris-texto)">Precio oferta (con F+F)</td><td style="padding:4px 0;text-align:right;font-variant-numeric:tabular-nums" id="sim-d-precio"></td></tr>
+            <tr><td style="padding:4px 0;color:var(--gris-texto)" id="sim-d-arancel-label">Arancel/sellado patente (CABA 4%)</td><td style="padding:4px 0;text-align:right;font-variant-numeric:tabular-nums" id="sim-d-arancel"></td></tr>
+            <tr><td style="padding:4px 0;color:var(--gris-texto)">Gestoría</td><td style="padding:4px 0;text-align:right;font-variant-numeric:tabular-nums" id="sim-d-gestoria"></td></tr>
+            <tr><td style="padding:4px 0;color:var(--gris-texto)" id="sim-d-prenda-label">Inscripción prenda</td><td style="padding:4px 0;text-align:right;font-variant-numeric:tabular-nums" id="sim-d-prenda"></td></tr>
+            <tr><td style="padding:4px 0;color:var(--gris-texto)" id="sim-d-sellado-label">Sellado prenda (CABA 1%)</td><td style="padding:4px 0;text-align:right;font-variant-numeric:tabular-nums" id="sim-d-sellado"></td></tr>
+            <tr><td style="padding:4px 0;color:var(--gris-texto)">Cargo administrativo (quebranto)</td><td style="padding:4px 0;text-align:right;font-variant-numeric:tabular-nums" id="sim-d-quebranto"></td></tr>
+            <tr style="border-top:2px solid #333"><td style="padding:8px 0 4px;font-weight:700;color:#333">Total patentado</td><td style="padding:8px 0 4px;text-align:right;font-weight:700;font-variant-numeric:tabular-nums;color:#333" id="sim-d-total"></td></tr>
+            <tr><td style="padding:4px 0;color:var(--azul-mid);font-weight:600">Monto financiado</td><td style="padding:4px 0;text-align:right;font-weight:600;color:var(--azul-mid);font-variant-numeric:tabular-nums" id="sim-d-financiado"></td></tr>
+            <tr style="border-top:2px solid var(--azul-vw)"><td style="padding:8px 0 4px;font-weight:700;color:var(--azul-vw);font-size:14px">Entrega (contado)</td><td style="padding:8px 0 4px;text-align:right;font-weight:700;font-size:14px;color:var(--azul-vw);font-variant-numeric:tabular-nums" id="sim-d-entrega"></td></tr>
+          </table>
+          <div class="sim-disclaimer" id="sim-d-pcia-nota" style="display:none;color:#b45309;margin-top:8px">
+            ⚠️ El arancel, sellado de patente y sellado de prenda son referenciales (calculados con valores de CABA). Tu asesor los reajustará a los valores de tu provincia.
+          </div>
+        </div>
+      </div>
+
+      <!-- Aclaraciones -->
+      <div class="sim-disclaimer" style="margin-top:14px">
+        <strong>Aclaraciones:</strong><br>
+        • Precio final patentado. No incluye únicamente el alta de patente.<br>
+        • La cuota indicada es <strong>promedio</strong>. La cuota del primer mes es más alta.<br>
+        • ITF (Impuesto a las Transacciones Financieras): 1,2% sobre el monto financiado — a cargo del cliente.<br>
+        • Seguro del vehículo no incluido en la simulación.<br>
+        • Sujeto a aprobación crediticia de VW Financial Services y a disponibilidad de cupo.<br>
+        • Simulación válida por 24 horas.
       </div>
 
       <button class="sim-wa-btn" id="sim-wa-btn" onclick="simContactar()">
@@ -1284,6 +1330,11 @@
     document.getElementById('sim-step-2').classList.add('activo');
   }
 
+  function simActualizarProvincia() {
+    const pcia = document.getElementById('sim-provincia').value;
+    document.getElementById('sim-pcia-aviso').style.display = pcia === 'OTRA' ? 'block' : 'none';
+  }
+
   function simActualizarPlazos() {
     const campNombre = document.getElementById('sim-campana').value;
     const selPlazo = document.getElementById('sim-plazo');
@@ -1326,6 +1377,8 @@
     const campNombre = document.getElementById('sim-campana').value;
     const plazo = parseInt(document.getElementById('sim-plazo').value);
     const monto = parseInt(document.getElementById('sim-monto').value);
+    const pcia = document.getElementById('sim-provincia').value;
+    const titulares = parseInt(document.getElementById('sim-titulares').value);
 
     if (!campNombre) { alert('Seleccioná una campaña'); return; }
     if (!plazo) { alert('Seleccioná un plazo'); return; }
@@ -1334,34 +1387,58 @@
     const datos = window._simCampanas[campNombre].plazos[plazo];
     if (!datos) return;
 
-    // Cálculo simplificado para el cliente
-    // Cuota mensual
-    const cuota = Math.round(monto / 1000 * datos.cp);
+    // Tasas según provincia (OTRA usa CABA como referencia)
+    let tasaArancel, tasaSelladoPrenda, pciaLabel;
+    if (pcia === 'PBA') {
+      tasaArancel = 0.035;
+      tasaSelladoPrenda = 0.012;
+      pciaLabel = 'PBA';
+    } else {
+      tasaArancel = 0.04;
+      tasaSelladoPrenda = 0.01;
+      pciaLabel = 'CABA';
+    }
 
-    // Gastos que se suman (simplificado, asumimos CABA):
-    // Patente: 4% sobre precio de lista (usamos precio oferta como referencia)
-    // Gestoría: $180.000
-    // Inscripción prenda: $150.000 (1 titular)
-    // Sellado prenda CABA: 1% sobre total deuda
-    // Quebranto: % sobre monto × 1.21
-    const patente = Math.round(simPrecio * 0.04);
+    // Cálculos
+    const cuota = Math.round(monto / 1000 * datos.cp);
+    const arancel = Math.round(simPrecio * tasaArancel);
     const gestoria = 180000;
-    const inscPrenda = 150000;
+    const inscPrenda = titulares === 2 ? 200000 : 150000;
     const totalDeuda = cuota * plazo;
-    const selladoPrenda = Math.round(totalDeuda * 0.01);
+    const selladoPrenda = Math.round(totalDeuda * tasaSelladoPrenda);
     const quebranto = Math.round(monto * datos.q * 1.21);
 
-    const totalGastos = simPrecio + patente + gestoria + inscPrenda + selladoPrenda + quebranto;
-    const entrega = totalGastos - monto;
+    const totalPatentado = simPrecio + arancel + gestoria + inscPrenda + selladoPrenda + quebranto;
+    const entrega = totalPatentado - monto;
 
-    // Mostrar resultado
+    // Mostrar resultado principal
     document.getElementById('sim-res-entrega').textContent = formatPrecio(entrega);
     document.getElementById('sim-res-cuota').textContent = formatPrecio(cuota);
     document.getElementById('sim-res-cuotas-cant').textContent = plazo + ' cuotas' + (datos.uva ? ' (UVA)' : '');
     document.getElementById('sim-res-campana').textContent = simModelo + ' · ' + campNombre + ' · ' + plazo + ' cuotas';
 
+    // Llenar desglose
+    document.getElementById('sim-d-precio').textContent = formatPrecio(simPrecio);
+    document.getElementById('sim-d-arancel-label').textContent = 'Arancel/sellado patente (' + pciaLabel + ' ' + (tasaArancel * 100) + '%)';
+    document.getElementById('sim-d-arancel').textContent = formatPrecio(arancel);
+    document.getElementById('sim-d-gestoria').textContent = formatPrecio(gestoria);
+    document.getElementById('sim-d-prenda-label').textContent = 'Inscripción prenda (' + titulares + ' tit.)';
+    document.getElementById('sim-d-prenda').textContent = formatPrecio(inscPrenda);
+    document.getElementById('sim-d-sellado-label').textContent = 'Sellado prenda (' + pciaLabel + ' ' + (tasaSelladoPrenda * 100) + '%)';
+    document.getElementById('sim-d-sellado').textContent = formatPrecio(selladoPrenda);
+    document.getElementById('sim-d-quebranto').textContent = formatPrecio(quebranto);
+    document.getElementById('sim-d-total').textContent = formatPrecio(totalPatentado);
+    document.getElementById('sim-d-financiado').textContent = '- ' + formatPrecio(monto);
+    document.getElementById('sim-d-entrega').textContent = formatPrecio(entrega);
+
+    // Nota provincia referencial
+    document.getElementById('sim-d-pcia-nota').style.display = pcia === 'OTRA' ? 'block' : 'none';
+
+    // Resetear desglose cerrado
+    document.getElementById('sim-desglose').style.display = 'none';
+
     // Guardar para el WA
-    window._simResultado = { campNombre, plazo, monto, cuota, entrega };
+    window._simResultado = { campNombre, plazo, monto, cuota, entrega, pcia };
 
     // Cambiar step
     document.querySelectorAll('.sim-step').forEach(s => s.classList.remove('activo'));
