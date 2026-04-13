@@ -1073,6 +1073,8 @@
   // SIMULADOR DE CRÉDITO PARA CLIENTES
   // =============================================
 
+  const CAMPANAS_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTD40FCkAXCrVNslz1OtxnYm1DRhDulVOHaCxJ81-kiQL17KnfimCOPn3hJDHAvJsF9ROEZdePuRw2E/pub?gid=2146569390&single=true&output=csv';
+
   // Lista FINANCIA_MAS (mismo filtro que simulador interno)
   const FINANCIA_MAS = [
     'VW Tera High 170TS AT',
@@ -1087,71 +1089,72 @@
     'VW Taos Highline Bitono 250 TSI AT MY26'
   ];
 
-  // Campañas para clientes (solo 0km, sin Campaña Única ni Usados)
-  // Formato simplificado: nombre, plazos con cuota_promedio, quebranto, max_financiado
-  const CAMPANAS_AUTOS = {
-    'Financia Más — TNA 0%': {
-      grupo: 'FM',
-      plazos: {
-        12: { cp: 83.33, q: 0.075, max: 30000000 },
-        18: { cp: 55.56, q: 0.11, max: 22000000 },
-        24: { cp: 41.67, q: 0.13, max: 20000000 }
-      }
-    },
-    'UVA Financia Más 36m — TNA 0% + UVA': {
-      grupo: 'FM',
-      plazos: {
-        36: { cp: 27.78, q: 0.11, max: 22500000, uva: true }
-      }
-    },
-    'Especial Autos — TNA 0%': {
-      grupo: 'BASICO',
-      plazos: {
-        12: { cp: 83.33, q: 0.105, max: 25000000 },
-        18: { cp: 55.56, q: 0.12, max: 17000000 }
-      }
-    },
-    'Especial Autos — TNA 9,9%': {
-      grupo: 'BASICO',
-      plazos: {
-        24: { cp: 55.56, q: 0.12, max: 17000000 }
-      }
-    },
-    'UVA Autos 24m — TNA 0% + UVA': {
-      grupo: 'TODOS',
-      plazos: {
-        24: { cp: 41.67, q: 0.11, max: 24000000, uva: true }
-      }
-    }
-  };
+  // Campañas cargadas dinámicamente del Google Sheet
+  let CAMPANAS_CARGADAS = null;
 
-  const CAMPANAS_AMAROK = {
-    'Amarok Financia Más — TNA 0%': {
-      grupo: 'AMAROK',
-      plazos: {
-        12: { cp: 83.33, q: 0.115, max: 40000000 },
-        18: { cp: 55.56, q: 0.12, max: 26000000 }
+  async function cargarCampanas() {
+    try {
+      const res = await fetch(CAMPANAS_CSV_URL);
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      const text = await res.text();
+      const filas = parsearCSV(text);
+
+      // Estructura: { nombreCampana: { grupo, plazos: { plazo: { cp, q, max, uva } } } }
+      const campanas = {};
+
+      for (let i = 1; i < filas.length; i++) {
+        const f = filas[i];
+        if (!f || !f[1] || !f[3]) continue;
+
+        const nombre = (f[1] || '').trim();       // B = nombre campaña
+        const tipo = (f[2] || '').trim();          // C = tipo (0km / usado)
+        const plazo = parseInt(f[3]) || 0;         // D = plazo
+        const cpVal = parseFloat((f[6] || '0').replace(',', '.')) || 0;  // G = cuota promedio
+        const qVal = parseFloat((f[7] || '0').replace(',', '.')) || 0;   // H = quebranto_final_iva (ya en %, ej: 10.5)
+        const maxStr = (f[8] || '0').replace(/[$,\s]/g, '').trim();
+        const maxVal = parseFloat(maxStr) || 0;    // I = máx financiado
+        const esAmarok = (f[9] || '').trim().toUpperCase();  // J = amarok (SI/NO/TODOS)
+        const esUva = (f[10] || '').trim().toUpperCase() === 'SI';  // K = UVA
+        const modelos = (f[12] || '').trim().toUpperCase(); // M = BASICO / FINANCIA_MAS / TODOS / NO
+
+        // Solo 0km para el simulador de clientes
+        if (tipo.toLowerCase() === 'usado') continue;
+        if (!plazo || !cpVal) continue;
+
+        // Determinar grupo usando columna M y J
+        let grupo;
+        if (esAmarok === 'SI') {
+          grupo = 'AMAROK';
+        } else if (modelos === 'FINANCIA_MAS') {
+          grupo = 'FM';
+        } else if (modelos === 'BASICO') {
+          grupo = 'BASICO';
+        } else {
+          grupo = 'TODOS';
+        }
+
+        if (!campanas[nombre]) {
+          campanas[nombre] = { grupo, plazos: {} };
+        }
+
+        campanas[nombre].plazos[plazo] = {
+          cp: cpVal,
+          q: qVal / 100, // Convertir de % (ej: 10.5) a decimal (0.105)
+          max: maxVal,
+          uva: esUva
+        };
       }
-    },
-    'UVA Amarok 36m — TNA 0% + UVA': {
-      grupo: 'AMAROK',
-      plazos: {
-        36: { cp: 27.78, q: 0.115, max: 24000000, uva: true }
-      }
-    },
-    'Amarok — TNA 19,9%': {
-      grupo: 'AMAROK',
-      plazos: {
-        24: { cp: 55.56, q: 0.105, max: 24000000 }
-      }
-    },
-    'UVA Amarok 24m — TNA 0% + UVA': {
-      grupo: 'AMAROK',
-      plazos: {
-        24: { cp: 41.67, q: 0.11, max: 25000000, uva: true }
-      }
+
+      CAMPANAS_CARGADAS = campanas;
+      console.log('Campañas cargadas:', Object.keys(campanas).length, campanas);
+    } catch (err) {
+      console.warn('Error cargando campañas:', err);
+      CAMPANAS_CARGADAS = null;
     }
-  };
+  }
+
+  // Cargar campañas al inicio
+  document.addEventListener('DOMContentLoaded', cargarCampanas);
 
   // Estado del simulador
   let simModelo = '';
@@ -1292,14 +1295,23 @@
 
     simContacto = { nombre, telefono: telLimpio, email };
 
+    // Verificar que las campañas se hayan cargado
+    if (!CAMPANAS_CARGADAS) {
+      alert('Las campañas de financiación aún no se cargaron. Intentá de nuevo en unos segundos.');
+      return;
+    }
+
     // Cargar campañas según modelo
     const esAmarok = simDataModelo.toLowerCase().includes('amarok');
     const esFM = FINANCIA_MAS.includes(simDataModelo);
 
-    const campanasDisponibles = esAmarok ? CAMPANAS_AMAROK : {};
-    if (!esAmarok) {
-      // Filtrar campañas por grupo
-      for (const [nombre, camp] of Object.entries(CAMPANAS_AUTOS)) {
+    const campanasDisponibles = {};
+    for (const [nombre, camp] of Object.entries(CAMPANAS_CARGADAS)) {
+      if (camp.grupo === 'AMAROK' && esAmarok) {
+        campanasDisponibles[nombre] = camp;
+      } else if (camp.grupo === 'AMAROK' && !esAmarok) {
+        continue;
+      } else if (!esAmarok) {
         if (camp.grupo === 'TODOS') {
           campanasDisponibles[nombre] = camp;
         } else if (camp.grupo === 'FM' && esFM) {
