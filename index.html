@@ -904,13 +904,15 @@
         <option value="">Seleccioná un plazo</option>
       </select>
 
-      <label class="sim-label">Monto a financiar</label>
-      <div class="sim-monto-display" id="sim-monto-display">$0</div>
-      <div class="sim-range-wrap">
-        <input type="range" class="sim-range" id="sim-monto" min="1000000" max="30000000" step="500000" value="10000000" oninput="simActualizarMontoDisplay()">
-        <div class="sim-range-labels">
-          <span id="sim-monto-min">$1.000.000</span>
-          <span id="sim-monto-max">$30.000.000</span>
+      <div id="sim-monto-section" style="display:none">
+        <label class="sim-label">Monto a financiar</label>
+        <div class="sim-monto-display" id="sim-monto-display">$0</div>
+        <div class="sim-range-wrap">
+          <input type="range" class="sim-range" id="sim-monto" min="1000000" max="30000000" step="500000" value="10000000" oninput="simActualizarMontoDisplay()">
+          <div class="sim-range-labels">
+            <span id="sim-monto-min">$1.000.000</span>
+            <span id="sim-monto-max">$30.000.000</span>
+          </div>
         </div>
       </div>
 
@@ -931,9 +933,8 @@
 
       <div class="sim-resultado-grid">
         <div class="sim-resultado-card">
-          <div class="sim-resultado-titulo">Entrega (contado)</div>
+          <div class="sim-resultado-titulo">Total contado</div>
           <div class="sim-resultado-valor" id="sim-res-entrega"></div>
-          <div class="sim-resultado-sub">al retirar el 0km</div>
         </div>
         <div class="sim-resultado-card">
           <div class="sim-resultado-titulo">Cuota promedio</div>
@@ -957,7 +958,7 @@
             <tr><td style="padding:4px 0;color:var(--gris-texto)">Cargo administrativo (quebranto)</td><td style="padding:4px 0;text-align:right;font-variant-numeric:tabular-nums" id="sim-d-quebranto"></td></tr>
             <tr style="border-top:2px solid #333"><td style="padding:8px 0 4px;font-weight:700;color:#333">Total patentado</td><td style="padding:8px 0 4px;text-align:right;font-weight:700;font-variant-numeric:tabular-nums;color:#333" id="sim-d-total"></td></tr>
             <tr><td style="padding:4px 0;color:var(--azul-mid);font-weight:600">Monto financiado</td><td style="padding:4px 0;text-align:right;font-weight:600;color:var(--azul-mid);font-variant-numeric:tabular-nums" id="sim-d-financiado"></td></tr>
-            <tr style="border-top:2px solid var(--azul-vw)"><td style="padding:8px 0 4px;font-weight:700;color:var(--azul-vw);font-size:14px">Entrega (contado)</td><td style="padding:8px 0 4px;text-align:right;font-weight:700;font-size:14px;color:var(--azul-vw);font-variant-numeric:tabular-nums" id="sim-d-entrega"></td></tr>
+            <tr style="border-top:2px solid var(--azul-vw)"><td style="padding:8px 0 4px;font-weight:700;color:var(--azul-vw);font-size:14px">Total contado</td><td style="padding:8px 0 4px;text-align:right;font-weight:700;font-size:14px;color:var(--azul-vw);font-variant-numeric:tabular-nums" id="sim-d-entrega"></td></tr>
           </table>
           <div class="sim-disclaimer" id="sim-d-pcia-nota" style="display:none;color:#b45309;margin-top:8px">
             ⚠️ El arancel, sellado de patente y sellado de prenda son referenciales (calculados con valores de CABA). Tu asesor los reajustará a los valores de tu provincia.
@@ -965,15 +966,13 @@
         </div>
       </div>
 
-      <!-- Aclaraciones -->
-      <div class="sim-disclaimer" style="margin-top:14px">
-        <strong>Aclaraciones:</strong><br>
-        • Precio final patentado. No incluye únicamente el alta de patente.<br>
-        • La cuota indicada es <strong>promedio</strong>. La cuota del primer mes es más alta.<br>
-        • ITF (Impuesto a las Transacciones Financieras): 1,2% sobre el monto financiado — a cargo del cliente.<br>
-        • Seguro del vehículo no incluido en la simulación.<br>
-        • Sujeto a aprobación crediticia de VW Financial Services y a disponibilidad de cupo.<br>
-        • Simulación válida por 24 horas.
+      <!-- Aclaraciones profesionales -->
+      <div class="sim-disclaimer" style="margin-top:14px;line-height:1.7">
+        Este presupuesto tiene validez por 24 horas o hasta agotar stock de la unidad elegida.<br>
+        No incluye alta de patente, que se abona el día de retiro de la unidad.<br>
+        La cuota indicada es promedio. La primera cuota incluye un adicional por ITF (Impuesto a las Transacciones Financieras) del 1,2% sobre el monto financiado.<br>
+        Los valores no incluyen seguro automotor.<br>
+        Campaña sujeta a disponibilidad de cupo. Volkswagen Financial Services Argentina.
       </div>
 
       <button class="sim-wa-btn" id="sim-wa-btn" onclick="simContactar()">
@@ -1271,7 +1270,14 @@
     const telRaw = document.getElementById('sim-telefono').value.trim();
     const email = document.getElementById('sim-email').value.trim();
 
-    if (!nombre) { alert('Ingresá tu nombre'); return; }
+    // Validar nombre y apellido (mínimo 2 palabras, cada una 3+ letras)
+    if (!nombre) { alert('Ingresá tu nombre completo'); return; }
+    const partes = nombre.split(/\s+/).filter(p => p.length >= 3);
+    if (partes.length < 2) {
+      alert('Ingresá tu nombre y apellido (mínimo 3 letras cada uno)');
+      return;
+    }
+
     if (!telRaw) { alert('Ingresá tu teléfono'); return; }
 
     const telLimpio = validarTelefono(telRaw);
@@ -1320,10 +1326,9 @@
     // Precio ref
     document.getElementById('sim-precio-ref').textContent = simModelo + ' · ' + formatPrecio(simPrecio);
 
-    // Reset plazo y monto
+    // Reset plazo y monto (oculto hasta elegir plazo)
     document.getElementById('sim-plazo').innerHTML = '<option value="">Seleccioná un plazo</option>';
-    document.getElementById('sim-monto').value = 10000000;
-    document.getElementById('sim-monto-display').textContent = formatPrecio(10000000);
+    document.getElementById('sim-monto-section').style.display = 'none';
 
     // Cambiar step
     document.querySelectorAll('.sim-step').forEach(s => s.classList.remove('activo'));
@@ -1340,6 +1345,9 @@
     const selPlazo = document.getElementById('sim-plazo');
     selPlazo.innerHTML = '<option value="">Seleccioná un plazo</option>';
 
+    // Ocultar monto hasta que elija plazo
+    document.getElementById('sim-monto-section').style.display = 'none';
+
     if (!campNombre || !window._simCampanas[campNombre]) return;
 
     const camp = window._simCampanas[campNombre];
@@ -1355,17 +1363,28 @@
     const campNombre = document.getElementById('sim-campana').value;
     const plazo = document.getElementById('sim-plazo').value;
 
-    if (!campNombre || !plazo || !window._simCampanas[campNombre]) return;
+    if (!campNombre || !plazo || !window._simCampanas[campNombre]) {
+      document.getElementById('sim-monto-section').style.display = 'none';
+      return;
+    }
 
     const datos = window._simCampanas[campNombre].plazos[plazo];
-    if (!datos) return;
+    if (!datos) {
+      document.getElementById('sim-monto-section').style.display = 'none';
+      return;
+    }
 
     const maxFinanciado = datos.max;
     const rangeEl = document.getElementById('sim-monto');
     rangeEl.max = maxFinanciado;
-    if (parseInt(rangeEl.value) > maxFinanciado) rangeEl.value = maxFinanciado;
+    // Setear valor inicial en la mitad del máximo, redondeado a 500K
+    const valorInicial = Math.round(maxFinanciado / 2 / 500000) * 500000;
+    rangeEl.value = Math.max(1000000, valorInicial);
     document.getElementById('sim-monto-max').textContent = formatPrecio(maxFinanciado);
     simActualizarMontoDisplay();
+
+    // Mostrar la sección
+    document.getElementById('sim-monto-section').style.display = 'block';
   }
 
   function simActualizarMontoDisplay() {
