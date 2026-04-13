@@ -1079,19 +1079,8 @@
 
   const CAMPANAS_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTD40FCkAXCrVNslz1OtxnYm1DRhDulVOHaCxJ81-kiQL17KnfimCOPn3hJDHAvJsF9ROEZdePuRw2E/pub?gid=2146569390&single=true&output=csv';
 
-  // Lista FINANCIA_MAS (mismo filtro que simulador interno)
-  const FINANCIA_MAS = [
-    'VW Tera High 170TS AT',
-    'VW Tera Outfit 170TS AT',
-    'VW T-Cross Comfortline 200TSI AT G1 MY26',
-    'VW T-Cross Highline 200TSI AT G1 MY26',
-    'VW T-Cross Extreme 200TSI AT G1 MY26',
-    'VW Nuevo Polo Comfortline 170 TSI AT G1 MY26',
-    'VW Nuevo Polo Highline 170TSI AT MY26',
-    'VW Taos Comfortline 250TSI AT MY26',
-    'VW Taos Highline 250 TSI AT MY26',
-    'VW Taos Highline Bitono 250 TSI AT MY26'
-  ];
+  // Lista FINANCIA_MAS - se carga dinámicamente desde columna N del CSV de campañas
+  let FINANCIA_MAS = [];
 
   // Campañas cargadas dinámicamente del Google Sheet
   let CAMPANAS_CARGADAS = null;
@@ -1103,34 +1092,41 @@
       const text = await res.text();
       const filas = parsearCSV(text);
 
-      // Estructura: { nombreCampana: { grupo, plazos: { plazo: { cp, q, max, uva } } } }
       const campanas = {};
+      const modelosFM = new Set(); // Para armar la lista FINANCIA_MAS sin duplicados
 
       for (let i = 1; i < filas.length; i++) {
         const f = filas[i];
         if (!f || !f[1] || !f[3]) continue;
 
-        const nombre = (f[1] || '').trim();       // B = nombre campaña
-        const tipo = (f[2] || '').trim();          // C = tipo (0km / usado)
-        const plazo = parseInt(f[3]) || 0;         // D = plazo
-        const cpVal = parseFloat((f[6] || '0').replace(',', '.')) || 0;  // G = cuota promedio
-        const qVal = parseFloat((f[7] || '0').replace(',', '.')) || 0;   // H = quebranto_final_iva (ya en %, ej: 10.5)
+        const nombre = (f[1] || '').trim();
+        const tipo = (f[2] || '').trim();
+        const plazo = parseInt(f[3]) || 0;
+        const cpVal = parseFloat((f[6] || '0').replace(',', '.')) || 0;
+        const qVal = parseFloat((f[7] || '0').replace(',', '.')) || 0;
         const maxStr = (f[8] || '0').replace(/[$,\s]/g, '').trim();
-        const maxVal = parseFloat(maxStr) || 0;    // I = máx financiado
-        const esAmarok = (f[9] || '').trim().toUpperCase();  // J = amarok (SI/NO/TODOS)
-        const esUva = (f[10] || '').trim().toUpperCase() === 'SI';  // K = UVA
-        const modelos = (f[12] || '').trim().toUpperCase(); // M = BASICO / FINANCIA_MAS / TODOS / NO
+        const maxVal = parseFloat(maxStr) || 0;
+        const esAmarok = (f[9] || '').trim().toUpperCase();
+        const esUva = (f[10] || '').trim().toUpperCase() === 'SI';
+        const modelos = (f[12] || '').trim().toUpperCase();
+        const modelosAplicables = (f[13] || '').trim(); // Columna N
 
-        // Solo 0km para el simulador de clientes
         if (tipo.toLowerCase() === 'usado') continue;
         if (!plazo || !cpVal) continue;
 
-        // Determinar grupo usando columna M y J
+        // Determinar grupo usando columna M
         let grupo;
         if (esAmarok === 'SI') {
           grupo = 'AMAROK';
         } else if (modelos === 'FINANCIA_MAS') {
           grupo = 'FM';
+          // Leer modelos aplicables de columna N y agregarlos al Set
+          if (modelosAplicables) {
+            modelosAplicables.split('|').forEach(m => {
+              const mt = m.trim();
+              if (mt) modelosFM.add(mt);
+            });
+          }
         } else if (modelos === 'BASICO') {
           grupo = 'BASICO';
         } else {
@@ -1143,14 +1139,16 @@
 
         campanas[nombre].plazos[plazo] = {
           cp: cpVal,
-          q: qVal / 100, // Convertir de % (ej: 10.5) a decimal (0.105)
+          q: qVal / 100,
           max: maxVal,
           uva: esUva
         };
       }
 
       CAMPANAS_CARGADAS = campanas;
+      FINANCIA_MAS = Array.from(modelosFM);
       console.log('Campañas cargadas:', Object.keys(campanas).length, campanas);
+      console.log('Modelos FINANCIA_MAS:', FINANCIA_MAS);
     } catch (err) {
       console.warn('Error cargando campañas:', err);
       CAMPANAS_CARGADAS = null;
