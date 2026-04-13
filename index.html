@@ -77,6 +77,8 @@
           }
           card.classList.toggle('sin-stock', info.stock.includes('sin stock'));
         });
+        // Poblar dropdown del simulador hero con modelos en stock
+        poblarDropdownHero();
       } catch (err) {
         console.warn('Error cargando precios:', err);
         document.querySelectorAll('[data-modelo]').forEach(card => {
@@ -170,6 +172,66 @@
     .modal-wa { display:inline-flex; align-items:center; gap:8px; background:#25D366; color:#fff; padding:12px 24px; border-radius:100px; text-decoration:none; font-weight:700; font-size:14px; transition:opacity .15s; }
     .modal-wa:hover { opacity:.9; }
     .modal-nota { font-size:11px; color:#999; margin-top:12px; }
+
+    /* Botón simular en tarjeta */
+    .btn-simular { display:block; background:transparent; color:var(--azul-vw); text-align:center; font-weight:700; font-size:13px; padding:10px; border-radius:8px; text-decoration:none; margin-top:6px; border:2px solid var(--azul-vw); transition:all .15s; cursor:pointer; font-family:'Barlow',sans-serif; width:100%; }
+    .btn-simular:hover { background:var(--azul-vw); color:#fff; }
+
+    /* Modal simulador */
+    .sim-overlay { display:none; position:fixed; inset:0; background:rgba(0,30,80,.6); z-index:1001; align-items:flex-start; justify-content:center; padding:16px; overflow-y:auto; }
+    .sim-overlay.activo { display:flex; }
+    .sim-box { background:#fff; border-radius:16px; width:100%; max-width:440px; padding:28px 24px; position:relative; box-shadow:0 20px 60px rgba(0,0,0,.3); animation:modalIn .25s ease; margin:auto; }
+    .sim-cerrar { position:absolute; top:12px; right:16px; background:none; border:none; font-size:22px; color:#999; cursor:pointer; line-height:1; }
+    .sim-cerrar:hover { color:#333; }
+    .sim-titulo { font-family:'Barlow Condensed',sans-serif; font-size:1.4rem; font-weight:800; color:var(--azul-vw); margin-bottom:2px; }
+    .sim-sub { font-size:13px; color:var(--gris-texto); margin-bottom:16px; }
+    .sim-modelo-info { font-size:13px; color:var(--azul-mid); font-weight:600; margin-bottom:12px; background:#F0F4FF; padding:8px 12px; border-radius:8px; }
+    .sim-input { width:100%; border:1.5px solid #ddd; border-radius:8px; padding:11px 14px; font-size:14px; font-family:'Barlow',sans-serif; margin-bottom:10px; outline:none; transition:border .15s; }
+    .sim-input:focus { border-color:var(--azul-mid); }
+    .sim-input::placeholder { color:#aaa; }
+    .sim-input.error { border-color:#dc2626; }
+    .sim-error { font-size:11px; color:#dc2626; margin:-6px 0 8px; display:none; }
+    .sim-label { font-size:13px; font-weight:600; color:#333; margin-bottom:6px; display:block; }
+    .sim-select { width:100%; border:1.5px solid #ddd; border-radius:8px; padding:11px 14px; font-size:14px; font-family:'Barlow',sans-serif; margin-bottom:10px; outline:none; background:#fff; cursor:pointer; -webkit-appearance:auto; appearance:auto; }
+    .sim-select:focus { border-color:var(--azul-mid); }
+    .sim-btn { width:100%; background:var(--azul-vw); color:#fff; border:none; padding:13px; border-radius:8px; font-size:15px; font-weight:700; font-family:'Barlow',sans-serif; cursor:pointer; transition:background .15s; margin-top:4px; }
+    .sim-btn:hover { background:var(--azul-mid); }
+    .sim-btn:disabled { opacity:.5; cursor:not-allowed; }
+    .sim-btn-outline { width:100%; background:transparent; color:var(--azul-vw); border:2px solid var(--azul-vw); padding:11px; border-radius:8px; font-size:14px; font-weight:700; font-family:'Barlow',sans-serif; cursor:pointer; transition:all .15s; margin-top:8px; }
+    .sim-btn-outline:hover { background:var(--azul-vw); color:#fff; }
+    .sim-step { display:none; }
+    .sim-step.activo { display:block; }
+    .sim-resultado-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin:16px 0; }
+    .sim-resultado-card { background:#F0F4FF; border-radius:12px; padding:16px; text-align:center; }
+    .sim-resultado-titulo { font-size:11px; color:var(--gris-texto); text-transform:uppercase; letter-spacing:.05em; margin-bottom:4px; }
+    .sim-resultado-valor { font-family:'Barlow Condensed',sans-serif; font-size:1.8rem; font-weight:900; color:var(--azul-vw); line-height:1.1; }
+    .sim-resultado-sub { font-size:12px; color:var(--gris-texto); margin-top:4px; }
+    .sim-divider { height:1px; background:#eee; margin:12px 0; }
+    .sim-disclaimer { font-size:11px; color:#999; line-height:1.5; margin-top:12px; }
+    .sim-wa-btn { display:flex; align-items:center; justify-content:center; gap:8px; background:#25D366; color:#fff; padding:13px 24px; border-radius:100px; text-decoration:none; font-weight:700; font-size:14px; transition:opacity .15s; margin-top:12px; border:none; width:100%; cursor:pointer; font-family:'Barlow',sans-serif; }
+    .sim-wa-btn:hover { opacity:.9; }
+    .sim-range-wrap { margin-bottom:14px; }
+    .sim-range-labels { display:flex; justify-content:space-between; font-size:12px; color:var(--gris-texto); margin-top:4px; }
+    .sim-range { width:100%; accent-color:var(--azul-vw); cursor:pointer; }
+    .sim-monto-display { font-family:'Barlow Condensed',sans-serif; font-size:1.5rem; font-weight:800; color:var(--azul-vw); text-align:center; margin:8px 0; }
+
+    /* Sección simulador arriba */
+    .sim-hero { max-width:1100px; margin:0 auto; padding:32px 16px 8px; }
+    .sim-hero-box { background:#fff; border-radius:var(--radio); border:2px solid var(--azul-vw); padding:24px; display:flex; align-items:center; gap:20px; flex-wrap:wrap; }
+    .sim-hero-left { flex:1; min-width:240px; }
+    .sim-hero-left h2 { font-family:'Barlow Condensed',sans-serif; font-size:clamp(1.3rem,4vw,1.7rem); font-weight:900; color:var(--azul-vw); text-transform:uppercase; margin-bottom:4px; }
+    .sim-hero-left p { font-size:13px; color:var(--gris-texto); }
+    .sim-hero-right { display:flex; gap:10px; align-items:center; flex-wrap:wrap; flex:1; min-width:280px; }
+    .sim-hero-select { flex:1; min-width:200px; border:1.5px solid #ddd; border-radius:8px; padding:12px 14px; font-size:14px; font-family:'Barlow',sans-serif; background:#fff; cursor:pointer; -webkit-appearance:auto; appearance:auto; }
+    .sim-hero-select:focus { border-color:var(--azul-mid); outline:none; }
+    .sim-hero-btn { background:var(--azul-vw); color:#fff; border:none; padding:12px 24px; border-radius:8px; font-size:14px; font-weight:700; font-family:'Barlow',sans-serif; cursor:pointer; transition:background .15s; white-space:nowrap; }
+    .sim-hero-btn:hover { background:var(--azul-mid); }
+    .sim-hero-btn:disabled { opacity:.5; cursor:not-allowed; }
+    @media(max-width:650px) {
+      .sim-hero-box { flex-direction:column; align-items:stretch; gap:14px; }
+      .sim-hero-right { flex-direction:column; }
+      .sim-hero-btn { width:100%; }
+    }
   </style>
 </head>
 <body>
@@ -195,6 +257,22 @@
     <span>Incluye flete y formularios</span>
   </div>
   <a class="btn-hero" href="#" onclick="event.preventDefault(); abrirFormulario('', '')">Quiero asesoramiento gratis</a>
+</section>
+
+<!-- SIMULADOR RÁPIDO -->
+<section class="sim-hero">
+  <div class="sim-hero-box">
+    <div class="sim-hero-left">
+      <h2>Simulá tu crédito</h2>
+      <p>Elegí un modelo y calculá tu cuota al instante. Tasa 0% VWFS.</p>
+    </div>
+    <div class="sim-hero-right">
+      <select class="sim-hero-select" id="sim-hero-modelo">
+        <option value="">Elegí un modelo...</option>
+      </select>
+      <button class="sim-hero-btn" onclick="simDesdeHero()">Simular</button>
+    </div>
+  </div>
 </section>
 
 <!-- POLO -->
@@ -784,6 +862,84 @@
   </div>
 </div>
 
+<!-- Modal simulador de crédito -->
+<div class="sim-overlay" id="sim-overlay">
+  <div class="sim-box">
+    <button class="sim-cerrar" onclick="cerrarSimulador()">&times;</button>
+    <div class="sim-modelo-info" id="sim-modelo-info"></div>
+
+    <!-- STEP 1: Datos de contacto -->
+    <div class="sim-step activo" id="sim-step-1">
+      <div class="sim-titulo">Simulá tu financiación</div>
+      <div class="sim-sub">Dejanos tu contacto para hacer la simulación de tu crédito.</div>
+      <input class="sim-input" id="sim-nombre" type="text" placeholder="Nombre completo *">
+      <input class="sim-input" id="sim-telefono" type="tel" placeholder="Teléfono celular * (ej: 1155667788)" maxlength="15">
+      <div class="sim-error" id="sim-tel-error">Ingresá un celular argentino válido (10 dígitos sin 0 ni 15)</div>
+      <input class="sim-input" id="sim-email" type="email" placeholder="Email (opcional)">
+      <button class="sim-btn" onclick="simPaso2()">Continuar</button>
+    </div>
+
+    <!-- STEP 2: Elegir campaña, plazo y monto -->
+    <div class="sim-step" id="sim-step-2">
+      <div class="sim-titulo">Elegí tu financiación</div>
+      <div class="sim-sub" id="sim-precio-ref"></div>
+
+      <label class="sim-label">Campaña</label>
+      <select class="sim-select" id="sim-campana" onchange="simActualizarPlazos()">
+        <option value="">Seleccioná una campaña</option>
+      </select>
+
+      <label class="sim-label">Plazo</label>
+      <select class="sim-select" id="sim-plazo" onchange="simActualizarMonto()">
+        <option value="">Seleccioná un plazo</option>
+      </select>
+
+      <label class="sim-label">Monto a financiar</label>
+      <div class="sim-monto-display" id="sim-monto-display">$0</div>
+      <div class="sim-range-wrap">
+        <input type="range" class="sim-range" id="sim-monto" min="1000000" max="30000000" step="500000" value="10000000" oninput="simActualizarMontoDisplay()">
+        <div class="sim-range-labels">
+          <span id="sim-monto-min">$1.000.000</span>
+          <span id="sim-monto-max">$30.000.000</span>
+        </div>
+      </div>
+
+      <button class="sim-btn" onclick="simCalcular()">Simular</button>
+      <button class="sim-btn-outline" onclick="simVolver(1)">← Volver</button>
+    </div>
+
+    <!-- STEP 3: Resultado -->
+    <div class="sim-step" id="sim-step-3">
+      <div class="sim-titulo">Tu simulación</div>
+      <div class="sim-sub" id="sim-res-campana"></div>
+
+      <div class="sim-resultado-grid">
+        <div class="sim-resultado-card">
+          <div class="sim-resultado-titulo">Entrega</div>
+          <div class="sim-resultado-valor" id="sim-res-entrega"></div>
+          <div class="sim-resultado-sub">al retirar el 0km</div>
+        </div>
+        <div class="sim-resultado-card">
+          <div class="sim-resultado-titulo">Cuota</div>
+          <div class="sim-resultado-valor" id="sim-res-cuota"></div>
+          <div class="sim-resultado-sub" id="sim-res-cuotas-cant"></div>
+        </div>
+      </div>
+
+      <div class="sim-disclaimer">
+        Simulación orientativa sujeta a aprobación crediticia de VW Financial Services. No incluye seguro. Valores calculados sobre precio de oferta vigente. Consultá con tu asesor por condiciones finales.
+      </div>
+
+      <button class="sim-wa-btn" id="sim-wa-btn" onclick="simContactar()">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="12" fill="#fff"/><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z" fill="#25D366"/></svg>
+        Quiero que me contacten
+      </button>
+
+      <button class="sim-btn-outline" onclick="simVolver(2)">← Simular de nuevo</button>
+    </div>
+  </div>
+</div>
+
 <script>
   const mes = new Date().toLocaleString('es-AR', { month: 'long', year: 'numeric' });
   const heroMes = document.getElementById('mes-hero');
@@ -866,6 +1022,401 @@
       btn.disabled = false;
       btn.textContent = 'Enviar consulta';
     }
+  }
+
+  // =============================================
+  // SIMULADOR DE CRÉDITO PARA CLIENTES
+  // =============================================
+
+  // Lista FINANCIA_MAS (mismo filtro que simulador interno)
+  const FINANCIA_MAS = [
+    'VW Tera High 170TS AT',
+    'VW Tera Outfit 170TS AT',
+    'VW T-Cross Comfortline 200TSI AT G1 MY26',
+    'VW T-Cross Highline 200TSI AT G1 MY26',
+    'VW T-Cross Extreme 200TSI AT G1 MY26',
+    'VW Nuevo Polo Comfortline 170 TSI AT G1 MY26',
+    'VW Nuevo Polo Highline 170TSI AT MY26',
+    'VW Taos Comfortline 250TSI AT MY26',
+    'VW Taos Highline 250 TSI AT MY26',
+    'VW Taos Highline Bitono 250 TSI AT MY26'
+  ];
+
+  // Campañas para clientes (solo 0km, sin Campaña Única ni Usados)
+  // Formato simplificado: nombre, plazos con cuota_promedio, quebranto, max_financiado
+  const CAMPANAS_AUTOS = {
+    'Financia Más — TNA 0%': {
+      grupo: 'FM',
+      plazos: {
+        12: { cp: 83.33, q: 0.075, max: 30000000 },
+        18: { cp: 55.56, q: 0.11, max: 22000000 },
+        24: { cp: 41.67, q: 0.13, max: 20000000 }
+      }
+    },
+    'UVA Financia Más 36m — TNA 0% + UVA': {
+      grupo: 'FM',
+      plazos: {
+        36: { cp: 27.78, q: 0.11, max: 22500000, uva: true }
+      }
+    },
+    'Especial Autos — TNA 0%': {
+      grupo: 'BASICO',
+      plazos: {
+        12: { cp: 83.33, q: 0.105, max: 25000000 },
+        18: { cp: 55.56, q: 0.12, max: 17000000 }
+      }
+    },
+    'Especial Autos — TNA 9,9%': {
+      grupo: 'BASICO',
+      plazos: {
+        24: { cp: 55.56, q: 0.12, max: 17000000 }
+      }
+    },
+    'UVA Autos 24m — TNA 0% + UVA': {
+      grupo: 'TODOS',
+      plazos: {
+        24: { cp: 41.67, q: 0.11, max: 24000000, uva: true }
+      }
+    }
+  };
+
+  const CAMPANAS_AMAROK = {
+    'Amarok Financia Más — TNA 0%': {
+      grupo: 'AMAROK',
+      plazos: {
+        12: { cp: 83.33, q: 0.115, max: 40000000 },
+        18: { cp: 55.56, q: 0.12, max: 26000000 }
+      }
+    },
+    'UVA Amarok 36m — TNA 0% + UVA': {
+      grupo: 'AMAROK',
+      plazos: {
+        36: { cp: 27.78, q: 0.115, max: 24000000, uva: true }
+      }
+    },
+    'Amarok — TNA 19,9%': {
+      grupo: 'AMAROK',
+      plazos: {
+        24: { cp: 55.56, q: 0.105, max: 24000000 }
+      }
+    },
+    'UVA Amarok 24m — TNA 0% + UVA': {
+      grupo: 'AMAROK',
+      plazos: {
+        24: { cp: 41.67, q: 0.11, max: 25000000, uva: true }
+      }
+    }
+  };
+
+  // Estado del simulador
+  let simModelo = '';
+  let simPrecio = 0;
+  let simDataModelo = '';
+  let simContacto = {};
+
+  // Inyectar botón "Simulá tu financiación" en cada tarjeta
+  document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.tarjeta[data-modelo]').forEach(card => {
+      const btnQuiero = card.querySelector('.btn-quiero');
+      if (btnQuiero) {
+        const btnSim = document.createElement('button');
+        btnSim.className = 'btn-simular';
+        btnSim.textContent = 'Simulá tu financiación';
+        btnSim.onclick = function() {
+          const nombre = card.querySelector('.nombre-auto')?.textContent?.trim() || '';
+          const precioEl = card.querySelector('.precio');
+          const precioTxt = precioEl ? precioEl.textContent : '';
+          const precioNum = precioTxt ? parseInt(precioTxt.replace(/[$.\s]/g, '').replace(/,/g, '')) : 0;
+          const dataModelo = card.getAttribute('data-modelo');
+          abrirSimulador(nombre, precioNum, dataModelo, precioTxt);
+        };
+        btnQuiero.insertAdjacentElement('afterend', btnSim);
+      }
+    });
+  });
+
+  // Poblar dropdown del hero con modelos en stock
+  function poblarDropdownHero() {
+    const select = document.getElementById('sim-hero-modelo');
+    if (!select) return;
+    select.innerHTML = '<option value="">Elegí un modelo...</option>';
+    document.querySelectorAll('.tarjeta[data-modelo]:not(.sin-stock)').forEach(card => {
+      const dataModelo = card.getAttribute('data-modelo');
+      const nombre = card.querySelector('.nombre-auto')?.textContent?.trim() || dataModelo;
+      const precioEl = card.querySelector('.precio');
+      const precioTxt = precioEl ? precioEl.textContent : '';
+      const opt = document.createElement('option');
+      opt.value = dataModelo;
+      opt.textContent = nombre + (precioTxt && precioTxt !== '…' ? ' · ' + precioTxt : '');
+      select.appendChild(opt);
+    });
+  }
+
+  // Abrir simulador desde el dropdown del hero
+  function simDesdeHero() {
+    const select = document.getElementById('sim-hero-modelo');
+    const dataModelo = select.value;
+    if (!dataModelo) { alert('Elegí un modelo primero'); return; }
+    const card = document.querySelector('.tarjeta[data-modelo="' + dataModelo + '"]');
+    if (!card) return;
+    const nombre = card.querySelector('.nombre-auto')?.textContent?.trim() || '';
+    const precioEl = card.querySelector('.precio');
+    const precioTxt = precioEl ? precioEl.textContent : '';
+    const precioNum = precioTxt ? parseInt(precioTxt.replace(/[$.\s]/g, '').replace(/,/g, '')) : 0;
+    abrirSimulador(nombre, precioNum, dataModelo, precioTxt);
+  }
+
+  function abrirSimulador(nombre, precio, dataModelo, precioTxt) {
+    simModelo = nombre;
+    simPrecio = precio;
+    simDataModelo = dataModelo;
+
+    document.getElementById('sim-modelo-info').textContent = nombre + (precioTxt ? ' · ' + precioTxt : '');
+
+    // Reset steps
+    document.querySelectorAll('.sim-step').forEach(s => s.classList.remove('activo'));
+    document.getElementById('sim-step-1').classList.add('activo');
+
+    // Reset inputs
+    document.getElementById('sim-nombre').value = '';
+    document.getElementById('sim-telefono').value = '';
+    document.getElementById('sim-email').value = '';
+    document.getElementById('sim-tel-error').style.display = 'none';
+    document.getElementById('sim-telefono').classList.remove('error');
+
+    document.getElementById('sim-overlay').classList.add('activo');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function cerrarSimulador() {
+    document.getElementById('sim-overlay').classList.remove('activo');
+    document.body.style.overflow = '';
+  }
+
+  document.getElementById('sim-overlay').addEventListener('click', function(ev) {
+    if (ev.target === this) cerrarSimulador();
+  });
+
+  // Validar teléfono argentino
+  function validarTelefono(tel) {
+    // Limpio el número
+    let limpio = tel.replace(/[\s\-\(\)\.]/g, '');
+    // Si empieza con +54, sacamos +54
+    if (limpio.startsWith('+54')) limpio = limpio.substring(3);
+    // Si empieza con 54, sacamos 54
+    if (limpio.startsWith('54') && limpio.length > 10) limpio = limpio.substring(2);
+    // Si empieza con 0, sacamos el 0
+    if (limpio.startsWith('0')) limpio = limpio.substring(1);
+    // Si empieza con 15 y tiene 10 dígitos, sacamos 15 y ponemos el código de área correcto
+    // Pero es ambiguo, así que aceptamos 10 dígitos que empiecen con código de área
+    // Si tiene 15 después del código de área, sacamos el 15
+    if (limpio.length === 12 && /^[1-9]\d{1}15\d{8}$/.test(limpio)) {
+      limpio = limpio.substring(0,2) + limpio.substring(4);
+    }
+    if (limpio.length === 13 && /^[1-9]\d{2}15\d{8}$/.test(limpio)) {
+      limpio = limpio.substring(0,3) + limpio.substring(5);
+    }
+    // Debe ser exactamente 10 dígitos, empezar con 1-9
+    return /^[1-9]\d{9}$/.test(limpio) ? limpio : null;
+  }
+
+  function simPaso2() {
+    const nombre = document.getElementById('sim-nombre').value.trim();
+    const telRaw = document.getElementById('sim-telefono').value.trim();
+    const email = document.getElementById('sim-email').value.trim();
+
+    if (!nombre) { alert('Ingresá tu nombre'); return; }
+    if (!telRaw) { alert('Ingresá tu teléfono'); return; }
+
+    const telLimpio = validarTelefono(telRaw);
+    if (!telLimpio) {
+      document.getElementById('sim-tel-error').style.display = 'block';
+      document.getElementById('sim-telefono').classList.add('error');
+      return;
+    }
+
+    document.getElementById('sim-tel-error').style.display = 'none';
+    document.getElementById('sim-telefono').classList.remove('error');
+
+    simContacto = { nombre, telefono: telLimpio, email };
+
+    // Cargar campañas según modelo
+    const esAmarok = simDataModelo.toLowerCase().includes('amarok');
+    const esFM = FINANCIA_MAS.includes(simDataModelo);
+
+    const campanasDisponibles = esAmarok ? CAMPANAS_AMAROK : {};
+    if (!esAmarok) {
+      // Filtrar campañas por grupo
+      for (const [nombre, camp] of Object.entries(CAMPANAS_AUTOS)) {
+        if (camp.grupo === 'TODOS') {
+          campanasDisponibles[nombre] = camp;
+        } else if (camp.grupo === 'FM' && esFM) {
+          campanasDisponibles[nombre] = camp;
+        } else if (camp.grupo === 'BASICO' && !esFM) {
+          campanasDisponibles[nombre] = camp;
+        }
+      }
+    }
+
+    // Poblar select de campañas
+    const selCamp = document.getElementById('sim-campana');
+    selCamp.innerHTML = '<option value="">Seleccioná una campaña</option>';
+    for (const nombre of Object.keys(campanasDisponibles)) {
+      const opt = document.createElement('option');
+      opt.value = nombre;
+      opt.textContent = nombre;
+      selCamp.appendChild(opt);
+    }
+
+    // Guardar campañas disponibles en el DOM para usarlas después
+    window._simCampanas = campanasDisponibles;
+
+    // Precio ref
+    document.getElementById('sim-precio-ref').textContent = simModelo + ' · ' + formatPrecio(simPrecio);
+
+    // Reset plazo y monto
+    document.getElementById('sim-plazo').innerHTML = '<option value="">Seleccioná un plazo</option>';
+    document.getElementById('sim-monto').value = 10000000;
+    document.getElementById('sim-monto-display').textContent = formatPrecio(10000000);
+
+    // Cambiar step
+    document.querySelectorAll('.sim-step').forEach(s => s.classList.remove('activo'));
+    document.getElementById('sim-step-2').classList.add('activo');
+  }
+
+  function simActualizarPlazos() {
+    const campNombre = document.getElementById('sim-campana').value;
+    const selPlazo = document.getElementById('sim-plazo');
+    selPlazo.innerHTML = '<option value="">Seleccioná un plazo</option>';
+
+    if (!campNombre || !window._simCampanas[campNombre]) return;
+
+    const camp = window._simCampanas[campNombre];
+    for (const plazo of Object.keys(camp.plazos).sort((a,b) => a - b)) {
+      const opt = document.createElement('option');
+      opt.value = plazo;
+      opt.textContent = plazo + ' cuotas' + (camp.plazos[plazo].uva ? ' (UVA)' : '');
+      selPlazo.appendChild(opt);
+    }
+  }
+
+  function simActualizarMonto() {
+    const campNombre = document.getElementById('sim-campana').value;
+    const plazo = document.getElementById('sim-plazo').value;
+
+    if (!campNombre || !plazo || !window._simCampanas[campNombre]) return;
+
+    const datos = window._simCampanas[campNombre].plazos[plazo];
+    if (!datos) return;
+
+    const maxFinanciado = datos.max;
+    const rangeEl = document.getElementById('sim-monto');
+    rangeEl.max = maxFinanciado;
+    if (parseInt(rangeEl.value) > maxFinanciado) rangeEl.value = maxFinanciado;
+    document.getElementById('sim-monto-max').textContent = formatPrecio(maxFinanciado);
+    simActualizarMontoDisplay();
+  }
+
+  function simActualizarMontoDisplay() {
+    const val = parseInt(document.getElementById('sim-monto').value);
+    document.getElementById('sim-monto-display').textContent = formatPrecio(val);
+  }
+
+  function simCalcular() {
+    const campNombre = document.getElementById('sim-campana').value;
+    const plazo = parseInt(document.getElementById('sim-plazo').value);
+    const monto = parseInt(document.getElementById('sim-monto').value);
+
+    if (!campNombre) { alert('Seleccioná una campaña'); return; }
+    if (!plazo) { alert('Seleccioná un plazo'); return; }
+    if (!monto || monto < 1000000) { alert('Seleccioná un monto'); return; }
+
+    const datos = window._simCampanas[campNombre].plazos[plazo];
+    if (!datos) return;
+
+    // Cálculo simplificado para el cliente
+    // Cuota mensual
+    const cuota = Math.round(monto / 1000 * datos.cp);
+
+    // Gastos que se suman (simplificado, asumimos CABA):
+    // Patente: 4% sobre precio de lista (usamos precio oferta como referencia)
+    // Gestoría: $180.000
+    // Inscripción prenda: $150.000 (1 titular)
+    // Sellado prenda CABA: 1% sobre total deuda
+    // Quebranto: % sobre monto × 1.21
+    const patente = Math.round(simPrecio * 0.04);
+    const gestoria = 180000;
+    const inscPrenda = 150000;
+    const totalDeuda = cuota * plazo;
+    const selladoPrenda = Math.round(totalDeuda * 0.01);
+    const quebranto = Math.round(monto * datos.q * 1.21);
+
+    const totalGastos = simPrecio + patente + gestoria + inscPrenda + selladoPrenda + quebranto;
+    const entrega = totalGastos - monto;
+
+    // Mostrar resultado
+    document.getElementById('sim-res-entrega').textContent = formatPrecio(entrega);
+    document.getElementById('sim-res-cuota').textContent = formatPrecio(cuota);
+    document.getElementById('sim-res-cuotas-cant').textContent = plazo + ' cuotas' + (datos.uva ? ' (UVA)' : '');
+    document.getElementById('sim-res-campana').textContent = simModelo + ' · ' + campNombre + ' · ' + plazo + ' cuotas';
+
+    // Guardar para el WA
+    window._simResultado = { campNombre, plazo, monto, cuota, entrega };
+
+    // Cambiar step
+    document.querySelectorAll('.sim-step').forEach(s => s.classList.remove('activo'));
+    document.getElementById('sim-step-3').classList.add('activo');
+  }
+
+  function simVolver(paso) {
+    document.querySelectorAll('.sim-step').forEach(s => s.classList.remove('activo'));
+    document.getElementById('sim-step-' + paso).classList.add('activo');
+  }
+
+  async function simContactar() {
+    const btn = document.getElementById('sim-wa-btn');
+    btn.style.opacity = '0.5';
+    btn.style.pointerEvents = 'none';
+
+    try {
+      // Enviar lead al CRM
+      const res = await fetch('https://tito-crm.vercel.app/api/lead-externo', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          nombre: simContacto.nombre,
+          telefono: simContacto.telefono,
+          email: simContacto.email,
+          modelo: simModelo,
+          precio: formatPrecio(simPrecio),
+          contado: false,
+          financiacion: true,
+          usado: false
+        })
+      });
+      const data = await res.json();
+
+      if (data.ok && data.vendedor) {
+        const tel = (data.vendedor.telefono || '').replace(/\D/g, '');
+        const telWa = tel.startsWith('54') ? tel : '54' + (tel.startsWith('9') ? tel : '9' + tel);
+        const r = window._simResultado;
+        const msg = '[WEB | BT] Hola ' + data.vendedor.nombre + '! Soy ' + simContacto.nombre + '. Simulé financiación para el ' + simModelo + ': ' + r.campNombre + ', ' + r.plazo + ' cuotas de ' + formatPrecio(r.cuota) + '. Vi la oferta en baratito.com.ar';
+        window.open('https://wa.me/' + telWa + '?text=' + encodeURIComponent(msg), '_blank');
+      } else {
+        // Fallback: WA genérico
+        const r = window._simResultado;
+        const msg = 'Hola! Soy ' + simContacto.nombre + '. Simulé financiación para el ' + simModelo + ': ' + r.campNombre + ', ' + r.plazo + ' cuotas de ' + formatPrecio(r.cuota) + '. Vi la oferta en baratito.com.ar';
+        window.open('https://wa.me/5491137573604?text=' + encodeURIComponent(msg), '_blank');
+      }
+    } catch (err) {
+      // Fallback: WA genérico
+      const r = window._simResultado;
+      const msg = 'Hola! Soy ' + simContacto.nombre + '. Simulé financiación para el ' + simModelo + ': ' + r.campNombre + ', ' + r.plazo + ' cuotas de ' + formatPrecio(r.cuota) + '. Vi la oferta en baratito.com.ar';
+      window.open('https://wa.me/5491137573604?text=' + encodeURIComponent(msg), '_blank');
+    }
+
+    btn.style.opacity = '1';
+    btn.style.pointerEvents = 'auto';
   }
 </script>
 
