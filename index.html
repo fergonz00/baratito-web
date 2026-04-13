@@ -52,11 +52,15 @@
           const fila = filas[i];
           if (!fila || !fila[0]) continue;
           const modelo = fila[0].trim();
+          const precioListaStr = (fila[1] || '').replace(/[$,]/g, '').trim();
+          const precioLista = precioListaStr ? parseFloat(precioListaStr) : null;
           const precioStr = (fila[2] || '').replace(/[$,]/g, '').trim();
           const precio = precioStr ? parseFloat(precioStr) : null;
           const stock = (fila[3] || '').trim().toLowerCase();
-          if (modelo) precios[modelo] = { precio, stock };
+          if (modelo) precios[modelo] = { precio, precioLista, stock };
         }
+        // Guardar mapa global de precios para el simulador
+        window._preciosData = precios;
         document.querySelectorAll('[data-modelo]').forEach(card => {
           const info = precios[card.getAttribute('data-modelo')];
           if (!info) return;
@@ -1159,8 +1163,12 @@
   // Estado del simulador
   let simModelo = '';
   let simPrecio = 0;
+  let simPrecioLista = 0;
   let simDataModelo = '';
   let simContacto = {};
+  
+  // Mapa global de precios (se llena desde cargarPrecios)
+  window._preciosData = {};
 
   // Inyectar botón "Simulá tu financiación" en cada tarjeta
   document.addEventListener('DOMContentLoaded', function() {
@@ -1218,6 +1226,10 @@
     simModelo = nombre;
     simPrecio = precio;
     simDataModelo = dataModelo;
+    
+    // Obtener precio lista del mapa global
+    const datosModelo = window._preciosData[dataModelo];
+    simPrecioLista = datosModelo && datosModelo.precioLista ? datosModelo.precioLista : precio;
 
     document.getElementById('sim-modelo-info').textContent = nombre + (precioTxt ? ' · ' + precioTxt : '');
 
@@ -1428,9 +1440,9 @@
       pciaLabel = 'CABA';
     }
 
-    // Cálculos
+    // Cálculos — patente sobre PRECIO DE LISTA (no oferta)
     const cuota = Math.round(monto / 1000 * datos.cp);
-    const arancel = Math.round(simPrecio * tasaArancel);
+    const arancel = Math.round(simPrecioLista * tasaArancel);
     const gestoria = 180000;
     const inscPrenda = titulares === 2 ? 200000 : 150000;
     const totalDeuda = cuota * plazo;
@@ -1448,7 +1460,7 @@
 
     // Llenar desglose
     document.getElementById('sim-d-precio').textContent = formatPrecio(simPrecio);
-    document.getElementById('sim-d-arancel-label').textContent = 'Arancel/sellado patente (' + pciaLabel + ' ' + (tasaArancel * 100) + '%)';
+    document.getElementById('sim-d-arancel-label').textContent = 'Arancel/sellado patente (' + pciaLabel + ' ' + (tasaArancel * 100) + '% s/lista)';
     document.getElementById('sim-d-arancel').textContent = formatPrecio(arancel);
     document.getElementById('sim-d-gestoria').textContent = formatPrecio(gestoria);
     document.getElementById('sim-d-prenda-label').textContent = 'Inscripción prenda (' + titulares + ' tit.)';
