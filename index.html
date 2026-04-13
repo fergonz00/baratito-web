@@ -1492,49 +1492,22 @@
   }
 
   async function simContactar() {
-    const btn = document.getElementById('sim-wa-btn');
-    btn.style.opacity = '0.5';
-    btn.style.pointerEvents = 'none';
+    // Cerrar el simulador
+    cerrarSimulador();
 
-    try {
-      // Enviar lead al CRM
-      const res = await fetch('https://tito-crm.vercel.app/api/lead-externo', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          nombre: simContacto.nombre,
-          telefono: simContacto.telefono,
-          email: simContacto.email,
-          modelo: simModelo,
-          precio: formatPrecio(simPrecio),
-          contado: false,
-          financiacion: true,
-          usado: false
-        })
-      });
-      const data = await res.json();
+    // Abrir el modal de contacto existente con datos pre-llenados
+    const precioTxt = formatPrecio(simPrecio);
+    abrirFormulario(simModelo, precioTxt);
 
-      if (data.ok && data.vendedor) {
-        const tel = (data.vendedor.telefono || '').replace(/\D/g, '');
-        const telWa = tel.startsWith('54') ? tel : '54' + (tel.startsWith('9') ? tel : '9' + tel);
-        const r = window._simResultado;
-        const msg = '[WEB | BT] Hola ' + data.vendedor.nombre + '! Soy ' + simContacto.nombre + '. Simulé financiación para el ' + simModelo + ': ' + r.campNombre + ', ' + r.plazo + ' cuotas de ' + formatPrecio(r.cuota) + '. Vi la oferta en baratito.com.ar';
-        window.open('https://wa.me/' + telWa + '?text=' + encodeURIComponent(msg), '_blank');
-      } else {
-        // Fallback: WA genérico
-        const r = window._simResultado;
-        const msg = 'Hola! Soy ' + simContacto.nombre + '. Simulé financiación para el ' + simModelo + ': ' + r.campNombre + ', ' + r.plazo + ' cuotas de ' + formatPrecio(r.cuota) + '. Vi la oferta en baratito.com.ar';
-        window.open('https://wa.me/5491137573604?text=' + encodeURIComponent(msg), '_blank');
-      }
-    } catch (err) {
-      // Fallback: WA genérico
-      const r = window._simResultado;
-      const msg = 'Hola! Soy ' + simContacto.nombre + '. Simulé financiación para el ' + simModelo + ': ' + r.campNombre + ', ' + r.plazo + ' cuotas de ' + formatPrecio(r.cuota) + '. Vi la oferta en baratito.com.ar';
-      window.open('https://wa.me/5491137573604?text=' + encodeURIComponent(msg), '_blank');
-    }
-
-    btn.style.opacity = '1';
-    btn.style.pointerEvents = 'auto';
+    // Pre-llenar con los datos del paso 1 del simulador
+    document.getElementById('fc-nombre').value = simContacto.nombre || '';
+    document.getElementById('fc-telefono').value = simContacto.telefono || '';
+    document.getElementById('fc-email').value = simContacto.email || '';
+    
+    // Tildar financiación
+    document.getElementById('fc-contado').checked = false;
+    document.getElementById('fc-financiacion').checked = true;
+    document.getElementById('fc-usado').checked = false;
   }
 </script>
 
