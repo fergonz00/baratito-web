@@ -1377,9 +1377,7 @@
     const maxFinanciado = datos.max;
     const rangeEl = document.getElementById('sim-monto');
     rangeEl.max = maxFinanciado;
-    // Setear valor inicial en la mitad del máximo, redondeado a 500K
-    const valorInicial = Math.round(maxFinanciado / 2 / 500000) * 500000;
-    rangeEl.value = Math.max(1000000, valorInicial);
+    rangeEl.value = maxFinanciado;
     document.getElementById('sim-monto-max').textContent = formatPrecio(maxFinanciado);
     simActualizarMontoDisplay();
 
