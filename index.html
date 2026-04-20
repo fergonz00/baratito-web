@@ -1155,8 +1155,49 @@
     }
   }
 
+  // Actualizar textos de financiación en las tarjetas según campañas cargadas
+  function actualizarTextosFinanciacion() {
+    if (!CAMPANAS_CARGADAS) return;
+    document.querySelectorAll('.tarjeta[data-modelo]').forEach(card => {
+      const modelo = card.getAttribute('data-modelo');
+      if (!modelo) return;
+      const esAmarok = modelo.toLowerCase().includes('amarok');
+      const esFM = FINANCIA_MAS.includes(modelo);
+      // Buscar la mejor campaña para este modelo (FM, Especial o Amarok FM)
+      let mejorCamp = null;
+      let mejorNombre = '';
+      for (const [nombre, camp] of Object.entries(CAMPANAS_CARGADAS)) {
+        let aplica = false;
+        if (esAmarok && camp.grupo === 'AMAROK' && nombre.toLowerCase().includes('financia')) aplica = true;
+        else if (!esAmarok && camp.grupo === 'FM' && esFM) aplica = true;
+        else if (!esAmarok && camp.grupo === 'BASICO' && !esFM) aplica = true;
+        else if (esAmarok && camp.grupo === 'AMAROK' && !mejorCamp && nombre.toLowerCase().includes('especial')) aplica = true;
+        else if (!esAmarok && camp.grupo === 'BASICO' && !esFM && !mejorCamp) aplica = true;
+        if (aplica && (!mejorCamp || Object.keys(camp.plazos).length > Object.keys(mejorCamp.plazos).length)) {
+          mejorCamp = camp;
+          mejorNombre = nombre;
+        }
+      }
+      const finDiv = card.querySelector('.financiacion');
+      if (!finDiv || !mejorCamp) return;
+      const plazos = Object.keys(mejorCamp.plazos).map(Number).sort((a,b) => a - b);
+      let txt = 'Tasa 0%';
+      plazos.forEach(p => {
+        const maxVal = mejorCamp.plazos[p].max;
+        if (maxVal > 0) {
+          const mStr = maxVal >= 1000000 ? '$' + (maxVal / 1000000).toFixed(maxVal % 1000000 === 0 ? 0 : 1).replace('.0','') + 'M' : '$' + maxVal.toLocaleString('es-AR');
+          txt += ' · <strong>' + mStr + '</strong> en ' + p + 'c';
+        }
+      });
+      finDiv.innerHTML = txt;
+    });
+  }
+
   // Cargar campañas al inicio
-  document.addEventListener('DOMContentLoaded', cargarCampanas);
+  document.addEventListener('DOMContentLoaded', async () => {
+    await cargarCampanas();
+    actualizarTextosFinanciacion();
+  });
 
   // Estado del simulador
   let simModelo = '';
