@@ -957,6 +957,7 @@
             <tr><td style="padding:4px 0;color:var(--gris-texto)">Precio oferta (con F+F)</td><td style="padding:4px 0;text-align:right;font-variant-numeric:tabular-nums" id="sim-d-precio"></td></tr>
             <tr><td style="padding:4px 0;color:var(--gris-texto)" id="sim-d-arancel-label">Arancel/sellado patente (CABA 4%)</td><td style="padding:4px 0;text-align:right;font-variant-numeric:tabular-nums" id="sim-d-arancel"></td></tr>
             <tr><td style="padding:4px 0;color:var(--gris-texto)">Gestoría</td><td style="padding:4px 0;text-align:right;font-variant-numeric:tabular-nums" id="sim-d-gestoria"></td></tr>
+            <tr><td style="padding:4px 0;color:var(--gris-texto)">ARANCEL Personas Físicas</td><td style="padding:4px 0;text-align:right;font-variant-numeric:tabular-nums" id="sim-d-arancel-tg"></td></tr>
             <tr><td style="padding:4px 0;color:var(--gris-texto)" id="sim-d-prenda-label">Inscripción prenda</td><td style="padding:4px 0;text-align:right;font-variant-numeric:tabular-nums" id="sim-d-prenda"></td></tr>
             <tr><td style="padding:4px 0;color:var(--gris-texto)" id="sim-d-sellado-label">Sellado prenda (CABA 1%)</td><td style="padding:4px 0;text-align:right;font-variant-numeric:tabular-nums" id="sim-d-sellado"></td></tr>
             <tr><td style="padding:4px 0;color:var(--gris-texto)">Cargo administrativo (quebranto)</td><td style="padding:4px 0;text-align:right;font-variant-numeric:tabular-nums" id="sim-d-quebranto"></td></tr>
@@ -1205,7 +1206,7 @@
   let simPrecioLista = 0;
   let simDataModelo = '';
   let simContacto = {};
-  
+
   // Mapa global de precios (se llena desde cargarPrecios)
   window._preciosData = {};
 
@@ -1265,7 +1266,7 @@
     simModelo = nombre;
     simPrecio = precio;
     simDataModelo = dataModelo;
-    
+
     // Obtener precio lista del mapa global
     const datosModelo = window._preciosData[dataModelo];
     simPrecioLista = datosModelo && datosModelo.precioLista ? datosModelo.precioLista : precio;
@@ -1483,12 +1484,13 @@
     const cuota = Math.round(monto / 1000 * datos.cp);
     const arancel = Math.round(simPrecioLista * tasaArancel);
     const gestoria = 180000;
+    const arancelTG = 10000; // Persona física fija; patenta el conce
     const inscPrenda = titulares === 2 ? 200000 : 150000;
     const totalDeuda = cuota * plazo;
     const selladoPrenda = Math.round(totalDeuda * tasaSelladoPrenda);
     const quebranto = Math.round(monto * datos.q * 1.21);
 
-    const totalPatentado = simPrecio + arancel + gestoria + inscPrenda + selladoPrenda + quebranto;
+    const totalPatentado = simPrecio + arancel + gestoria + arancelTG + inscPrenda + selladoPrenda + quebranto;
     const entrega = totalPatentado - monto;
 
     // Mostrar resultado principal
@@ -1502,6 +1504,7 @@
     document.getElementById('sim-d-arancel-label').textContent = 'Arancel/sellado patente (' + pciaLabel + ' ' + (tasaArancel * 100) + '% s/lista)';
     document.getElementById('sim-d-arancel').textContent = formatPrecio(arancel);
     document.getElementById('sim-d-gestoria').textContent = formatPrecio(gestoria);
+    document.getElementById('sim-d-arancel-tg').textContent = formatPrecio(arancelTG);
     document.getElementById('sim-d-prenda-label').textContent = 'Inscripción prenda (' + titulares + ' tit.)';
     document.getElementById('sim-d-prenda').textContent = formatPrecio(inscPrenda);
     document.getElementById('sim-d-sellado-label').textContent = 'Sellado prenda (' + pciaLabel + ' ' + (tasaSelladoPrenda * 100) + '%)';
@@ -1542,7 +1545,7 @@
     document.getElementById('fc-nombre').value = simContacto.nombre || '';
     document.getElementById('fc-telefono').value = simContacto.telefono || '';
     document.getElementById('fc-email').value = simContacto.email || '';
-    
+
     // Tildar financiación
     document.getElementById('fc-contado').checked = false;
     document.getElementById('fc-financiacion').checked = true;
