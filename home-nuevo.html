@@ -1288,7 +1288,10 @@ Sábados cerrado</div>
       if (!res.ok) throw new Error('HTTP ' + res.status);
       const text = await res.text();
       const filas = parseCSV(text);
-      const minPorSlug = {};
+      // Solo consideramos el "Desde" sobre versiones EN STOCK. Si todas las
+      // versiones de un modelo están sin stock, el modelo no se muestra
+      // (queda hayStock=false y applyFilters lo filtra).
+      const minEnStockPorSlug = {};
       const stockPorSlug = {};
       for (let i = 1; i < filas.length; i++) {
         const f = filas[i];
@@ -1299,12 +1302,16 @@ Sábados cerrado</div>
         const ofertaStr = (f[2] || '').replace(/[$,]/g, '').trim();
         const oferta = ofertaStr ? parseFloat(ofertaStr) : null;
         if (!oferta || isNaN(oferta)) continue;
-        if (!(slug in minPorSlug) || oferta < minPorSlug[slug]) minPorSlug[slug] = oferta;
         const stock = (f[3] || '').trim().toLowerCase();
-        if (stock.includes('stock disponible')) stockPorSlug[slug] = true;
+        const enStock = stock.includes('stock disponible');
+        if (!enStock) continue;
+        if (!(slug in minEnStockPorSlug) || oferta < minEnStockPorSlug[slug]) {
+          minEnStockPorSlug[slug] = oferta;
+        }
+        stockPorSlug[slug] = true;
       }
       for (const m of MODELS) {
-        if (minPorSlug[m.slug]) m.priceFrom = minPorSlug[m.slug];
+        if (minEnStockPorSlug[m.slug]) m.priceFrom = minEnStockPorSlug[m.slug];
         m.hayStock = stockPorSlug[m.slug] === true;
       }
       renderModels();

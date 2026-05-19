@@ -834,8 +834,8 @@
       const text = await res.text();
       const filas = parseCSV(text);
       const m = state.model;
-      // Para cada fila del Sheet, intento matchear contra una versión y guardo
-      // el menor precio en caso de duplicados.
+      // Para cada fila: matcheo contra una versión, marco si tiene stock y
+      // guardo el menor precio.
       for (let i = 1; i < filas.length; i++) {
         const f = filas[i];
         if (!f || !f[0]) continue;
@@ -845,7 +845,22 @@
         const ofertaStr = (f[2] || '').replace(/[$,]/g, '').trim();
         const oferta = ofertaStr ? parseFloat(ofertaStr) : null;
         if (!oferta || isNaN(oferta)) continue;
+        const stock = (f[3] || '').trim().toLowerCase();
+        const enStock = stock.includes('stock disponible');
+        if (enStock) v.enStock = true;
         if (v.precio == null || oferta < v.precio) v.precio = oferta;
+      }
+      // Filtrar versiones sin stock antes de renderizar.
+      m.versions = m.versions.filter(v => v.enStock === true);
+      // Si después de filtrar no queda ninguna versión, dejar al menos una para no romper.
+      if (m.versions.length === 0) {
+        console.warn('No hay versiones en stock para este modelo');
+      } else {
+        // Si la versión actualmente seleccionada fue filtrada, resetear a la primera.
+        if (!m.versions.find(v => v.id === state.versionId)) {
+          state.versionId = m.versions[0].id;
+          state.galleryIdx = 0;
+        }
       }
       renderMeta();
       renderVariantes();
