@@ -1,11 +1,7 @@
 {
-  "$schema": "https://openapi.vercel.sh/vercel.json",
-  "cleanUrls": true,
-  "trailingSlash": false,
   "rewrites": [
     { "source": "/", "destination": "/home-nuevo.html" },
     { "source": "/financiacion", "destination": "/simulador-nuevo.html" },
-    { "source": "/financiacion/:slug", "destination": "/simulador-nuevo.html?slug=:slug" },
     { "source": "/polo",    "destination": "/modelo-nuevo.html?slug=polo" },
     { "source": "/virtus",  "destination": "/modelo-nuevo.html?slug=virtus" },
     { "source": "/tera",    "destination": "/modelo-nuevo.html?slug=tera" },
@@ -30,9 +26,5 @@
         { "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }
       ]
     }
-  ],
-  "redirects": [
-    { "source": "/modelo-nuevo.html", "destination": "/", "permanent": false },
-    { "source": "/home-nuevo.html", "destination": "/", "permanent": true }
   ]
 }
