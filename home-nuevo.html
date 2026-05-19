@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#001E50">
+
+  <title>Baratito · Ofertas 0km Volkswagen — Tito González Automotores</title>
+  <meta name="description" content="Ofertas de autos Volkswagen 0km en CABA. Polo, Virtus, T-Cross, Taos, Amarok y más con tasa 0% y entrega inmediata. Concesionario oficial.">
+  <meta name="keywords" content="Volkswagen 0km, VW ofertas, autos 0km CABA, Polo precio, T-Cross precio, Virtus precio, Amarok precio, concesionario VW Buenos Aires, Tito González Automotores">
+  <meta name="author" content="Tito González Automotores">
+  <meta property="og:title" content="Baratito · Ofertas 0km Volkswagen | Tito González Automotores">
+  <meta property="og:description" content="Las mejores ofertas Volkswagen en el Concesionario Oficial con más trayectoria del país.">
+  <meta property="og:url" content="https://baratito.com.ar">
+  <meta property="og:type" content="website">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --vw-blue: #001E50;
+      --vw-blue-deep: #00133A;
+      --vw-cyan: #00B0F0;
+      --vw-cyan-soft: #E6F7FE;
+      --vw-green: #25D366;
+      --grey-50: #FAFAFA;
+      --grey-100: #F5F5F5;
+      --grey-200: #EBEBEB;
+      --grey-300: #D8D8D8;
+      --grey-500: #8A8A8A;
+      --grey-700: #4A4A4A;
+      --grey-900: #1A1A1A;
+    }
+
+    html, body {
+      font-family: 'DM Sans', system-ui, -apple-system, sans-serif;
+      color: var(--grey-900);
+      background: var(--grey-100);
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+    body { min-height: 100vh; overflow-x: hidden; }
+
+    .num { font-variant-numeric: tabular-nums; }
+    .mono { font-family: 'JetBrains Mono', monospace; }
+
+    button { font-family: inherit; cursor: pointer; }
+
+    /* ============== HEADER ============== */
+    .header {
+      position: sticky; top: 0; z-index: 30;
+      background: #fff;
+      padding: calc(12px + env(safe-area-inset-top, 0px)) 16px 12px;
+      border-bottom: 1px solid var(--grey-200);
+      display: flex; align-items: center; justify-content: space-between; gap: 10px;
+    }
+    .logo-tito { height: 36px; width: auto; display: block; }
+    .btn-wa-header {
+      width: 40px; height: 40px; border-radius: 999px; border: none;
+      background: var(--vw-green); flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+    }
+
+    /* ============== HERO ============== */
+    .hero { padding: 20px 16px 16px; background: #fff; }
+    .hero h1 {
+      font-size: 38px; font-weight: 700; color: var(--vw-blue);
+      letter-spacing: -1.6px; line-height: 0.95;
+    }
+    .hero p {
+      font-size: 15px; color: var(--grey-700);
+      margin-top: 12px; line-height: 1.4; font-weight: 400;
+    }
+    .cta-cuota {
+      width: 100%; margin-top: 18px; padding: 16px 18px;
+      background: var(--vw-blue); border: none; border-radius: 14px;
+      text-align: left;
+      display: flex; align-items: center; justify-content: space-between; gap: 12px;
+      position: relative; overflow: hidden;
+    }
+    .cta-cuota::after {
+      content: '';
+      position: absolute; right: -40px; top: -40px;
+      width: 160px; height: 160px; border-radius: 50%;
+      background: radial-gradient(circle, rgba(0, 176, 240, 0.13) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .cta-cuota .stack {
+      display: flex; flex-direction: column; min-width: 0; position: relative;
+    }
+    .cta-cuota .titulo {
+      font-size: 24px; font-weight: 700; color: #fff;
+      letter-spacing: -0.9px; line-height: 1; display: block;
+    }
+    .cta-cuota .eyebrow {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px; font-weight: 700; color: var(--vw-cyan);
+      letter-spacing: 1.2px; text-transform: uppercase;
+      margin-top: 6px; display: block;
+    }
+    .cta-cuota svg { color: #fff; flex-shrink: 0; position: relative; }
+
+    /* ============== FILTROS ============== */
+    .filters-wrap { background: #fff; padding-bottom: 14px; }
+    .filter-row {
+      display: flex; gap: 8px; padding: 8px 16px;
+      overflow-x: auto; scrollbar-width: none;
+    }
+    .filter-row::-webkit-scrollbar { display: none; }
+    .filter-chip {
+      flex-shrink: 0; padding: 8px 14px;
+      border-radius: 999px;
+      background: #fff; color: var(--grey-900);
+      border: 1px solid var(--grey-300);
+      font-size: 13.5px; font-weight: 600;
+      white-space: nowrap;
+      transition: all 0.12s;
+    }
+    .filter-chip.muted { padding: 7px 12px; background: var(--grey-100); border: none; color: var(--grey-700); font-size: 12.5px; }
+    .filter-chip.active {
+      background: var(--vw-blue); color: #fff; border: none; font-weight: 700;
+    }
+
+    /* ============== RESULTS COUNT ============== */
+    .results-count {
+      padding: 14px 16px 8px;
+      display: flex; justify-content: space-between; align-items: baseline;
+    }
+    .results-count .total {
+      font-size: 12.5px; color: var(--grey-500); font-weight: 600;
+      text-transform: uppercase; letter-spacing: 0.5px;
+    }
+    .results-count .orden { font-size: 12.5px; color: var(--grey-500); }
+
+    /* ============== MODEL CARDS ============== */
+    .model-grid {
+      padding: 6px 16px 0;
+      display: flex; flex-direction: column; gap: 14px;
+    }
+    .model-card {
+      width: 100%; background: #fff;
+      border: 1px solid var(--grey-200); border-radius: 16px;
+      padding: 0; text-align: left; overflow: hidden;
+      transition: transform 0.12s, box-shadow 0.18s;
+    }
+    .model-card:active { transform: scale(0.99); }
+    .model-card .foto-wrap {
+      position: relative; padding: 14px 14px 0;
+    }
+    .model-card .foto {
+      width: 100%; height: 170px;
+      background: var(--grey-100); border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      overflow: hidden;
+    }
+    .model-card .foto img { width: 100%; height: 100%; object-fit: contain; }
+    .model-card .badge-nuevo {
+      position: absolute; top: 22px; right: 22px;
+      background: var(--vw-cyan); color: #fff;
+      padding: 4px 10px; border-radius: 6px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px; font-weight: 700; letter-spacing: 0.8px;
+    }
+    .model-card .info { padding: 16px 18px 8px; }
+    .model-card .eyebrow-vw {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10.5px; color: var(--grey-500); font-weight: 600;
+      text-transform: uppercase; letter-spacing: 1px;
+    }
+    .model-card .nombre {
+      font-size: 36px; font-weight: 700; color: var(--grey-900);
+      margin: 4px 0 0; letter-spacing: -1.4px; line-height: 0.95;
+    }
+    .model-card .body-tipo { font-size: 13px; color: var(--grey-500); margin-top: 6px; font-weight: 500; }
+    .model-card .precio-wrap { padding: 4px 18px 8px; }
+    .model-card .precio-eyebrow {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10.5px; color: var(--grey-500); font-weight: 600;
+      text-transform: uppercase; letter-spacing: 1px;
+    }
+    .model-card .precio-valor {
+      font-size: 32px; font-weight: 700; color: var(--vw-blue);
+      letter-spacing: -1.2px; line-height: 1; margin-top: 4px;
+    }
+    .model-card .meta-row {
+      padding: 12px 18px; border-top: 1px solid var(--grey-200);
+      display: flex; align-items: center; justify-content: space-between; gap: 10px;
+    }
+    .model-card .versiones { font-size: 12px; color: var(--grey-700); font-weight: 600; }
+    .campaign-badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 4px 10px; border-radius: 999px;
+      font-size: 11px; font-weight: 700;
+    }
+    .campaign-badge .dot { width: 6px; height: 6px; border-radius: 50%; }
+    .model-card .cta-versiones {
+      margin: 0 18px 18px;
+      padding: 13px 16px;
+      background: var(--vw-blue); color: #fff;
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: space-between;
+      font-size: 14.5px; font-weight: 600; letter-spacing: -0.2px;
+    }
+
+    .model-card.sin-stock { opacity: 0.6; }
+    .model-card.sin-stock .foto { filter: grayscale(0.5); }
+
+    .empty-state {
+      padding: 40px 20px; text-align: center; color: var(--grey-500);
+      background: #fff; border-radius: 12px; font-size: 14px;
+      margin: 6px 16px;
+    }
+    .empty-state button { margin-top: 10px; color: var(--vw-blue); background: none; border: none; font-weight: 700; font-size: 14px; }
+
+    /* ============== POR QUÉ ============== */
+    .por-que { padding: 32px 16px 16px; }
+    .por-que h2 {
+      font-size: 20px; font-weight: 800; color: var(--vw-blue);
+      margin: 0 0 16px; letter-spacing: -0.4px;
+    }
+    .por-que-grid { display: flex; flex-direction: column; gap: 10px; }
+    .feature-row {
+      display: flex; gap: 14px; align-items: center;
+      background: #fff; padding: 16px; border-radius: 12px;
+    }
+    .feature-row .icon {
+      width: 44px; height: 44px; border-radius: 10px; flex-shrink: 0;
+      background: var(--vw-cyan-soft);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .feature-row .titulo { font-size: 15px; font-weight: 700; color: var(--vw-blue); letter-spacing: -0.2px; }
+    .feature-row .subtitulo { font-size: 12.5px; color: var(--grey-700); margin-top: 3px; line-height: 1.4; }
+
+    /* ============== FOOTER ============== */
+    .footer {
+      background: var(--vw-blue-deep); color: #fff;
+      padding: 28px 16px 22px; margin-top: 16px;
+    }
+    .footer .logo-tito { height: 36px; }
+    .footer .dominio {
+      margin-top: 4px;
+      font-family: 'JetBrains Mono', monospace; font-size: 10px;
+      color: rgba(255, 255, 255, 0.5); letter-spacing: 1.5px; text-transform: uppercase;
+    }
+    .footer .tagline { font-size: 13px; color: rgba(255, 255, 255, 0.8); margin-top: 18px; line-height: 1.5; font-weight: 500; }
+    .footer .salones { font-size: 13px; color: rgba(255, 255, 255, 0.75); margin-top: 22px; line-height: 1.55; }
+    .footer .salones .heading {
+      font-weight: 600; color: #fff; margin-bottom: 8px; font-size: 12px;
+      letter-spacing: 0.6px; text-transform: uppercase;
+    }
+    .footer .salones .salon { margin-bottom: 10px; }
+    .footer .salones .direccion { color: #fff; font-weight: 400; }
+    .footer .salones .horarios { font-size: 12px; color: rgba(255, 255, 255, 0.6); margin-top: 2px; }
+    .footer .tel { margin-top: 4px; color: #fff; font-weight: 600; }
+    .footer .socials { display: flex; gap: 14px; margin-top: 16px; }
+    .footer .social-dot {
+      width: 36px; height: 36px; border-radius: 999px;
+      background: rgba(255, 255, 255, 0.1); color: #fff;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 11px; font-weight: 700; letter-spacing: 0.5px;
+      text-decoration: none;
+    }
+    .footer .legal { font-size: 10.5px; color: rgba(255, 255, 255, 0.45); margin-top: 22px; line-height: 1.5; }
+
+    /* ============== STICKY BOTTOM BAR ============== */
+    .sticky-bottom {
+      position: sticky; bottom: 0; left: 0; right: 0; z-index: 25;
+      padding: 10px 12px calc(12px + env(safe-area-inset-bottom, 0px));
+      background: rgba(255, 255, 255, 0.96);
+      backdrop-filter: blur(8px);
+      border-top: 1px solid var(--grey-200);
+      display: grid; grid-template-columns: 1fr 1fr; gap: 8px;
+    }
+    .sticky-bottom .btn-wa, .sticky-bottom .btn-call {
+      height: 48px; border: none; border-radius: 10px;
+      font-size: 15px; font-weight: 700;
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      text-decoration: none; color: #fff;
+    }
+    .sticky-bottom .btn-wa { background: var(--vw-green); }
+    .sticky-bottom .btn-call { background: var(--vw-blue); }
+
+    /* Placeholder loader del precio */
+    .precio-loader {
+      display: inline-block; min-width: 140px; height: 32px;
+      background: linear-gradient(90deg, var(--grey-100) 25%, var(--grey-200) 50%, var(--grey-100) 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.4s infinite;
+      border-radius: 4px;
+    }
+    @keyframes shimmer {
+      0% { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+
+    /* Desktop limiter — el sitio es mobile-first. En desktop centramos el contenido. */
+    @media (min-width: 600px) {
+      body { max-width: 480px; margin: 0 auto; box-shadow: 0 0 40px rgba(0,0,0,0.06); }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ============== HEADER ============== -->
+<header class="header">
+  <img class="logo-tito" src="imagenes/logo-tito-blue.png" width="1150" height="226" alt="Tito González Automotores">
+  <a href="https://wa.me/5491137573604?text=Hola%20Tito%20Gonzalez%2C%20vi%20sus%20ofertas%20en%20baratito.com.ar%20y%20quer%C3%ADa%20consultar."
+     class="btn-wa-header" aria-label="WhatsApp">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="#fff"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.149-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.71.306 1.263.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+  </a>
+</header>
+
+<!-- ============== HERO ============== -->
+<section class="hero">
+  <h1>Baratito en serio.</h1>
+  <p>Las mejores ofertas Volkswagen en el Concesionario Oficial con más trayectoria del país.</p>
+
+  <button class="cta-cuota" onclick="abrirAsesoramiento('financiacion')">
+    <span class="stack">
+      <span class="titulo">Calculá tu cuota</span>
+      <span class="eyebrow">Tasa 0% · VWFS</span>
+    </span>
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+  </button>
+</section>
+
+<!-- ============== FILTROS ============== -->
+<section class="filters-wrap">
+  <div class="filter-row" id="filter-body"></div>
+  <div class="filter-row" id="filter-price"></div>
+  <div class="filter-row" id="filter-campaign"></div>
+</section>
+
+<!-- ============== RESULTS COUNT ============== -->
+<div class="results-count">
+  <span class="total" id="results-total">10 modelos en oferta</span>
+  <span class="orden">orden: precio ↓</span>
+</div>
+
+<!-- ============== MODEL GRID ============== -->
+<section class="model-grid" id="model-grid"></section>
+
+<!-- ============== POR QUÉ ============== -->
+<section class="por-que">
+  <h2>Por qué Tito Gonzalez</h2>
+  <div class="por-que-grid">
+    <div class="feature-row">
+      <span class="icon">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#001E50" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      </span>
+      <div>
+        <div class="titulo">Concesionario oficial Volkswagen</div>
+        <div class="subtitulo">Entrega inmediata, unidades con garantía oficial de fábrica.</div>
+      </div>
+    </div>
+    <div class="feature-row">
+      <span class="icon">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#001E50" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      </span>
+      <div>
+        <div class="titulo">100 años de trayectoria</div>
+        <div class="subtitulo">Una empresa familiar argentina desde 1926.</div>
+      </div>
+    </div>
+    <div class="feature-row">
+      <span class="icon">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#001E50" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="21" x2="21" y2="21"/><line x1="3" y1="10" x2="21" y2="10"/><polyline points="5 6 12 3 19 6"/><line x1="4" y1="10" x2="4" y2="21"/><line x1="20" y1="10" x2="20" y2="21"/><line x1="8" y1="14" x2="8" y2="17"/><line x1="12" y1="14" x2="12" y2="17"/><line x1="16" y1="14" x2="16" y2="17"/></svg>
+      </span>
+      <div>
+        <div class="titulo">Financiación oficial VW Financial Services</div>
+        <div class="subtitulo">Tasa 0%, planes en pesos y cuotas a tu medida.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============== FOOTER ============== -->
+<footer class="footer">
+  <img class="logo-tito" src="imagenes/logo-tito-white.png" width="1150" height="226" alt="Tito González Automotores">
+  <div class="dominio">baratito.com.ar</div>
+  <div class="tagline">Concesionario oficial Volkswagen desde 1926</div>
+  <div class="salones">
+    <div class="heading">Nuestros salones · CABA</div>
+    <div class="salon">
+      <div class="direccion">Av. Entre Ríos 1338</div>
+      <div class="horarios">Lun a Vie 9–18 hs · Sáb 10–16 hs</div>
+    </div>
+    <div class="salon">
+      <div class="direccion">Av. Independencia 780</div>
+      <div class="horarios">Lun a Vie 9–18 hs · Sábados cerrado</div>
+    </div>
+    <div class="tel">Tel. 11 3757-3604</div>
+  </div>
+  <div class="socials">
+    <a class="social-dot" href="https://www.instagram.com/titogonzalezautomotores" target="_blank" rel="noopener">IG</a>
+    <a class="social-dot" href="https://www.facebook.com/titogonzalezautomotores" target="_blank" rel="noopener">FB</a>
+    <a class="social-dot" href="#" rel="noopener">YT</a>
+  </div>
+  <div class="legal">baratito.com.ar es un sitio operado por Tito González Automotores S.A. · Precios sujetos a confirmación · Imágenes ilustrativas</div>
+</footer>
+
+<!-- ============== STICKY BOTTOM BAR ============== -->
+<nav class="sticky-bottom">
+  <a class="btn-wa" href="https://wa.me/5491137573604?text=Hola%20Tito%20Gonzalez%2C%20quer%C3%ADa%20consultar%20por%20las%20ofertas.">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="#fff"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.149-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.71.306 1.263.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+    WhatsApp
+  </a>
+  <a class="btn-call" href="tel:+541137573604">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+    Llamar
+  </a>
+</nav>
+
+<script>
+  // ============== DATA ==============
+  const CAMPAIGNS = {
+    financia_mas:    { id: 'financia_mas',    label: 'Financia Más',    color: '#00B0F0', bg: '#E6F7FE' },
+    especial_autos:  { id: 'especial_autos',  label: 'Especial Autos',  color: '#7B2CBF', bg: '#F1E8FB' },
+    credito_vw:      { id: 'credito_vw',      label: 'Crédito VW',      color: '#001E50', bg: '#E1E6EF' },
+    tasa_cero:       { id: 'tasa_cero',       label: 'Tasa 0%',         color: '#0B8A3E', bg: '#E4F5EA' },
+  };
+
+  // Los precios de cada modelo se actualizan desde la planilla. El priceFrom
+  // hardcoded es fallback inicial si la red está caída.
+  const MODELS = [
+    { slug: 'polo',     name: 'Polo',     body: 'Hatchback Pequeño', bodyType: 'hatch',  origin: 'Brasil',    priceFrom: 25650000, versions: 3, foto: 'imagenes/polo track.webp',           campaign: CAMPAIGNS.financia_mas },
+    { slug: 'virtus',   name: 'Virtus',   body: 'Sedán Pequeño',     bodyType: 'sedan',  origin: 'Brasil',    priceFrom: 28940000, versions: 3, foto: 'imagenes/virtus MSI.webp',            campaign: CAMPAIGNS.financia_mas },
+    { slug: 'tera',     name: 'Tera',     body: 'SUV Crossover',     bodyType: 'suv',    origin: 'Brasil',    priceFrom: 29000000, versions: 3, foto: 'imagenes/tera trendline.webp',        campaign: CAMPAIGNS.tasa_cero, isNew: true },
+    { slug: 'saveiro',  name: 'Saveiro',  body: 'Pick-up Pequeña',   bodyType: 'pickup', origin: 'Brasil',    priceFrom: 29800000, versions: 2, foto: 'imagenes/saveiro comfortline.webp',   campaign: CAMPAIGNS.credito_vw },
+    { slug: 'nivus',    name: 'Nivus',    body: 'SUV Crossover',     bodyType: 'suv',    origin: 'Brasil',    priceFrom: 31200000, versions: 3, foto: 'imagenes/nivus trendline.webp',       campaign: CAMPAIGNS.financia_mas },
+    { slug: 't-cross',  name: 'T-Cross',  body: 'SUV Crossover',     bodyType: 'suv',    origin: 'Brasil',    priceFrom: 34693859, versions: 3, foto: 'imagenes/t-cross trendline mt.webp',  campaign: CAMPAIGNS.financia_mas },
+    { slug: 'vento',    name: 'Vento',    body: 'Sedán Mediano',     bodyType: 'sedan',  origin: 'México',    priceFrom: 38500000, versions: 2, foto: 'imagenes/vento gli.webp',             campaign: null },
+    { slug: 'amarok',   name: 'Amarok',   body: 'Pick-up Mediana',   bodyType: 'pickup', origin: 'Argentina', priceFrom: 41974035, versions: 4, foto: 'imagenes/amarok comfortline mt 4x2.webp', campaign: CAMPAIGNS.credito_vw },
+    { slug: 'taos',     name: 'Taos',     body: 'SUV Compacta',      bodyType: 'suv',    origin: 'Argentina', priceFrom: 45300000, versions: 2, foto: 'imagenes/taos comfortline.webp',      campaign: CAMPAIGNS.especial_autos },
+    { slug: 'tiguan',   name: 'Tiguan',   body: 'SUV Mediana',       bodyType: 'suv',    origin: 'México',    priceFrom: 58200000, versions: 2, foto: 'imagenes/tiguan rline.webp',          campaign: CAMPAIGNS.especial_autos },
+  ];
+
+  const BODY_FILTERS = [
+    { id: 'all', label: 'Todos' },
+    { id: 'hatch', label: 'Hatchback' },
+    { id: 'sedan', label: 'Sedán' },
+    { id: 'suv', label: 'SUV' },
+    { id: 'pickup', label: 'Pickup' },
+  ];
+  const PRICE_FILTERS = [
+    { id: 'all', label: 'Cualquier precio' },
+    { id: 'low', label: 'Hasta $32M' },
+    { id: 'mid', label: '$32M – $45M' },
+    { id: 'high', label: 'Más de $45M' },
+  ];
+  const CAMPAIGN_FILTERS = [
+    { id: 'all', label: 'Todas las campañas' },
+    { id: 'financia_mas', label: 'Financia Más' },
+    { id: 'especial_autos', label: 'Especial Autos' },
+    { id: 'credito_vw', label: 'Crédito VW' },
+    { id: 'tasa_cero', label: 'Tasa 0%' },
+  ];
+
+  // Estado de filtros
+  const state = { body: 'all', price: 'all', campaign: 'all' };
+
+  // ============== HELPERS ==============
+  function fmtPrice(n) {
+    if (n == null) return '—';
+    return '$' + Math.round(n).toLocaleString('es-AR');
+  }
+  function applyFilters() {
+    return MODELS.filter(m => {
+      if (state.body !== 'all' && m.bodyType !== state.body) return false;
+      if (state.price === 'low'  && m.priceFrom > 32000000) return false;
+      if (state.price === 'mid'  && (m.priceFrom < 32000000 || m.priceFrom > 45000000)) return false;
+      if (state.price === 'high' && m.priceFrom < 45000000) return false;
+      if (state.campaign !== 'all' && (!m.campaign || m.campaign.id !== state.campaign)) return false;
+      return true;
+    });
+  }
+
+  // ============== RENDER ==============
+  function renderFilters() {
+    const renderRow = (containerId, items, key, muted) => {
+      const wrap = document.getElementById(containerId);
+      wrap.innerHTML = items.map(it => {
+        const active = state[key] === it.id;
+        const cls = ['filter-chip', muted ? 'muted' : '', active ? 'active' : ''].filter(Boolean).join(' ');
+        return `<button class="${cls}" data-key="${key}" data-id="${it.id}">${it.label}</button>`;
+      }).join('');
+    };
+    renderRow('filter-body', BODY_FILTERS, 'body', false);
+    renderRow('filter-price', PRICE_FILTERS, 'price', true);
+    renderRow('filter-campaign', CAMPAIGN_FILTERS, 'campaign', true);
+  }
+
+  function renderModels() {
+    const filtered = applyFilters();
+    const totalEl = document.getElementById('results-total');
+    totalEl.textContent = `${filtered.length} ${filtered.length === 1 ? 'modelo' : 'modelos'} en oferta`;
+
+    const grid = document.getElementById('model-grid');
+    if (filtered.length === 0) {
+      grid.innerHTML = `<div class="empty-state">No hay modelos con esos filtros.<br><button onclick="clearFilters()">Limpiar filtros</button></div>`;
+      return;
+    }
+
+    grid.innerHTML = filtered.map((m, idx) => {
+      const camp = m.campaign;
+      const campBadge = camp
+        ? `<span class="campaign-badge" style="background:${camp.bg}; color:${camp.color};">
+             <span class="dot" style="background:${camp.color};"></span>${camp.label}
+           </span>`
+        : '';
+      const nuevoBadge = m.isNew ? `<span class="badge-nuevo">NUEVO</span>` : '';
+      const sinStock = m.hayStock === false ? ' sin-stock' : '';
+      const loadingAttr = idx === 0 ? 'eager' : 'lazy';
+      const fetchPriority = idx === 0 ? ' fetchpriority="high"' : '';
+
+      return `
+        <button class="model-card${sinStock}" data-slug="${m.slug}" onclick="onCardClick('${m.slug}')">
+          <div class="foto-wrap">
+            <div class="foto"><img src="${m.foto}" alt="VW ${m.name}" loading="${loadingAttr}"${fetchPriority}></div>
+            ${nuevoBadge}
+          </div>
+          <div class="info">
+            <div class="eyebrow-vw">Volkswagen</div>
+            <h3 class="nombre num">${m.name}</h3>
+            <div class="body-tipo">${m.body}</div>
+          </div>
+          <div class="precio-wrap">
+            <div class="precio-eyebrow">Desde · contado</div>
+            <div class="precio-valor num" data-precio-slot>${fmtPrice(m.priceFrom)}</div>
+          </div>
+          <div class="meta-row">
+            <div>
+              <span class="versiones"><span class="num">${m.versions}</span> versiones</span>
+            </div>
+            ${campBadge}
+          </div>
+          <div class="cta-versiones">
+            <span>Ver versiones disponibles</span>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+          </div>
+        </button>
+      `;
+    }).join('');
+  }
+
+  function clearFilters() {
+    state.body = 'all'; state.price = 'all'; state.campaign = 'all';
+    renderFilters(); renderModels();
+  }
+
+  function onCardClick(slug) {
+    window.location.href = `modelo-nuevo.html?slug=${encodeURIComponent(slug)}`;
+  }
+
+  function abrirAsesoramiento(tipo) {
+    const msg = tipo === 'financiacion'
+      ? 'Hola Tito Gonzalez, quería simular una cuota en VWFS. Vi sus ofertas en baratito.com.ar.'
+      : 'Hola Tito Gonzalez, quería asesoramiento sobre sus ofertas.';
+    window.location.href = `https://wa.me/5491137573604?text=${encodeURIComponent(msg)}`;
+  }
+
+  // ============== SHEET LOADER ==============
+  const SHEET_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTD40FCkAXCrVNslz1OtxnYm1DRhDulVOHaCxJ81-kiQL17KnfimCOPn3hJDHAvJsF9ROEZdePuRw2E/pub?gid=1432576316&single=true&output=csv';
+
+  function parseCSV(text) {
+    const filas = [];
+    for (const linea of text.trim().split(/\r?\n/)) {
+      const cols = []; let dentro = false, celda = '';
+      for (let i = 0; i < linea.length; i++) {
+        const c = linea[i];
+        if (c === '"') dentro = !dentro;
+        else if (c === ',' && !dentro) { cols.push(celda.trim()); celda = ''; }
+        else celda += c;
+      }
+      cols.push(celda.trim());
+      filas.push(cols);
+    }
+    return filas;
+  }
+
+  // Matchea un nombre de modelo del Sheet (ej "VW Polo Track MSI MT G1 MY26")
+  // contra el slug de nuestros MODELS. Devuelve el slug si matchea o null.
+  function matchSlug(nombreSheet) {
+    const n = (nombreSheet || '').toLowerCase();
+    if (!n) return null;
+    // T-Cross primero (antes que "tera" porque ambos arrancan con t)
+    if (n.includes('t-cross') || n.includes('tcross')) return 't-cross';
+    for (const m of MODELS) {
+      if (m.slug === 't-cross') continue;
+      if (n.includes(m.slug)) return m.slug;
+    }
+    return null;
+  }
+
+  async function cargarPreciosDesdeSheet() {
+    try {
+      const res = await fetch(SHEET_URL);
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      const text = await res.text();
+      const filas = parseCSV(text);
+      // Header: modelo, precio_lista, oferta_vigente_con_fyf, stock, dto, colores
+      const minPorSlug = {};
+      const stockPorSlug = {};
+      for (let i = 1; i < filas.length; i++) {
+        const f = filas[i];
+        if (!f || !f[0]) continue;
+        const nombre = f[0].trim();
+        const slug = matchSlug(nombre);
+        if (!slug) continue;
+        const ofertaStr = (f[2] || '').replace(/[$,]/g, '').trim();
+        const oferta = ofertaStr ? parseFloat(ofertaStr) : null;
+        if (!oferta || isNaN(oferta)) continue;
+        if (!(slug in minPorSlug) || oferta < minPorSlug[slug]) minPorSlug[slug] = oferta;
+        const stock = (f[3] || '').trim().toLowerCase();
+        if (stock.includes('stock disponible')) stockPorSlug[slug] = true;
+      }
+      // Aplicar al modelo
+      for (const m of MODELS) {
+        if (minPorSlug[m.slug]) m.priceFrom = minPorSlug[m.slug];
+        m.hayStock = stockPorSlug[m.slug] === true;
+      }
+      renderModels();
+    } catch (err) {
+      console.warn('No se pudieron cargar precios desde Sheet:', err);
+      // Mantenemos los priceFrom hardcoded como fallback
+    }
+  }
+
+  // ============== EVENTS ==============
+  document.addEventListener('click', (ev) => {
+    const chip = ev.target.closest('.filter-chip');
+    if (!chip) return;
+    const key = chip.dataset.key;
+    const id = chip.dataset.id;
+    if (!key || !id) return;
+    state[key] = id;
+    renderFilters();
+    renderModels();
+  });
+
+  // ============== INIT ==============
+  renderFilters();
+  renderModels();
+  cargarPreciosDesdeSheet();
+</script>
+
+</body>
+</html>
