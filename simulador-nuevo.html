@@ -1,0 +1,1939 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#00133A">
+  <meta name="google-site-verification" content="9icjYBaCoTR3kDyOT93q2gRK3_WhpVWDwCPk14jEZvE" />
+  <link rel="canonical" href="https://baratito.com.ar/financiacion" />
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+
+  <title>Simulá tu cuota VW · Baratito · Tito González Automotores</title>
+  <meta name="description" content="Simulador VWFS con cálculo real: campaña, plazo, monto, provincia y titulares. Tasa 0% en cuotas seleccionadas.">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --vw-blue: #001E50;
+      --vw-blue-deep: #00133A;
+      --vw-cyan: #00B0F0;
+      --vw-cyan-soft: #E6F7FE;
+      --vw-green: #25D366;
+      --grey-50: #FAFAFA;
+      --grey-100: #F5F5F5;
+      --grey-200: #EBEBEB;
+      --grey-300: #D8D8D8;
+      --grey-500: #8A8A8A;
+      --grey-700: #4A4A4A;
+      --grey-900: #1A1A1A;
+      --max-w: 1320px;
+    }
+
+    html, body {
+      font-family: 'DM Sans', system-ui, -apple-system, sans-serif;
+      color: var(--grey-900);
+      background: var(--grey-100);
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+    body { min-height: 100vh; overflow-x: hidden; }
+
+    .num { font-variant-numeric: tabular-nums; }
+    .mono { font-family: 'JetBrains Mono', monospace; }
+
+    button { font-family: inherit; cursor: pointer; }
+    a { color: inherit; }
+
+    .desktop-only { display: none !important; }
+
+    /* ============== HEADER ============== */
+    .header {
+      position: sticky; top: 0; z-index: 30;
+      background: var(--vw-blue-deep);
+      color: #fff;
+    }
+    .header-inner {
+      padding: calc(12px + env(safe-area-inset-top, 0px)) 16px 12px;
+      display: flex; align-items: center; gap: 12px;
+    }
+    .btn-back {
+      width: 40px; height: 40px; border-radius: 999px;
+      background: rgba(255,255,255,0.1); border: none;
+      display: flex; align-items: center; justify-content: center;
+      color: #fff; flex-shrink: 0;
+      text-decoration: none;
+    }
+    .btn-back:hover { background: rgba(255,255,255,0.18); }
+    .header-title {
+      flex: 1; min-width: 0;
+    }
+    .header-title .eyebrow {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10.5px; color: var(--vw-cyan);
+      letter-spacing: 1.2px; text-transform: uppercase; font-weight: 700;
+    }
+    .header-title .titulo {
+      font-size: 17px; font-weight: 700; color: #fff;
+      letter-spacing: -0.3px; line-height: 1.1; margin-top: 2px;
+    }
+
+    /* ============== HERO ============== */
+    .hero {
+      background: var(--vw-blue-deep); color: #fff;
+      padding: 4px 16px 28px;
+      position: relative; overflow: hidden;
+    }
+    .hero::after {
+      content: ''; position: absolute; right: -100px; top: -60px;
+      width: 360px; height: 360px; border-radius: 50%;
+      background: radial-gradient(circle, rgba(0,176,240,0.18) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .hero-inner { position: relative; }
+    .hero .eyebrow {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10.5px; color: var(--vw-cyan);
+      letter-spacing: 1.4px; text-transform: uppercase; font-weight: 700;
+    }
+    .hero h1 {
+      font-size: 36px; font-weight: 700; color: #fff;
+      letter-spacing: -1.4px; line-height: 1; margin-top: 12px;
+    }
+    .hero h1 .cyan { color: var(--vw-cyan); display: block; }
+    .hero-stats {
+      margin-top: 24px; display: grid;
+      grid-template-columns: repeat(3, 1fr); gap: 12px;
+    }
+    .hero-stat {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 10px; padding: 12px 10px;
+    }
+    .hero-stat .num-big {
+      font-size: 22px; font-weight: 700; color: #fff;
+      letter-spacing: -0.6px; line-height: 1;
+    }
+    .hero-stat .label {
+      font-size: 10.5px; color: rgba(255,255,255,0.65);
+      margin-top: 5px; line-height: 1.3;
+      text-transform: uppercase; letter-spacing: 0.4px; font-weight: 500;
+    }
+
+    /* ============== FORM CARDS ============== */
+    .form-wrap {
+      background: var(--grey-100);
+      padding: 18px 16px 24px;
+    }
+    .form-inner { display: block; }
+
+    /* ============== GATE (elegir cómo simular) ============== */
+    .gate-wrap {
+      background: var(--grey-100);
+      padding: 22px 16px 8px;
+    }
+    .gate-inner {
+      max-width: 640px; margin: 0 auto;
+    }
+    .gate-eyebrow {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10.5px; color: var(--vw-cyan);
+      letter-spacing: 1.4px; text-transform: uppercase; font-weight: 700;
+      margin-bottom: 6px;
+    }
+    .gate-title {
+      font-size: 22px; font-weight: 700; color: var(--vw-blue);
+      letter-spacing: -0.6px; line-height: 1.15;
+      margin-bottom: 14px;
+    }
+    .gate-cards {
+      display: grid; grid-template-columns: 1fr; gap: 10px;
+    }
+    .gate-card {
+      width: 100%; text-align: left;
+      background: #fff; border: 1.5px solid transparent;
+      border-radius: 14px; padding: 18px 16px;
+      display: flex; align-items: flex-start; gap: 14px;
+      box-shadow: 0 1px 2px rgba(0,30,80,0.04);
+      cursor: pointer; font-family: inherit;
+      transition: border-color 0.12s, box-shadow 0.18s;
+    }
+    .gate-card:hover { border-color: var(--vw-cyan); box-shadow: 0 6px 18px rgba(0,30,80,0.06); }
+    .gate-card .icon {
+      width: 44px; height: 44px; border-radius: 10px; flex-shrink: 0;
+      background: var(--vw-cyan-soft); color: var(--vw-blue);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .gate-card.recommended { border-color: var(--vw-blue); box-shadow: 0 6px 22px rgba(0,30,80,0.08); }
+    .gate-card.recommended .icon { background: var(--vw-blue); color: #fff; }
+    .gate-card .body { flex: 1; min-width: 0; }
+    .gate-card .titulo {
+      font-size: 16px; font-weight: 700; color: var(--vw-blue);
+      letter-spacing: -0.3px; display: flex; align-items: center; gap: 8px;
+    }
+    .gate-card .pill {
+      padding: 2px 8px; border-radius: 999px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 9.5px; font-weight: 700; letter-spacing: 0.6px; text-transform: uppercase;
+      background: var(--vw-cyan); color: #fff;
+    }
+    .gate-card .sub {
+      font-size: 13px; color: var(--grey-700);
+      margin-top: 4px; line-height: 1.45;
+    }
+    .gate-card .arrow { color: var(--grey-500); flex-shrink: 0; align-self: center; }
+    .gate-card:hover .arrow { color: var(--vw-blue); }
+    .gate-bypass {
+      margin-top: 14px; padding: 0;
+      background: none; border: none; color: var(--grey-700);
+      font-family: inherit; font-size: 12.5px; font-weight: 600;
+      text-decoration: underline; cursor: pointer;
+    }
+    .gate-bypass:hover { color: var(--vw-blue); }
+
+    @media (min-width: 1024px) {
+      .gate-wrap { padding: 48px 40px 24px; }
+      .gate-inner { max-width: 720px; }
+      .gate-title { font-size: 28px; letter-spacing: -1px; }
+      .gate-cards { gap: 14px; }
+      .gate-card { padding: 22px 22px; }
+      .gate-card .titulo { font-size: 17px; }
+    }
+    /* Default: gate visible, simulador oculto. Tras elegir "online" → invierte. */
+    body:not(.choice-made) .form-wrap,
+    body:not(.choice-made) .planes-wrap,
+    body:not(.choice-made) .faq-wrap,
+    body:not(.choice-made) .sticky-bottom { display: none !important; }
+    body.choice-made .gate-wrap { display: none; }
+
+    .form-card {
+      background: #fff; border-radius: 14px;
+      padding: 18px;
+      margin-bottom: 12px;
+      box-shadow: 0 1px 2px rgba(0,30,80,0.04);
+    }
+    .card-head {
+      display: flex; align-items: center; gap: 12px; margin-bottom: 14px;
+    }
+    .card-num {
+      width: 28px; height: 28px; border-radius: 7px;
+      background: var(--vw-cyan-soft); color: var(--vw-blue);
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px; font-weight: 700; letter-spacing: 0.4px;
+      flex-shrink: 0;
+    }
+    .card-num.done { background: var(--vw-blue); color: #fff; }
+    .card-num.disabled { background: var(--grey-100); color: var(--grey-300); }
+    .card-title {
+      font-size: 15px; font-weight: 700; color: var(--vw-blue);
+      letter-spacing: -0.2px;
+    }
+    .card-sub {
+      font-size: 12.5px; color: var(--grey-500); margin-top: 2px; font-weight: 500;
+    }
+    .form-card.disabled { opacity: 0.5; pointer-events: none; }
+
+    /* Select nativo custom */
+    .form-select {
+      width: 100%; height: 48px;
+      padding: 0 40px 0 16px;
+      background: var(--grey-100); border: 1.5px solid transparent;
+      border-radius: 10px;
+      font-family: inherit; font-size: 14.5px; font-weight: 600;
+      color: var(--grey-900);
+      appearance: none; -webkit-appearance: none;
+      background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%238A8A8A' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'/></svg>");
+      background-repeat: no-repeat;
+      background-position: right 14px center;
+    }
+    .form-select:focus { outline: none; border-color: var(--vw-blue); background: #fff; }
+    .form-select.with-precio {
+      background-color: var(--vw-cyan-soft);
+    }
+
+    /* Provincia chips */
+    .pcia-row {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px;
+    }
+    .pcia-chip {
+      height: 44px; padding: 0 10px;
+      background: var(--grey-100); color: var(--grey-700);
+      border: 1.5px solid transparent; border-radius: 10px;
+      font-size: 13px; font-weight: 700;
+      display: flex; align-items: center; justify-content: center;
+      transition: all 0.12s;
+    }
+    .pcia-chip.active {
+      background: var(--vw-blue); color: #fff;
+    }
+    .pcia-aviso {
+      display: none;
+      margin-top: 10px; padding: 10px 12px;
+      background: #FFF3E0; color: #B45309;
+      border-radius: 8px;
+      font-size: 12px; line-height: 1.45;
+    }
+    .pcia-aviso.show { display: block; }
+
+    /* Version cards */
+    .version-list {
+      display: flex; flex-direction: column; gap: 8px;
+    }
+    .version-card {
+      width: 100%;
+      padding: 14px 16px;
+      background: var(--grey-100); border: 1.5px solid transparent;
+      border-radius: 12px;
+      text-align: left;
+      display: flex; align-items: center; gap: 14px;
+      transition: all 0.12s;
+    }
+    .version-card.active {
+      background: #fff; border-color: var(--vw-blue);
+      box-shadow: 0 4px 14px rgba(0,30,80,0.06);
+    }
+    .version-card.sin-stock {
+      opacity: 0.55;
+    }
+    .version-radio {
+      width: 22px; height: 22px; border-radius: 999px;
+      border: 2px solid var(--grey-300);
+      flex-shrink: 0; position: relative;
+      background: #fff;
+    }
+    .version-card.active .version-radio { border-color: var(--vw-blue); }
+    .version-card.active .version-radio::after {
+      content: ''; position: absolute;
+      inset: 3px; border-radius: 999px;
+      background: var(--vw-blue);
+    }
+    .version-body { flex: 1; min-width: 0; }
+    .version-nombre {
+      font-size: 14px; font-weight: 700; color: var(--grey-900);
+      letter-spacing: -0.2px; line-height: 1.25;
+    }
+    .version-meta {
+      margin-top: 4px;
+      display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+    }
+    .version-precio {
+      font-size: 13px; font-weight: 700; color: var(--vw-blue);
+      font-variant-numeric: tabular-nums; letter-spacing: -0.2px;
+    }
+    .version-stock {
+      padding: 2px 7px; border-radius: 4px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 9.5px; font-weight: 700; letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+    .version-stock.in { background: #E4F5EA; color: #0B8A3E; }
+    .version-stock.out { background: #FFE8E8; color: #B91C1C; }
+    .version-colores {
+      width: 100%; margin-top: 4px;
+      font-size: 11.5px; color: var(--grey-500); font-weight: 500;
+    }
+
+    /* Campaign cards */
+    .campana-list {
+      display: flex; flex-direction: column; gap: 8px;
+    }
+    .campana-card {
+      width: 100%;
+      padding: 14px 16px;
+      background: var(--grey-100); border: 1.5px solid transparent;
+      border-radius: 12px;
+      text-align: left;
+      display: flex; align-items: center; gap: 14px;
+      transition: all 0.12s;
+    }
+    .campana-card.active {
+      background: #fff; border-color: var(--vw-blue);
+      box-shadow: 0 4px 14px rgba(0,30,80,0.06);
+    }
+    .campana-card.destacada {
+      background: #fff;
+      border-color: #0B8A3E;
+      box-shadow: 0 6px 20px rgba(11,138,62,0.12);
+      position: relative;
+    }
+    .campana-card.destacada.active {
+      border-color: #0B8A3E;
+      box-shadow: 0 6px 22px rgba(11,138,62,0.18);
+    }
+    .campana-card.destacada .campana-radio { border-color: #0B8A3E; }
+    .campana-card.destacada.active .campana-radio::after { background: #0B8A3E; }
+    .destacada-pill {
+      position: absolute; top: -8px; right: 12px;
+      background: #0B8A3E; color: #fff;
+      padding: 3px 9px; border-radius: 999px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 9.5px; font-weight: 700; letter-spacing: 0.7px;
+      text-transform: uppercase;
+      box-shadow: 0 2px 6px rgba(11,138,62,0.25);
+    }
+    .campana-radio {
+      width: 22px; height: 22px; border-radius: 999px;
+      border: 2px solid var(--grey-300);
+      flex-shrink: 0; position: relative;
+      background: #fff;
+    }
+    .campana-card.active .campana-radio {
+      border-color: var(--vw-blue);
+    }
+    .campana-card.active .campana-radio::after {
+      content: ''; position: absolute;
+      inset: 3px; border-radius: 999px;
+      background: var(--vw-blue);
+    }
+    .campana-body { flex: 1; min-width: 0; }
+    .campana-nombre {
+      font-size: 14px; font-weight: 700; color: var(--grey-900);
+      letter-spacing: -0.2px; line-height: 1.2;
+    }
+    .campana-meta {
+      font-size: 11.5px; color: var(--grey-500); margin-top: 3px; font-weight: 500;
+    }
+    .campana-tags {
+      margin-top: 6px; display: flex; gap: 5px; flex-wrap: wrap;
+    }
+    .campana-tag {
+      padding: 2px 7px; border-radius: 4px;
+      background: var(--vw-cyan-soft); color: var(--vw-blue);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px; font-weight: 700; letter-spacing: 0.4px;
+      text-transform: uppercase;
+    }
+    .campana-tag.uva { background: #FFF3E0; color: #B45309; }
+    .campana-tag.zero { background: #E4F5EA; color: #0B8A3E; }
+
+    /* Plazo chips */
+    .plazo-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px;
+    }
+    .plazo-chip {
+      height: 50px; padding: 0;
+      background: var(--grey-100); color: var(--grey-700);
+      border: 1.5px solid transparent; border-radius: 10px;
+      font-family: inherit; font-weight: 700; font-size: 14px;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center; gap: 0;
+      transition: all 0.12s;
+    }
+    .plazo-chip .cant { font-size: 17px; line-height: 1; }
+    .plazo-chip .label { font-size: 10px; color: var(--grey-500); margin-top: 3px; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600; }
+    .plazo-chip.active { background: var(--vw-blue); color: #fff; }
+    .plazo-chip.active .label { color: rgba(255,255,255,0.7); }
+    .plazo-chip:disabled { opacity: 0.3; cursor: not-allowed; }
+
+    /* Slider monto */
+    .monto-display {
+      font-size: 32px; font-weight: 700; color: var(--vw-blue);
+      letter-spacing: -1px; font-variant-numeric: tabular-nums;
+      margin-bottom: 10px;
+    }
+    .monto-sub {
+      font-size: 12.5px; color: var(--grey-500); margin-bottom: 14px; font-weight: 500;
+    }
+    input[type="range"].monto-slider {
+      width: 100%; height: 6px; appearance: none; -webkit-appearance: none;
+      background: var(--grey-200); border-radius: 999px; outline: none;
+      margin: 2px 0;
+    }
+    input[type="range"].monto-slider::-webkit-slider-thumb {
+      appearance: none; -webkit-appearance: none;
+      width: 26px; height: 26px; border-radius: 50%;
+      background: var(--vw-blue); cursor: pointer;
+      border: 4px solid #fff; box-shadow: 0 2px 8px rgba(0,30,80,0.15);
+    }
+    input[type="range"].monto-slider::-moz-range-thumb {
+      width: 26px; height: 26px; border-radius: 50%;
+      background: var(--vw-blue); cursor: pointer;
+      border: 4px solid #fff; box-shadow: 0 2px 8px rgba(0,30,80,0.15);
+    }
+    .slider-labels {
+      display: flex; justify-content: space-between;
+      margin-top: 10px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px; color: var(--grey-500); font-weight: 600;
+    }
+
+    /* Titulares toggle */
+    .tit-row { display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px; }
+    .tit-chip {
+      height: 50px; padding: 0 12px;
+      background: var(--grey-100); color: var(--grey-700);
+      border: 1.5px solid transparent; border-radius: 10px;
+      font-size: 13.5px; font-weight: 700;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+    }
+    .tit-chip .label-num { font-size: 18px; line-height: 1; }
+    .tit-chip .label-sub { font-size: 10.5px; color: var(--grey-500); margin-top: 3px; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600; }
+    .tit-chip.active { background: var(--vw-blue); color: #fff; }
+    .tit-chip.active .label-sub { color: rgba(255,255,255,0.7); }
+
+    /* ============== RESULTADO ============== */
+    .result-card {
+      background: linear-gradient(135deg, var(--vw-blue) 0%, var(--vw-blue-deep) 100%);
+      color: #fff;
+      border-radius: 18px;
+      padding: 24px;
+      margin: 16px 16px 0;
+      position: relative; overflow: hidden;
+    }
+    .result-card::after {
+      content: ''; position: absolute; top: -80px; right: -60px;
+      width: 280px; height: 280px; border-radius: 50%;
+      background: radial-gradient(circle, rgba(0,176,240,0.22) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .result-card.empty { opacity: 0.7; }
+    .result-content { position: relative; }
+    .result-eyebrow {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10.5px; color: var(--vw-cyan);
+      letter-spacing: 1.4px; text-transform: uppercase; font-weight: 700;
+    }
+    .result-cuota {
+      font-size: 48px; font-weight: 700; color: #fff;
+      letter-spacing: -1.8px; line-height: 1; margin-top: 8px;
+      font-variant-numeric: tabular-nums;
+    }
+    .result-cuota.placeholder { color: rgba(255,255,255,0.4); font-size: 38px; }
+    .result-meta {
+      font-size: 13px; color: rgba(255,255,255,0.75);
+      margin-top: 10px; line-height: 1.4;
+    }
+    .result-grid {
+      margin-top: 20px; padding-top: 18px;
+      border-top: 1px solid rgba(255,255,255,0.12);
+      display: grid; grid-template-columns: 1fr 1fr; gap: 14px 18px;
+    }
+    .result-cell .label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px; color: rgba(255,255,255,0.55);
+      letter-spacing: 0.8px; text-transform: uppercase; font-weight: 600;
+    }
+    .result-cell .value {
+      font-size: 15px; color: #fff; margin-top: 4px;
+      font-weight: 600; font-variant-numeric: tabular-nums;
+      letter-spacing: -0.2px;
+    }
+    .result-cell .value.big {
+      font-size: 22px; letter-spacing: -0.5px; font-weight: 700;
+    }
+    .result-actions { margin-top: 22px; display: flex; flex-direction: column; gap: 8px; }
+    .btn-desglose {
+      background: rgba(255,255,255,0.1);
+      color: #fff; border: 1px solid rgba(255,255,255,0.15);
+      padding: 12px 16px; border-radius: 10px;
+      font-size: 13px; font-weight: 600;
+      display: flex; align-items: center; justify-content: space-between;
+      width: 100%;
+    }
+    .btn-desglose:hover { background: rgba(255,255,255,0.15); }
+    .btn-desglose svg { transition: transform 0.18s; }
+    .btn-desglose.open svg { transform: rotate(180deg); }
+
+    .desglose-card {
+      display: none;
+      background: rgba(0,0,0,0.18);
+      border-radius: 10px;
+      padding: 14px 16px;
+      margin-top: 8px;
+    }
+    .desglose-card.open { display: block; }
+    .desglose-row {
+      display: flex; justify-content: space-between; align-items: baseline;
+      padding: 5px 0; font-size: 12.5px;
+      color: rgba(255,255,255,0.78);
+    }
+    .desglose-row .v { font-variant-numeric: tabular-nums; }
+    .desglose-row.section-sep { margin-top: 8px; padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.15); }
+    .desglose-row.total {
+      color: #fff; font-weight: 700; font-size: 13.5px;
+      margin-top: 4px; padding-top: 8px;
+      border-top: 1px solid rgba(255,255,255,0.2);
+    }
+    .desglose-row.cyan { color: var(--vw-cyan); }
+    .desglose-note {
+      display: none;
+      margin-top: 10px; padding: 10px 12px;
+      background: rgba(255,193,7,0.12); color: #FCD34D;
+      border-radius: 6px;
+      font-size: 11.5px; line-height: 1.5;
+    }
+    .desglose-note.show { display: block; }
+
+    .result-disclaimer {
+      font-size: 11px; color: rgba(255,255,255,0.55);
+      margin-top: 14px; line-height: 1.5;
+    }
+
+    /* CTA contacto */
+    .cta-contactar {
+      width: 100%; height: 56px;
+      background: var(--vw-green); color: #fff;
+      border: none; border-radius: 14px;
+      font-size: 16px; font-weight: 700;
+      display: flex; align-items: center; justify-content: center; gap: 10px;
+      margin-top: 6px;
+    }
+    .cta-contactar:disabled { opacity: 0.4; cursor: not-allowed; }
+    .cta-contactar:hover:not(:disabled) { background: #1ebd5a; }
+
+    /* ============== PLANES VWFS ============== */
+    .planes-wrap {
+      background: var(--grey-100); padding: 28px 16px 16px;
+    }
+    .planes-wrap .section-eyebrow {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px; color: var(--grey-500);
+      letter-spacing: 1px; text-transform: uppercase; font-weight: 700;
+    }
+    .planes-wrap h2 {
+      font-size: 26px; font-weight: 700; color: var(--vw-blue);
+      letter-spacing: -1px; line-height: 1.1;
+      margin: 8px 0 18px;
+    }
+    .planes-list {
+      display: flex; flex-direction: column; gap: 10px;
+    }
+    .plan-info-card {
+      background: #fff; border: 1px solid var(--grey-200);
+      border-radius: 14px;
+      padding: 18px;
+    }
+    .plan-info-card.recommended {
+      border-color: var(--vw-cyan);
+      box-shadow: 0 8px 28px rgba(0,176,240,0.10);
+    }
+    .plan-info-card .head {
+      display: flex; align-items: center; justify-content: space-between; gap: 10px;
+      margin-bottom: 8px;
+    }
+    .plan-info-card .nombre {
+      font-size: 17px; font-weight: 700; color: var(--vw-blue); letter-spacing: -0.3px;
+    }
+    .plan-info-card .badge {
+      padding: 3px 9px; border-radius: 6px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px; font-weight: 700; letter-spacing: 0.6px; text-transform: uppercase;
+      background: var(--vw-cyan); color: #fff;
+    }
+    .plan-info-card .desc {
+      font-size: 13px; color: var(--grey-700); line-height: 1.5;
+    }
+    .plan-info-card .plazos-mini {
+      margin-top: 10px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px; color: var(--grey-500); font-weight: 600;
+      letter-spacing: 0.4px;
+    }
+
+    /* ============== FAQ ============== */
+    .faq-wrap {
+      padding: 22px 16px 28px;
+    }
+    .faq-wrap h2 {
+      font-size: 22px; font-weight: 700; color: var(--vw-blue);
+      letter-spacing: -0.6px; margin-bottom: 14px;
+    }
+    .faq-item {
+      background: #fff; border: 1px solid var(--grey-200);
+      border-radius: 10px;
+      margin-bottom: 8px;
+    }
+    .faq-q {
+      width: 100%; padding: 14px 16px;
+      background: transparent; border: none;
+      text-align: left;
+      display: flex; justify-content: space-between; align-items: center; gap: 12px;
+      font-size: 14px; font-weight: 700; color: var(--grey-900);
+      line-height: 1.3;
+    }
+    .faq-q svg { flex-shrink: 0; color: var(--vw-blue); transition: transform 0.18s; }
+    .faq-item.open .faq-q svg { transform: rotate(180deg); }
+    .faq-a {
+      display: none;
+      padding: 0 16px 14px;
+      font-size: 13px; color: var(--grey-700); line-height: 1.55;
+    }
+    .faq-item.open .faq-a { display: block; }
+
+    /* ============== STICKY BOTTOM ============== */
+    .sticky-bottom {
+      position: sticky; bottom: 0; z-index: 25;
+      padding: 10px 12px calc(12px + env(safe-area-inset-bottom, 0px));
+      background: rgba(255,255,255,0.96);
+      backdrop-filter: blur(8px);
+      border-top: 1px solid var(--grey-200);
+    }
+    .sticky-bottom .btn-cotizar {
+      width: 100%; height: 50px; border: none; border-radius: 12px;
+      background: var(--vw-green); color: #fff;
+      font-size: 15px; font-weight: 700;
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      text-decoration: none;
+    }
+    .sticky-bottom .btn-cotizar:disabled { opacity: 0.4; cursor: not-allowed; }
+
+    /* ============== MODAL CONTACTO ============== */
+    .modal-overlay {
+      display: none;
+      position: fixed; inset: 0; z-index: 100;
+      background: rgba(0,0,0,0.5);
+      padding: 16px;
+      align-items: flex-end; justify-content: center;
+    }
+    .modal-overlay.open { display: flex; }
+    .modal-box {
+      background: #fff; border-radius: 18px 18px 0 0;
+      width: 100%; max-width: 480px;
+      padding: 22px 20px calc(20px + env(safe-area-inset-bottom, 0px));
+      position: relative;
+      max-height: 90vh; overflow-y: auto;
+    }
+    .modal-close {
+      position: absolute; right: 14px; top: 14px;
+      width: 32px; height: 32px; border-radius: 999px;
+      background: var(--grey-100); border: none;
+      font-size: 18px; color: var(--grey-700);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .modal-title {
+      font-size: 20px; font-weight: 700; color: var(--vw-blue);
+      letter-spacing: -0.4px; margin-bottom: 6px;
+    }
+    .modal-sub {
+      font-size: 13px; color: var(--grey-700);
+      margin-bottom: 16px; line-height: 1.4;
+    }
+    .modal-input {
+      width: 100%; height: 48px; padding: 0 14px;
+      background: var(--grey-100); border: 1.5px solid transparent;
+      border-radius: 10px; font-family: inherit;
+      font-size: 14px; font-weight: 500;
+      margin-bottom: 10px;
+    }
+    .modal-input:focus { outline: none; border-color: var(--vw-blue); background: #fff; }
+    .modal-input.error { border-color: #DC2626; background: #FEF2F2; }
+    .modal-error {
+      display: none;
+      font-size: 12px; color: #DC2626;
+      margin: -6px 0 8px 4px;
+    }
+    .modal-error.show { display: block; }
+    .modal-cta {
+      width: 100%; height: 50px; border: none; border-radius: 10px;
+      background: var(--vw-blue); color: #fff;
+      font-size: 15px; font-weight: 700;
+      margin-top: 6px;
+    }
+    .modal-cta:disabled { opacity: 0.5; cursor: not-allowed; }
+    .modal-success {
+      text-align: center; padding: 20px 0;
+    }
+    .modal-success .check {
+      width: 64px; height: 64px; border-radius: 50%;
+      background: var(--vw-cyan-soft); color: var(--vw-blue);
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 14px;
+    }
+    .modal-success h3 {
+      font-size: 22px; font-weight: 700; color: var(--vw-blue);
+      letter-spacing: -0.4px; margin-bottom: 6px;
+    }
+    .modal-success p { font-size: 13.5px; color: var(--grey-700); line-height: 1.4; }
+    .modal-success .wa-cta {
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      width: 100%; height: 52px;
+      background: var(--vw-green); color: #fff;
+      border-radius: 12px; text-decoration: none;
+      font-size: 15px; font-weight: 700;
+      margin-top: 18px;
+    }
+
+    /* ============== DESKTOP (≥ 1024px) ============== */
+    @media (min-width: 1024px) {
+      body { background: #fff; }
+      .desktop-only { display: revert !important; }
+
+      .header { background: #fff; color: var(--grey-900); border-bottom: 1px solid var(--grey-200); }
+      .header-inner {
+        max-width: var(--max-w); margin: 0 auto;
+        padding: 0 40px; height: 88px;
+      }
+      .btn-back { background: var(--grey-100); color: var(--vw-blue); }
+      .btn-back:hover { background: var(--vw-cyan-soft); }
+      .header-title .eyebrow { color: var(--vw-blue); }
+      .header-title .titulo { color: var(--grey-900); font-size: 18px; }
+
+      /* HERO */
+      .hero { padding: 64px 0 72px; }
+      .hero-inner {
+        max-width: var(--max-w); margin: 0 auto;
+        padding: 0 40px;
+        display: grid; grid-template-columns: 1fr 480px;
+        gap: 56px; align-items: center;
+      }
+      .hero h1 { font-size: 64px; letter-spacing: -2.4px; line-height: 0.96; }
+      .hero p {
+        display: block;
+        font-size: 18px; color: rgba(255,255,255,0.78);
+        margin-top: 18px; line-height: 1.5; max-width: 540px;
+      }
+      .hero-stats {
+        margin-top: 36px; grid-template-columns: repeat(3, auto); gap: 28px;
+      }
+      .hero-stat {
+        background: transparent; border: none; padding: 0;
+      }
+      .hero-stat .num-big { font-size: 38px; letter-spacing: -1.4px; }
+      .hero-stat .label { font-size: 11.5px; margin-top: 8px; }
+      .hero-example {
+        background: rgba(255,255,255,0.06);
+        border: 1px solid rgba(255,255,255,0.08);
+        border-radius: 16px; padding: 22px;
+      }
+      .hero-example .eg-eyebrow {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 11px; color: var(--vw-cyan); letter-spacing: 1px;
+        text-transform: uppercase; font-weight: 700;
+      }
+      .hero-example .eg-title {
+        font-size: 16px; font-weight: 600; color: #fff; margin-top: 6px;
+      }
+      .hero-example .eg-cuota {
+        font-size: 44px; font-weight: 700; color: #fff;
+        letter-spacing: -1.6px; margin-top: 14px;
+        font-variant-numeric: tabular-nums;
+      }
+      .hero-example .eg-meta {
+        font-size: 12.5px; color: rgba(255,255,255,0.65); margin-top: 4px;
+      }
+      .hero-example .eg-disclaimer {
+        font-size: 10.5px; color: rgba(255,255,255,0.45);
+        margin-top: 18px; line-height: 1.5;
+      }
+
+      /* FORM + RESULT layout */
+      .form-wrap { padding: 0; background: var(--grey-100); }
+      .form-result-grid {
+        max-width: var(--max-w); margin: 0 auto;
+        padding: 48px 40px 64px;
+        display: grid; grid-template-columns: 1.4fr 1fr;
+        gap: 32px; align-items: flex-start;
+      }
+      .form-inner { display: block; }
+      .form-card { padding: 24px; margin-bottom: 14px; border-radius: 16px; }
+      .card-title { font-size: 16px; }
+
+      /* Result card sticky on desktop */
+      .result-side { position: sticky; top: 112px; }
+      .result-card { margin: 0; padding: 28px; border-radius: 18px; }
+      .result-cuota { font-size: 54px; letter-spacing: -2.2px; }
+
+      /* PLANES */
+      .planes-wrap { background: #fff; padding: 64px 0 56px; border-top: 1px solid var(--grey-200); }
+      .planes-inner { max-width: var(--max-w); margin: 0 auto; padding: 0 40px; }
+      .planes-wrap h2 { font-size: 36px; letter-spacing: -1.4px; line-height: 1.1; margin: 8px 0 28px; }
+      .planes-list { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+      .plan-info-card { padding: 24px; }
+
+      /* FAQ */
+      .faq-wrap { max-width: 840px; margin: 0 auto; padding: 48px 40px 72px; }
+      .faq-wrap h2 { font-size: 32px; letter-spacing: -1px; margin-bottom: 22px; }
+      .faq-q { font-size: 15.5px; padding: 18px 22px; }
+      .faq-a { padding: 0 22px 18px; font-size: 14px; }
+
+      /* STICKY BOTTOM oculto en desktop */
+      .sticky-bottom { display: none; }
+
+      /* Modal: centrado, no bottom sheet */
+      .modal-overlay { align-items: center; }
+      .modal-box { border-radius: 18px; max-width: 480px; max-height: 86vh; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ============== HEADER ============== -->
+<header class="header">
+  <div class="header-inner">
+    <a href="home-nuevo.html" class="btn-back" aria-label="Volver">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+    </a>
+    <div class="header-title">
+      <div class="eyebrow">VWFS</div>
+      <div class="titulo">Simulá tu cuota</div>
+    </div>
+  </div>
+</header>
+
+<!-- ============== HERO ============== -->
+<section class="hero">
+  <div class="hero-inner">
+    <div class="hero-text">
+      <div class="eyebrow">Volkswagen Financial Services</div>
+      <h1>Tu cuota VW<span class="cyan">en 30 segundos.</span></h1>
+      <p class="desktop-only">Coeficientes reales de VWFS, cálculo de patente según provincia y desglose completo de costos. Sin sorpresas.</p>
+      <div class="hero-stats">
+        <div class="hero-stat">
+          <div class="num-big">0%</div>
+          <div class="label">Tasa arranque</div>
+        </div>
+        <div class="hero-stat">
+          <div class="num-big">48</div>
+          <div class="label">Cuotas máx.</div>
+        </div>
+        <div class="hero-stat">
+          <div class="num-big">48hs</div>
+          <div class="label">Aprobación</div>
+        </div>
+      </div>
+    </div>
+    <aside class="hero-example desktop-only">
+      <div class="eg-eyebrow" id="hero-eg-eyebrow">Ejemplo · cargando…</div>
+      <div class="eg-title" id="hero-eg-title">Esperá unos segundos…</div>
+      <div class="eg-cuota num" id="hero-eg-cuota">$ —</div>
+      <div class="eg-meta" id="hero-eg-meta">cuota mensual</div>
+      <div class="eg-disclaimer">Valor calculado con la grilla VWFS vigente. Simulá abajo con tu modelo y plazo.</div>
+    </aside>
+  </div>
+</section>
+
+<!-- ============== GATE ============== -->
+<section class="gate-wrap" id="gate">
+  <div class="gate-inner">
+    <div class="gate-eyebrow">Empezá por acá</div>
+    <h2 class="gate-title">¿Cómo querés simular tu crédito?</h2>
+    <div class="gate-cards">
+      <button class="gate-card recommended" onclick="gateElegir('asesor')">
+        <span class="icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        </span>
+        <div class="body">
+          <div class="titulo">Con un asesor <span class="pill">Recomendado</span></div>
+          <div class="sub">Dejá tus datos y te llamamos. Calculamos tu cuota con la mejor combinación de plan y plazo para tu caso.</div>
+        </div>
+        <svg class="arrow" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+      </button>
+      <button class="gate-card" onclick="gateElegir('online')">
+        <span class="icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2" width="16" height="20" rx="2"/><line x1="8" y1="6" x2="16" y2="6"/><line x1="8" y1="10" x2="16" y2="10"/><line x1="8" y1="14" x2="12" y2="14"/></svg>
+        </span>
+        <div class="body">
+          <div class="titulo">Simulalo online</div>
+          <div class="sub">Elegí versión, campaña, plazo y monto. Vas a ver la cuota mensual y el desglose completo de costos.</div>
+        </div>
+        <svg class="arrow" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+      </button>
+    </div>
+  </div>
+</section>
+
+<!-- ============== FORM + RESULT ============== -->
+<div class="form-wrap">
+  <div class="form-result-grid">
+    <div class="form-inner">
+
+      <!-- 01 Modelo -->
+      <div class="form-card" id="card-modelo">
+        <div class="card-head">
+          <span class="card-num" id="num-modelo">01</span>
+          <div>
+            <div class="card-title">Elegí el modelo</div>
+            <div class="card-sub">Primero la familia (Polo, T-Cross, etc.).</div>
+          </div>
+        </div>
+        <select class="form-select" id="sel-modelo">
+          <option value="">Cargando modelos…</option>
+        </select>
+      </div>
+
+      <!-- 02 Versión -->
+      <div class="form-card disabled" id="card-version">
+        <div class="card-head">
+          <span class="card-num disabled" id="num-version">02</span>
+          <div>
+            <div class="card-title">Elegí la versión</div>
+            <div class="card-sub">Precios finales patenta cliente · stock limitado.</div>
+          </div>
+        </div>
+        <div class="version-list" id="version-list">
+          <div style="padding: 16px; color: var(--grey-500); font-size: 13px; text-align: center;">Esperá a elegir un modelo…</div>
+        </div>
+      </div>
+
+      <!-- 03 Provincia -->
+      <div class="form-card disabled" id="card-provincia">
+        <div class="card-head">
+          <span class="card-num disabled" id="num-provincia">03</span>
+          <div>
+            <div class="card-title">¿Dónde patentás?</div>
+            <div class="card-sub">Cambia el arancel y sellado de prenda.</div>
+          </div>
+        </div>
+        <div class="pcia-row">
+          <button class="pcia-chip" data-pcia="CABA">CABA</button>
+          <button class="pcia-chip" data-pcia="PBA">Pcia. de Bs. As.</button>
+          <button class="pcia-chip" data-pcia="OTRA">Otra</button>
+        </div>
+        <div class="pcia-aviso" id="pcia-aviso">
+          ⚠️ Tasas calculadas como referencia con valores de CABA. Tu asesor las ajusta a tu provincia real.
+        </div>
+      </div>
+
+      <!-- 04 Campaña -->
+      <div class="form-card disabled" id="card-campana">
+        <div class="card-head">
+          <span class="card-num disabled" id="num-campana">04</span>
+          <div>
+            <div class="card-title">Elegí la campaña VWFS</div>
+            <div class="card-sub">Cargadas desde el sistema VWFS en vivo.</div>
+          </div>
+        </div>
+        <div class="campana-list" id="campana-list">
+          <div style="padding: 16px; color: var(--grey-500); font-size: 13px; text-align: center;">Esperá a elegir una versión…</div>
+        </div>
+      </div>
+
+      <!-- 05 Plazo -->
+      <div class="form-card disabled" id="card-plazo">
+        <div class="card-head">
+          <span class="card-num disabled" id="num-plazo">05</span>
+          <div>
+            <div class="card-title">Cuotas</div>
+            <div class="card-sub">Plazos disponibles según campaña.</div>
+          </div>
+        </div>
+        <div class="plazo-grid" id="plazo-grid"></div>
+      </div>
+
+      <!-- 06 Monto -->
+      <div class="form-card disabled" id="card-monto">
+        <div class="card-head">
+          <span class="card-num disabled" id="num-monto">06</span>
+          <div>
+            <div class="card-title">Monto a financiar</div>
+            <div class="card-sub">Hasta el tope de la campaña elegida.</div>
+          </div>
+        </div>
+        <div class="monto-display num" id="monto-display">$0</div>
+        <div class="monto-sub" id="monto-sub">Elegí campaña y plazo primero</div>
+        <input type="range" class="monto-slider" id="monto-slider" min="1000000" max="30000000" step="500000" value="10000000">
+        <div class="slider-labels">
+          <span id="monto-min">$1.000.000</span>
+          <span id="monto-max">$30.000.000</span>
+        </div>
+      </div>
+
+      <!-- 07 Titulares -->
+      <div class="form-card disabled" id="card-titulares">
+        <div class="card-head">
+          <span class="card-num disabled" id="num-titulares">07</span>
+          <div>
+            <div class="card-title">Titulares del crédito</div>
+            <div class="card-sub">Cambia el costo de inscripción de prenda.</div>
+          </div>
+        </div>
+        <div class="tit-row">
+          <button class="tit-chip active" data-tit="1"><span class="label-num">1</span><span class="label-sub">titular</span></button>
+          <button class="tit-chip" data-tit="2"><span class="label-num">2</span><span class="label-sub">titulares</span></button>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- RESULT -->
+    <div class="result-side">
+      <div class="result-card empty" id="result-card">
+        <div class="result-content">
+          <div class="result-eyebrow">Tu cuota mensual</div>
+          <div class="result-cuota num placeholder" id="result-cuota">$ —</div>
+          <div class="result-meta" id="result-meta">Completá el simulador para ver tu cuota.</div>
+          <div class="result-grid" id="result-grid" style="display:none">
+            <div class="result-cell">
+              <div class="label">Modelo</div>
+              <div class="value" id="rg-modelo">—</div>
+            </div>
+            <div class="result-cell">
+              <div class="label">Plan</div>
+              <div class="value" id="rg-plan">—</div>
+            </div>
+            <div class="result-cell">
+              <div class="label">Total contado</div>
+              <div class="value big num" id="rg-entrega">—</div>
+            </div>
+            <div class="result-cell">
+              <div class="label">A financiar</div>
+              <div class="value num" id="rg-monto">—</div>
+            </div>
+          </div>
+          <div class="result-actions" id="result-actions" style="display:none">
+            <button class="btn-desglose" id="btn-desglose" onclick="toggleDesglose()">
+              <span>Ver desglose de costos</span>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+            <div class="desglose-card" id="desglose-card">
+              <div class="desglose-row"><span>Precio oferta (con F+F)</span><span class="v num" id="d-precio">—</span></div>
+              <div class="desglose-row"><span id="d-arancel-label">Arancel/sellado patente</span><span class="v num" id="d-arancel">—</span></div>
+              <div class="desglose-row"><span>Gestoría</span><span class="v num" id="d-gestoria">—</span></div>
+              <div class="desglose-row"><span>Arancel Tito González (PF)</span><span class="v num" id="d-arancel-tg">—</span></div>
+              <div class="desglose-row"><span id="d-prenda-label">Inscripción prenda</span><span class="v num" id="d-prenda">—</span></div>
+              <div class="desglose-row"><span id="d-sellado-label">Sellado prenda</span><span class="v num" id="d-sellado">—</span></div>
+              <div class="desglose-row"><span>Quebranto VWFS</span><span class="v num" id="d-quebranto">—</span></div>
+              <div class="desglose-row total"><span>Total patentado</span><span class="v num" id="d-total">—</span></div>
+              <div class="desglose-row cyan"><span>Monto financiado</span><span class="v num" id="d-financiado">—</span></div>
+              <div class="desglose-row total"><span>Total contado a abonar</span><span class="v num" id="d-entrega">—</span></div>
+              <div class="desglose-note" id="d-pcia-nota">⚠️ Arancel, sellado de patente y sellado de prenda son referenciales (calculados con valores de CABA). Tu asesor los ajusta a tu provincia real.</div>
+            </div>
+            <button class="cta-contactar" id="cta-contactar" onclick="abrirModalContacto()">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="#fff"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.149-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.71.306 1.263.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/></svg>
+              Quiero que me contacten
+            </button>
+          </div>
+          <div class="result-disclaimer">Precio final patenta cliente · stock limitado. Simulación orientativa. La primera cuota incluye un adicional por ITF (1,2% s/monto financiado). No incluye seguro automotor. Validez 24 hs o hasta agotar stock. VWFS Argentina.</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ============== PLANES VWFS EXPLICADOS ============== -->
+<section class="planes-wrap">
+  <div class="planes-inner">
+    <div class="section-eyebrow">Cómo se financia un VW</div>
+    <h2>3 formas de comprar tu Volkswagen.</h2>
+    <div class="planes-list" id="planes-list">
+      <div class="plan-info-card recommended">
+        <div class="head">
+          <div class="nombre">Financia Más</div>
+          <div class="badge">Más elegido</div>
+        </div>
+        <div class="desc">Promo VWFS por tiempo limitado sobre modelos seleccionados, tasa cercana a 0% en cuotas cortas. Cupo limitado por mes.</div>
+        <div class="plazos-mini">12 · 18 · 24 cuotas</div>
+      </div>
+      <div class="plan-info-card">
+        <div class="head">
+          <div class="nombre">Especial Autos</div>
+        </div>
+        <div class="desc">Crédito prendario tradicional VWFS, tasa nominal anual baja en pesos. Aprobación rápida.</div>
+        <div class="plazos-mini">24 · 36 · 48 cuotas</div>
+      </div>
+      <div class="plan-info-card">
+        <div class="head">
+          <div class="nombre">Crédito VW</div>
+        </div>
+        <div class="desc">Financiación directa VW a plazo largo, tasa fija o ajustable. Ideal para presupuestos ajustados.</div>
+        <div class="plazos-mini">36 · 48 · 60 cuotas</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============== FAQ ============== -->
+<section class="faq-wrap">
+  <h2>Preguntas frecuentes</h2>
+  <div class="faq-item">
+    <button class="faq-q" onclick="toggleFaq(this)">
+      ¿La cuota incluye seguro y patente?
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+    </button>
+    <div class="faq-a">No. La cuota mensual es sólo de VWFS. El alta de patente se abona el día de retiro de la unidad y el seguro automotor lo contratás aparte (te ayudamos a comparar opciones).</div>
+  </div>
+  <div class="faq-item">
+    <button class="faq-q" onclick="toggleFaq(this)">
+      ¿Qué papeles necesito?
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+    </button>
+    <div class="faq-a">DNI, último recibo de sueldo (si sos relación de dependencia), 3 últimas DDJJ de IVA o monotributo (si sos autónomo) y un servicio a tu nombre. Tu asesor te arma la lista completa según tu caso.</div>
+  </div>
+  <div class="faq-item">
+    <button class="faq-q" onclick="toggleFaq(this)">
+      ¿Cuánto tarda la aprobación?
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+    </button>
+    <div class="faq-a">Hasta 48 hs hábiles desde que recibimos toda tu documentación. Si tu legajo está completo y limpio en BCRA, suele salir antes.</div>
+  </div>
+  <div class="faq-item">
+    <button class="faq-q" onclick="toggleFaq(this)">
+      ¿Puedo cancelar el crédito anticipadamente?
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+    </button>
+    <div class="faq-a">Sí, podés cancelar total o parcialmente cuando quieras. VWFS te recalcula el saldo y te devuelve los intereses no devengados (ley 27.440). Sin penalidad.</div>
+  </div>
+</section>
+
+<!-- ============== STICKY BOTTOM ============== -->
+<nav class="sticky-bottom">
+  <button class="btn-cotizar" id="btn-cotizar-sticky" onclick="abrirModalContacto()" disabled>
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="#fff"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.149-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.71.306 1.263.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/></svg>
+    Cotizar este plan
+  </button>
+</nav>
+
+<!-- ============== MODAL CONTACTO ============== -->
+<div class="modal-overlay" id="modal-overlay">
+  <div class="modal-box">
+    <button class="modal-close" onclick="cerrarModal()" aria-label="Cerrar">&times;</button>
+    <div id="modal-form-view">
+      <div class="modal-title">Dejanos tus datos así te contactamos</div>
+      <div class="modal-sub">Dejanos tus datos y un asesor se pone en contacto a la brevedad.</div>
+      <input class="modal-input" id="m-nombre" type="text" placeholder="Nombre y apellido *">
+      <input class="modal-input" id="m-telefono" type="tel" placeholder="Celular * (ej: 11 5566 7788)" maxlength="20">
+      <div class="modal-error" id="m-tel-error">Ingresá un celular argentino válido (10 dígitos sin 0 ni 15).</div>
+      <input class="modal-input" id="m-email" type="email" placeholder="Email (opcional)">
+      <button class="modal-cta" id="m-submit" onclick="enviarLead()">Enviar</button>
+    </div>
+    <div id="modal-success-view" style="display:none">
+      <div class="modal-success">
+        <div class="check">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+        </div>
+        <h3>¡Gracias!</h3>
+        <p>En unos minutos un asesor se va a estar poniendo en contacto.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // ============== DATA (compartido con home-nuevo.html) ==============
+  const PRECIOS_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTD40FCkAXCrVNslz1OtxnYm1DRhDulVOHaCxJ81-kiQL17KnfimCOPn3hJDHAvJsF9ROEZdePuRw2E/pub?gid=1432576316&single=true&output=csv';
+  const CAMPANAS_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTD40FCkAXCrVNslz1OtxnYm1DRhDulVOHaCxJ81-kiQL17KnfimCOPn3hJDHAvJsF9ROEZdePuRw2E/pub?gid=2146569390&single=true&output=csv';
+  const CRM_LEAD_URL = 'https://tito-crm.vercel.app/api/lead-externo';
+  const WA_FALLBACK = '5491137573604';
+
+  // Modelos base (mismo orden que home-nuevo.html)
+  const MODELS = [
+    { slug: 'polo',    name: 'Polo',    body: 'Hatchback Pequeño', bodyType: 'hatch',  priceFrom: 25650000, priceLista: 25650000 },
+    { slug: 'virtus',  name: 'Virtus',  body: 'Sedán Pequeño',     bodyType: 'sedan',  priceFrom: 28940000, priceLista: 28940000 },
+    { slug: 'tera',    name: 'Tera',    body: 'SUV Crossover',     bodyType: 'suv',    priceFrom: 29000000, priceLista: 29000000 },
+    { slug: 'saveiro', name: 'Saveiro', body: 'Pick-up Pequeña',   bodyType: 'pickup', priceFrom: 29800000, priceLista: 29800000 },
+    { slug: 'nivus',   name: 'Nivus',   body: 'SUV Crossover',     bodyType: 'suv',    priceFrom: 31200000, priceLista: 31200000 },
+    { slug: 't-cross', name: 'T-Cross', body: 'SUV Crossover',     bodyType: 'suv',    priceFrom: 34693859, priceLista: 34693859 },
+    { slug: 'vento',   name: 'Vento',   body: 'Sedán Mediano',     bodyType: 'sedan',  priceFrom: 38500000, priceLista: 38500000 },
+    { slug: 'amarok',  name: 'Amarok',  body: 'Pick-up Mediana',   bodyType: 'pickup', priceFrom: 41974035, priceLista: 41974035 },
+    { slug: 'taos',    name: 'Taos',    body: 'SUV Compacta',      bodyType: 'suv',    priceFrom: 45300000, priceLista: 45300000 },
+    { slug: 'tiguan',  name: 'Tiguan',  body: 'SUV Mediana',       bodyType: 'suv',    priceFrom: 58200000, priceLista: 58200000 },
+  ];
+
+  // Estado del simulador
+  const sim = {
+    modelo: null,        // objeto base del MODELS (familia: Polo, T-Cross, etc.)
+    version: null,       // versión específica: { nombreSheet, displayName, priceOferta, priceLista, stock, colores }
+    provincia: null,     // 'CABA' | 'PBA' | 'OTRA'
+    campana: null,       // string nombre de campaña
+    plazo: null,         // int
+    monto: 0,            // int
+    titulares: 1,
+    campanasDisponibles: {},
+  };
+  // Versiones cargadas del Sheet, agrupadas por slug del modelo base
+  const VERSIONS_POR_SLUG = {};
+  let CAMPANAS_CARGADAS = null;
+  let FINANCIA_MAS = [];
+
+  // ============== HELPERS ==============
+  function fmt(n) {
+    if (n == null || isNaN(n)) return '—';
+    return '$' + Math.round(n).toLocaleString('es-AR');
+  }
+  function $(id) { return document.getElementById(id); }
+  function urlParam(name) {
+    return new URLSearchParams(location.search).get(name);
+  }
+
+  function parseCSV(text) {
+    const filas = [];
+    for (const linea of text.trim().split(/\r?\n/)) {
+      const cols = []; let dentro = false, celda = '';
+      for (let i = 0; i < linea.length; i++) {
+        const c = linea[i];
+        if (c === '"') dentro = !dentro;
+        else if (c === ',' && !dentro) { cols.push(celda.trim()); celda = ''; }
+        else celda += c;
+      }
+      cols.push(celda.trim());
+      filas.push(cols);
+    }
+    return filas;
+  }
+
+  function matchSlug(nombreSheet) {
+    const n = (nombreSheet || '').toLowerCase();
+    if (!n) return null;
+    if (n.includes('t-cross') || n.includes('tcross')) return 't-cross';
+    for (const m of MODELS) {
+      if (m.slug === 't-cross') continue;
+      if (n.includes(m.slug)) return m.slug;
+    }
+    return null;
+  }
+
+  // ============== CARGA DE PRECIOS ==============
+  // Quita prefijos VW / VW Nuevo y sufijos de generación (G1/G2/G3) y model year
+  // para mostrar un display name más corto en la card de versión.
+  function prettyVersion(nombre) {
+    return (nombre || '')
+      .replace(/^VW\s+(Nuevo\s+)?/i, '')
+      .replace(/\s+G\d\b/gi, '')
+      .replace(/\s+MY\d{2,4}\b/gi, '')
+      .replace(/\s+/g, ' ')
+      .trim();
+  }
+
+  async function cargarPrecios() {
+    try {
+      const res = await fetch(PRECIOS_CSV_URL);
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      const text = await res.text();
+      const filas = parseCSV(text);
+      // Header esperado: modelo, precio_lista, oferta_vigente_con_fyf, stock, dto, colores
+      for (let i = 1; i < filas.length; i++) {
+        const f = filas[i];
+        if (!f || !f[0]) continue;
+        const slug = matchSlug(f[0]);
+        if (!slug) continue;
+        const nombreSheet = f[0].trim();
+        const lista = parseFloat((f[1] || '').replace(/[$,\s]/g, '')) || null;
+        const oferta = parseFloat((f[2] || '').replace(/[$,\s]/g, '')) || null;
+        if (!oferta) continue;
+        const stockTxt = (f[3] || '').toLowerCase();
+        const enStock = stockTxt.includes('stock disponible');
+        const colores = (f[5] || '').trim();
+        if (!VERSIONS_POR_SLUG[slug]) VERSIONS_POR_SLUG[slug] = [];
+        VERSIONS_POR_SLUG[slug].push({
+          slug,
+          nombreSheet,
+          displayName: prettyVersion(nombreSheet),
+          priceOferta: oferta,
+          priceLista: lista || oferta,
+          enStock,
+          colores,
+        });
+      }
+      // Ordenar: en stock primero, luego por precio ascendente
+      for (const slug of Object.keys(VERSIONS_POR_SLUG)) {
+        VERSIONS_POR_SLUG[slug].sort((a, b) => {
+          if (a.enStock !== b.enStock) return a.enStock ? -1 : 1;
+          return a.priceOferta - b.priceOferta;
+        });
+        // Actualizar el priceFrom del modelo a la oferta más barata EN STOCK (o la más barata absoluta)
+        const m = MODELS.find(x => x.slug === slug);
+        if (m) {
+          const enStock = VERSIONS_POR_SLUG[slug].filter(v => v.enStock);
+          const ref = (enStock[0] || VERSIONS_POR_SLUG[slug][0]);
+          if (ref) {
+            m.priceFrom = ref.priceOferta;
+            m.priceLista = ref.priceLista;
+            m.dataModelo = ref.nombreSheet;
+          }
+        }
+      }
+    } catch (err) {
+      console.warn('No se pudieron cargar precios:', err);
+    }
+  }
+
+  // ============== CARGA DE CAMPAÑAS ==============
+  async function cargarCampanas() {
+    try {
+      const res = await fetch(CAMPANAS_CSV_URL);
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      const text = await res.text();
+      const filas = parseCSV(text);
+      const campanas = {};
+      const modelosFM = new Set();
+
+      for (let i = 1; i < filas.length; i++) {
+        const f = filas[i];
+        if (!f || !f[1] || !f[3]) continue;
+        const nombre = (f[1] || '').trim();
+        const tipo = (f[2] || '').trim();
+        const plazo = parseInt(f[3]) || 0;
+        const cpVal = parseFloat((f[6] || '0').replace(',', '.')) || 0;
+        const qVal = parseFloat((f[7] || '0').replace(',', '.')) || 0;
+        const maxStr = (f[8] || '0').replace(/[$,\s]/g, '').trim();
+        const maxVal = parseFloat(maxStr) || 0;
+        const esAmarok = (f[9] || '').trim().toUpperCase();
+        const esUva = (f[10] || '').trim().toUpperCase() === 'SI';
+        const modelos = (f[12] || '').trim().toUpperCase();
+        const modelosAplicables = (f[13] || '').trim();
+
+        if (tipo.toLowerCase() === 'usado') continue;
+        if (!plazo || !cpVal) continue;
+
+        let grupo;
+        if (esAmarok === 'SI') grupo = 'AMAROK';
+        else if (modelos === 'FINANCIA_MAS') {
+          grupo = 'FM';
+          if (modelosAplicables) {
+            modelosAplicables.split('|').forEach(m => {
+              const mt = m.trim();
+              if (mt) modelosFM.add(mt);
+            });
+          }
+        } else if (modelos === 'BASICO') grupo = 'BASICO';
+        else grupo = 'TODOS';
+
+        if (!campanas[nombre]) campanas[nombre] = { grupo, plazos: {} };
+        campanas[nombre].plazos[plazo] = { cp: cpVal, q: qVal / 100, max: maxVal, uva: esUva };
+      }
+
+      CAMPANAS_CARGADAS = campanas;
+      FINANCIA_MAS = Array.from(modelosFM);
+    } catch (err) {
+      console.warn('No se pudieron cargar campañas:', err);
+      CAMPANAS_CARGADAS = null;
+    }
+  }
+
+  // ============== RENDER ==============
+  function poblarSelectModelos() {
+    const sel = $('sel-modelo');
+    sel.innerHTML = '<option value="">Elegí un modelo…</option>';
+    MODELS.forEach(m => {
+      const opt = document.createElement('option');
+      opt.value = m.slug;
+      opt.textContent = `${m.name} · desde ${fmt(m.priceFrom)}`;
+      sel.appendChild(opt);
+    });
+  }
+
+  function setCardState(cardId, numId, state) {
+    // state: 'disabled' | 'active' | 'done'
+    const card = $(cardId), num = $(numId);
+    card.classList.toggle('disabled', state === 'disabled');
+    num.classList.toggle('disabled', state === 'disabled');
+    num.classList.toggle('done', state === 'done');
+  }
+
+  function refreshFlow() {
+    setCardState('card-modelo',     'num-modelo',     sim.modelo ? 'done' : 'active');
+    setCardState('card-version',    'num-version',    !sim.modelo ? 'disabled' : (sim.version ? 'done' : 'active'));
+    setCardState('card-provincia',  'num-provincia',  !sim.version ? 'disabled' : (sim.provincia ? 'done' : 'active'));
+    setCardState('card-campana',    'num-campana',    !sim.provincia ? 'disabled' : (sim.campana ? 'done' : 'active'));
+    setCardState('card-plazo',      'num-plazo',      !sim.campana ? 'disabled' : (sim.plazo ? 'done' : 'active'));
+    setCardState('card-monto',      'num-monto',      !sim.plazo ? 'disabled' : 'active');
+    setCardState('card-titulares',  'num-titulares',  !sim.plazo ? 'disabled' : 'active');
+  }
+
+  function renderVersiones() {
+    const cont = $('version-list');
+    if (!sim.modelo) {
+      cont.innerHTML = '<div style="padding: 16px; color: var(--grey-500); font-size: 13px; text-align: center;">Esperá a elegir un modelo…</div>';
+      return;
+    }
+    const todas = VERSIONS_POR_SLUG[sim.modelo.slug] || [];
+    const versiones = todas.filter(v => v.enStock);
+    if (versiones.length === 0) {
+      cont.innerHTML = '<div style="padding: 16px; color: var(--grey-500); font-size: 13px; text-align: center;">Por el momento no hay versiones de este modelo en stock. Consultá por WhatsApp.</div>';
+      return;
+    }
+    cont.innerHTML = versiones.map((v) => {
+      const isActive = sim.version && sim.version.nombreSheet === v.nombreSheet;
+      const realIdx = todas.indexOf(v);
+      return `
+        <button class="version-card${isActive ? ' active' : ''}" data-version-idx="${realIdx}">
+          <span class="version-radio"></span>
+          <div class="version-body">
+            <div class="version-nombre">${v.displayName}</div>
+            <div class="version-meta">
+              <span class="version-precio num">${fmt(v.priceOferta)}</span>
+            </div>
+          </div>
+        </button>
+      `;
+    }).join('');
+  }
+
+  function renderCampanas() {
+    const cont = $('campana-list');
+    if (!sim.version) {
+      cont.innerHTML = '<div style="padding: 16px; color: var(--grey-500); font-size: 13px; text-align: center;">Esperá a elegir una versión…</div>';
+      return;
+    }
+    if (!CAMPANAS_CARGADAS) {
+      cont.innerHTML = '<div style="padding: 16px; color: var(--grey-500); font-size: 13px; text-align: center;">Cargando campañas VWFS…</div>';
+      return;
+    }
+
+    // Matcheo de FINANCIA_MAS por nombre completo del Sheet (la versión, no el modelo base)
+    const dataModelo = sim.version.nombreSheet;
+    const esAmarok = dataModelo.toLowerCase().includes('amarok');
+    const esFM = FINANCIA_MAS.includes(dataModelo);
+
+    const disponibles = {};
+    for (const [nombre, camp] of Object.entries(CAMPANAS_CARGADAS)) {
+      if (camp.grupo === 'AMAROK' && esAmarok) disponibles[nombre] = camp;
+      else if (camp.grupo === 'AMAROK' && !esAmarok) continue;
+      else if (!esAmarok) {
+        if (camp.grupo === 'TODOS') disponibles[nombre] = camp;
+        else if (camp.grupo === 'FM' && esFM) disponibles[nombre] = camp;
+        else if (camp.grupo === 'BASICO') disponibles[nombre] = camp;
+      }
+    }
+    sim.campanasDisponibles = disponibles;
+
+    if (Object.keys(disponibles).length === 0) {
+      cont.innerHTML = '<div style="padding: 16px; color: var(--grey-500); font-size: 13px; text-align: center;">No hay campañas disponibles para este modelo. Consultá por WhatsApp.</div>';
+      return;
+    }
+
+    // "Más elegida" = Especial Autos o Sin Quebranto (las que más vende VW hoy).
+    // UVA no entra, Largo Plazo no entra, Financia Más no entra, Campaña Única no entra.
+    const esMasElegida = (nombre) => {
+      const n = nombre.toLowerCase();
+      if (n.includes('uva')) return false;
+      return n.includes('especial autos') || n.includes('sin quebranto');
+    };
+
+    // Ordenar: destacadas primero
+    const ordenadas = Object.entries(disponibles).sort((a, b) => {
+      const aDest = esMasElegida(a[0]);
+      const bDest = esMasElegida(b[0]);
+      if (aDest && !bDest) return -1;
+      if (!aDest && bDest) return 1;
+      return 0;
+    });
+
+    cont.innerHTML = ordenadas.map(([nombre, camp]) => {
+      const plazos = Object.keys(camp.plazos).map(Number).sort((a, b) => a - b);
+      const plazoMaxObj = camp.plazos[plazos[plazos.length - 1]];
+      const maxStr = plazoMaxObj && plazoMaxObj.max
+        ? `Hasta ${fmt(plazoMaxObj.max)} en ${plazos[plazos.length - 1]} cuotas`
+        : `${plazos.length} plazos disponibles`;
+      const n = nombre.toLowerCase();
+      const destacada = esMasElegida(nombre);
+      const tags = [];
+      if (n.includes('sin quebranto')) tags.push('<span class="campana-tag zero">Quebranto $0</span>');
+      else if (n.includes('especial autos')) tags.push('<span class="campana-tag zero">Más vendida</span>');
+      else if (n.includes('financia más')) tags.push('<span class="campana-tag zero">Tasa 0%</span>');
+      if (plazos.some(p => camp.plazos[p].uva)) tags.push('<span class="campana-tag uva">UVA</span>');
+      const isActive = sim.campana === nombre;
+      const pill = destacada ? '<span class="destacada-pill">Más elegida</span>' : '';
+      return `
+        <button class="campana-card${isActive ? ' active' : ''}${destacada ? ' destacada' : ''}" data-campana="${nombre.replace(/"/g, '&quot;')}">
+          ${pill}
+          <span class="campana-radio"></span>
+          <div class="campana-body">
+            <div class="campana-nombre">${nombre}</div>
+            <div class="campana-meta">${maxStr}</div>
+            ${tags.length ? `<div class="campana-tags">${tags.join('')}</div>` : ''}
+          </div>
+        </button>
+      `;
+    }).join('');
+  }
+
+  function renderPlazos() {
+    const cont = $('plazo-grid');
+    if (!sim.campana || !sim.campanasDisponibles[sim.campana]) {
+      cont.innerHTML = '<div style="padding: 14px; color: var(--grey-500); font-size: 12.5px; grid-column: 1/-1; text-align: center;">Elegí campaña primero</div>';
+      return;
+    }
+    const camp = sim.campanasDisponibles[sim.campana];
+    const plazos = Object.keys(camp.plazos).map(Number).sort((a, b) => a - b);
+    cont.innerHTML = plazos.map(p => {
+      const isActive = sim.plazo === p;
+      const uva = camp.plazos[p].uva ? '<span class="label">UVA</span>' : '<span class="label">cuotas</span>';
+      return `
+        <button class="plazo-chip ${isActive ? 'active' : ''}" data-plazo="${p}">
+          <span class="cant">${p}</span>
+          ${uva}
+        </button>
+      `;
+    }).join('');
+  }
+
+  function updateMontoSlider() {
+    const slider = $('monto-slider');
+    const display = $('monto-display');
+    const sub = $('monto-sub');
+    const minLbl = $('monto-min'), maxLbl = $('monto-max');
+
+    if (!sim.campana || !sim.plazo || !sim.campanasDisponibles[sim.campana]) {
+      slider.disabled = true;
+      sub.textContent = 'Elegí campaña y plazo primero';
+      display.textContent = '$0';
+      return;
+    }
+    const datos = sim.campanasDisponibles[sim.campana].plazos[sim.plazo];
+    if (!datos || !datos.max) {
+      slider.disabled = true;
+      sub.textContent = 'Sin tope definido para esta combinación';
+      return;
+    }
+    const max = datos.max;
+    const min = Math.min(1000000, max);
+    slider.disabled = false;
+    slider.min = min;
+    slider.max = max;
+    slider.step = 500000;
+    if (sim.monto < min || sim.monto > max) {
+      sim.monto = max;
+    }
+    slider.value = sim.monto;
+    minLbl.textContent = fmt(min);
+    maxLbl.textContent = fmt(max);
+    display.textContent = fmt(sim.monto);
+    sub.textContent = `Hasta ${fmt(max)} en esta campaña`;
+  }
+
+  function calcular() {
+    if (!sim.version || !sim.provincia || !sim.campana || !sim.plazo || !sim.monto) {
+      $('result-card').classList.add('empty');
+      $('result-cuota').classList.add('placeholder');
+      $('result-cuota').textContent = '$ —';
+      $('result-meta').textContent = 'Completá el simulador para ver tu cuota.';
+      $('result-grid').style.display = 'none';
+      $('result-actions').style.display = 'none';
+      $('btn-cotizar-sticky').disabled = true;
+      return;
+    }
+    const datos = sim.campanasDisponibles[sim.campana].plazos[sim.plazo];
+    if (!datos) return;
+
+    let tasaArancel, tasaSelladoPrenda, pciaLabel;
+    if (sim.provincia === 'PBA') {
+      tasaArancel = 0.035; tasaSelladoPrenda = 0.012; pciaLabel = 'PBA';
+    } else {
+      tasaArancel = 0.04; tasaSelladoPrenda = 0.01; pciaLabel = 'CABA';
+    }
+
+    const cuota = Math.round(sim.monto / 1000 * datos.cp);
+    const arancel = Math.round(sim.version.priceLista * tasaArancel);
+    const gestoria = 180000;
+    const arancelTG = 10000;
+    const inscPrenda = sim.titulares === 2 ? 200000 : 150000;
+    const totalDeuda = cuota * sim.plazo;
+    const selladoPrenda = Math.round(totalDeuda * tasaSelladoPrenda);
+    const quebranto = Math.round(sim.monto * datos.q * 1.21);
+    const totalPatentado = sim.version.priceOferta + arancel + gestoria + arancelTG + inscPrenda + selladoPrenda + quebranto;
+    const entrega = totalPatentado - sim.monto;
+
+    // Result card principal
+    $('result-card').classList.remove('empty');
+    $('result-cuota').classList.remove('placeholder');
+    $('result-cuota').textContent = fmt(cuota);
+    $('result-meta').textContent = `${sim.plazo} cuotas · ${sim.campana}${datos.uva ? ' (UVA)' : ''}`;
+    $('result-grid').style.display = 'grid';
+    $('result-actions').style.display = 'flex';
+    $('rg-modelo').textContent = sim.version.displayName;
+    $('rg-plan').textContent = sim.campana;
+    $('rg-entrega').textContent = fmt(entrega);
+    $('rg-monto').textContent = fmt(sim.monto);
+
+    // Desglose
+    $('d-precio').textContent = fmt(sim.version.priceOferta);
+    $('d-arancel-label').textContent = `Arancel/sellado patente (${pciaLabel} ${(tasaArancel * 100).toFixed(1)}%)`;
+    $('d-arancel').textContent = fmt(arancel);
+    $('d-gestoria').textContent = fmt(gestoria);
+    $('d-arancel-tg').textContent = fmt(arancelTG);
+    $('d-prenda-label').textContent = `Inscripción prenda (${sim.titulares} tit.)`;
+    $('d-prenda').textContent = fmt(inscPrenda);
+    $('d-sellado-label').textContent = `Sellado prenda (${pciaLabel} ${(tasaSelladoPrenda * 100).toFixed(1)}%)`;
+    $('d-sellado').textContent = fmt(selladoPrenda);
+    $('d-quebranto').textContent = fmt(quebranto);
+    $('d-total').textContent = fmt(totalPatentado);
+    $('d-financiado').textContent = '− ' + fmt(sim.monto);
+    $('d-entrega').textContent = fmt(entrega);
+    $('d-pcia-nota').classList.toggle('show', sim.provincia === 'OTRA');
+
+    $('btn-cotizar-sticky').disabled = false;
+
+    // Guardar para el lead
+    window._simResultado = {
+      cuota, entrega,
+      plan: sim.campana, plazo: sim.plazo, monto: sim.monto,
+      modelo: sim.modelo.name,
+      version: sim.version.displayName,
+      versionSheet: sim.version.nombreSheet,
+      provincia: sim.provincia,
+    };
+  }
+
+  function toggleDesglose() {
+    const btn = $('btn-desglose');
+    const card = $('desglose-card');
+    const open = !card.classList.contains('open');
+    card.classList.toggle('open', open);
+    btn.classList.toggle('open', open);
+    btn.querySelector('span').textContent = open ? 'Ocultar desglose' : 'Ver desglose de costos';
+  }
+
+  function toggleFaq(btn) {
+    btn.closest('.faq-item').classList.toggle('open');
+  }
+
+  // ============== MODAL CONTACTO ==============
+  function abrirModalContacto(bypassCheck) {
+    if (!bypassCheck && (!sim.version || !sim.campana || !sim.plazo)) {
+      alert('Completá la simulación primero.');
+      return;
+    }
+    $('modal-form-view').style.display = 'block';
+    $('modal-success-view').style.display = 'none';
+    $('m-nombre').value = '';
+    $('m-telefono').value = '';
+    $('m-email').value = '';
+    $('m-telefono').classList.remove('error');
+    $('m-tel-error').classList.remove('show');
+    $('m-submit').disabled = false;
+    $('m-submit').textContent = 'Enviar y abrir WhatsApp';
+    $('modal-overlay').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+  function cerrarModal() {
+    $('modal-overlay').classList.remove('open');
+    document.body.style.overflow = '';
+  }
+  $('modal-overlay').addEventListener('click', function(ev) {
+    if (ev.target === this) cerrarModal();
+  });
+
+  function validarTelefono(tel) {
+    let limpio = tel.replace(/[\s\-\(\)\.]/g, '');
+    if (limpio.startsWith('+54')) limpio = limpio.substring(3);
+    if (limpio.startsWith('54') && limpio.length > 10) limpio = limpio.substring(2);
+    if (limpio.startsWith('0')) limpio = limpio.substring(1);
+    if (limpio.length === 12 && /^[1-9]\d{1}15\d{8}$/.test(limpio)) limpio = limpio.substring(0, 2) + limpio.substring(4);
+    if (limpio.length === 13 && /^[1-9]\d{2}15\d{8}$/.test(limpio)) limpio = limpio.substring(0, 3) + limpio.substring(5);
+    return /^[1-9]\d{9}$/.test(limpio) ? limpio : null;
+  }
+
+  async function enviarLead() {
+    const nombre = $('m-nombre').value.trim();
+    const telRaw = $('m-telefono').value.trim();
+    const email = $('m-email').value.trim();
+
+    // Validación nombre y apellido (mínimo 2 palabras, cada una 3+ letras)
+    const partes = nombre.split(/\s+/).filter(p => p.length >= 3);
+    if (partes.length < 2) { alert('Ingresá tu nombre y apellido (mínimo 3 letras cada uno).'); return; }
+
+    const tel = validarTelefono(telRaw);
+    if (!tel) {
+      $('m-telefono').classList.add('error');
+      $('m-tel-error').classList.add('show');
+      return;
+    }
+    $('m-telefono').classList.remove('error');
+    $('m-tel-error').classList.remove('show');
+
+    const btn = $('m-submit');
+    btn.disabled = true;
+    btn.textContent = 'Enviando…';
+
+    try {
+      const haySim = sim.version && sim.campana && sim.plazo;
+      const modeloStr = haySim ? sim.version.nombreSheet : (sim.modelo ? sim.modelo.name : '');
+      const precioStr = haySim ? fmt(sim.version.priceOferta) : '';
+      const res = await fetch(CRM_LEAD_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          nombre, telefono: tel, email,
+          modelo: modeloStr,
+          precio: precioStr,
+          financiacion: true,
+          simulacion: window._simResultado || null,
+          via: haySim ? 'simulador-online' : 'simulador-asesor',
+        }),
+      });
+      // El CRM recibe el lead. Sea exitoso o no, mostramos siempre el mismo mensaje.
+      const data = await res.json().catch(() => null);
+      if (!data || !data.ok) console.warn('CRM respondió sin ok:', data);
+      $('modal-form-view').style.display = 'none';
+      $('modal-success-view').style.display = 'block';
+    } catch (err) {
+      console.warn('Lead error:', err);
+      // Aun si falla la red mostramos el mismo mensaje (el lead lo retomamos por backup)
+      $('modal-form-view').style.display = 'none';
+      $('modal-success-view').style.display = 'block';
+    }
+  }
+
+  // ============== EVENTS ==============
+  $('sel-modelo').addEventListener('change', (ev) => {
+    const slug = ev.target.value;
+    sim.modelo = MODELS.find(m => m.slug === slug) || null;
+    // Reset downstream
+    sim.version = null;
+    sim.campana = null; sim.plazo = null; sim.monto = 0;
+    renderVersiones();
+    renderCampanas();
+    renderPlazos();
+    updateMontoSlider();
+    refreshFlow();
+    calcular();
+  });
+
+  document.addEventListener('click', (ev) => {
+    // Selección de versión
+    const verCard = ev.target.closest('.version-card');
+    if (verCard && !verCard.closest('.disabled')) {
+      const idx = parseInt(verCard.dataset.versionIdx);
+      const versiones = VERSIONS_POR_SLUG[sim.modelo.slug] || [];
+      sim.version = versiones[idx] || null;
+      // Reset downstream (campañas dependen de la versión por matcheo FM)
+      sim.campana = null; sim.plazo = null; sim.monto = 0;
+      renderVersiones();
+      renderCampanas();
+      renderPlazos();
+      updateMontoSlider();
+      refreshFlow();
+      calcular();
+      return;
+    }
+    const pcia = ev.target.closest('.pcia-chip');
+    if (pcia && !pcia.closest('.disabled')) {
+      sim.provincia = pcia.dataset.pcia;
+      document.querySelectorAll('.pcia-chip').forEach(b => b.classList.toggle('active', b === pcia));
+      $('pcia-aviso').classList.toggle('show', sim.provincia === 'OTRA');
+      refreshFlow();
+      calcular();
+      return;
+    }
+    const camp = ev.target.closest('.campana-card');
+    if (camp && !camp.closest('.disabled')) {
+      sim.campana = camp.dataset.campana;
+      sim.plazo = null; sim.monto = 0;
+      renderCampanas();
+      renderPlazos();
+      updateMontoSlider();
+      refreshFlow();
+      calcular();
+      return;
+    }
+    const plazo = ev.target.closest('.plazo-chip');
+    if (plazo && !plazo.closest('.disabled') && !plazo.disabled) {
+      sim.plazo = parseInt(plazo.dataset.plazo);
+      renderPlazos();
+      updateMontoSlider();
+      refreshFlow();
+      calcular();
+      return;
+    }
+    const tit = ev.target.closest('.tit-chip');
+    if (tit && !tit.closest('.disabled')) {
+      sim.titulares = parseInt(tit.dataset.tit);
+      document.querySelectorAll('.tit-chip').forEach(b => b.classList.toggle('active', b === tit));
+      calcular();
+      return;
+    }
+  });
+
+  $('monto-slider').addEventListener('input', (ev) => {
+    sim.monto = parseInt(ev.target.value);
+    $('monto-display').textContent = fmt(sim.monto);
+    calcular();
+  });
+
+  // ============== EJEMPLO HERO ==============
+  // Busca una versión FINANCIA_MAS en stock + campaña Sin Quebranto (12c).
+  // Si no hay Sin Quebranto, cae a Especial Autos. Si no, a Financia Más.
+  function mostrarEjemploHero() {
+    if (!CAMPANAS_CARGADAS || Object.keys(VERSIONS_POR_SLUG).length === 0) return;
+
+    // Versión candidata: la primera versión en stock que esté en FINANCIA_MAS
+    let version = null;
+    for (const slug of Object.keys(VERSIONS_POR_SLUG)) {
+      for (const v of VERSIONS_POR_SLUG[slug]) {
+        if (v.enStock && FINANCIA_MAS.includes(v.nombreSheet)) { version = v; break; }
+      }
+      if (version) break;
+    }
+    if (!version) {
+      // Fallback: cualquier versión en stock
+      for (const slug of Object.keys(VERSIONS_POR_SLUG)) {
+        const v = VERSIONS_POR_SLUG[slug].find(x => x.enStock);
+        if (v) { version = v; break; }
+      }
+    }
+    if (!version) return;
+
+    // Buscar campaña preferida para esta versión
+    const esAmarok = version.nombreSheet.toLowerCase().includes('amarok');
+    const esFM = FINANCIA_MAS.includes(version.nombreSheet);
+    const candidatos = [];
+    for (const [nombre, camp] of Object.entries(CAMPANAS_CARGADAS)) {
+      // Filtro de aplicabilidad
+      if (camp.grupo === 'AMAROK' && !esAmarok) continue;
+      if (camp.grupo !== 'AMAROK' && esAmarok) continue;
+      if (camp.grupo === 'FM' && !esFM) continue;
+      const n = nombre.toLowerCase();
+      // Prioridad: Sin Quebranto > Especial Autos > Financia Más
+      let prio = 99;
+      if (n.includes('sin quebranto')) prio = 1;
+      else if (n.includes('especial autos')) prio = 2;
+      else if (n.includes('financia más')) prio = 3;
+      else continue;
+      candidatos.push({ nombre, camp, prio });
+    }
+    if (candidatos.length === 0) return;
+    candidatos.sort((a, b) => a.prio - b.prio);
+    const { nombre, camp } = candidatos[0];
+
+    // Plazo: el menor disponible (suele ser 12 para Sin Quebranto)
+    const plazos = Object.keys(camp.plazos).map(Number).sort((a, b) => a - b);
+    const plazo = plazos[0];
+    const datos = camp.plazos[plazo];
+    const monto = datos.max || 17000000;
+    const cuota = Math.round(monto / 1000 * datos.cp);
+
+    // Render
+    $('hero-eg-eyebrow').textContent = `Ejemplo · ${version.displayName}`;
+    $('hero-eg-title').textContent = `${fmt(monto)} en ${plazo} cuotas`;
+    $('hero-eg-cuota').textContent = fmt(cuota);
+    const metaParts = [`cuota mensual · ${nombre}`];
+    $('hero-eg-meta').textContent = metaParts.join(' · ');
+  }
+
+  // ============== GATE ==============
+  // 'asesor' → abre modal de contacto sin requerir simulación.
+  // 'online' → muestra el simulador (form + result + planes + FAQ).
+  function gateElegir(opcion) {
+    if (opcion === 'asesor') {
+      abrirModalContacto(true);
+    } else {
+      document.body.classList.add('choice-made');
+      window.scrollTo({ top: 0, behavior: 'instant' });
+    }
+  }
+
+  // ============== INIT ==============
+  (async () => {
+    poblarSelectModelos();
+    await Promise.all([cargarPrecios(), cargarCampanas()]);
+    poblarSelectModelos();
+    mostrarEjemploHero();
+    // Pre-cargar modelo desde ?slug=polo si vino del home
+    const slugInicial = urlParam('slug');
+    if (slugInicial) {
+      const m = MODELS.find(x => x.slug === slugInicial);
+      if (m) {
+        $('sel-modelo').value = m.slug;
+        sim.modelo = m;
+        renderVersiones();
+        renderCampanas();
+        renderPlazos();
+        updateMontoSlider();
+        refreshFlow();
+      }
+    }
+  })();
+</script>
+
+</body>
+</html>

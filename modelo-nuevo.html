@@ -1,0 +1,886 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#001E50">
+  <meta name="google-site-verification" content="9icjYBaCoTR3kDyOT93q2gRK3_WhpVWDwCPk14jEZvE" />
+  <link rel="canonical" id="canonical-link" href="https://baratito.com.ar/" />
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+
+  <title id="page-title">Modelo · Baratito · Tito González Automotores</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --vw-blue: #001E50;
+      --vw-blue-deep: #00133A;
+      --vw-cyan: #00B0F0;
+      --vw-cyan-soft: #E6F7FE;
+      --vw-green: #25D366;
+      --grey-50: #FAFAFA;
+      --grey-100: #F5F5F5;
+      --grey-200: #EBEBEB;
+      --grey-300: #D8D8D8;
+      --grey-500: #8A8A8A;
+      --grey-700: #4A4A4A;
+      --grey-900: #1A1A1A;
+    }
+    html, body {
+      font-family: 'DM Sans', system-ui, -apple-system, sans-serif;
+      color: var(--grey-900); background: var(--grey-100);
+      -webkit-font-smoothing: antialiased;
+    }
+    body { min-height: 100vh; overflow-x: hidden; }
+    .num { font-variant-numeric: tabular-nums; }
+    .mono { font-family: 'JetBrains Mono', monospace; }
+    button { font-family: inherit; cursor: pointer; }
+    a { text-decoration: none; color: inherit; }
+
+    /* ============== HEADER ============== */
+    .header {
+      position: sticky; top: 0; z-index: 30; background: #fff;
+      padding: 52px 16px 10px;
+      display: flex; align-items: center; gap: 10px;
+      border-bottom: 1px solid var(--grey-200);
+    }
+    .btn-back {
+      width: 36px; height: 36px; border-radius: 999px; border: none;
+      background: var(--grey-100);
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .header-info { flex: 1; min-width: 0; }
+    .header-info .eyebrow {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px; color: var(--grey-500); font-weight: 600;
+      text-transform: uppercase; letter-spacing: 0.6px;
+    }
+    .header-info .nombre {
+      font-size: 22px; font-weight: 700; color: var(--grey-900);
+      letter-spacing: -0.8px; line-height: 1;
+    }
+    .btn-financiacion {
+      padding: 8px 12px; border-radius: 999px;
+      border: 1.5px solid var(--vw-blue); background: #fff; color: var(--vw-blue);
+      font-size: 12px; font-weight: 700; letter-spacing: -0.1px;
+      white-space: nowrap; flex-shrink: 0;
+    }
+
+    /* ============== META ============== */
+    .meta-row { padding: 14px 16px 10px; background: #fff; }
+    .meta-chips { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; }
+    .chip {
+      padding: 4px 10px; border-radius: 999px;
+      background: var(--grey-100); color: var(--grey-700);
+      font-size: 11.5px; font-weight: 600;
+    }
+    .campaign-badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 4px 10px; border-radius: 999px;
+      font-size: 11px; font-weight: 700;
+    }
+    .campaign-badge .dot { width: 6px; height: 6px; border-radius: 50%; }
+    .meta-precio {
+      display: flex; align-items: baseline; justify-content: space-between;
+      margin-top: 12px;
+    }
+    .meta-precio .lbl {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px; color: var(--grey-500); font-weight: 600;
+      letter-spacing: 0.6px; text-transform: uppercase;
+    }
+    .meta-precio .valor {
+      font-size: 24px; font-weight: 700; color: var(--vw-blue);
+      letter-spacing: -0.8px;
+    }
+
+    /* ============== TABS SECCIONES ============== */
+    .tabs-wrap {
+      position: sticky; top: 99px; z-index: 25;
+      background: var(--grey-100);
+      border-bottom: 1px solid var(--grey-200);
+      padding: 10px 0;
+    }
+    .tabs {
+      display: flex; gap: 6px; padding: 0 16px;
+      overflow-x: auto; scrollbar-width: none;
+    }
+    .tabs::-webkit-scrollbar { display: none; }
+    .tab {
+      flex-shrink: 0; padding: 8px 14px; border-radius: 999px;
+      background: #fff; color: var(--grey-700);
+      border: none;
+      font-size: 12.5px; font-weight: 600; white-space: nowrap;
+    }
+    .tab.active { background: var(--vw-blue); color: #fff; font-weight: 700; }
+
+    /* ============== CONTENT ============== */
+    .content { padding: 14px 16px 0; }
+
+    /* Gallery */
+    .gallery {
+      background: #fff; border-radius: 14px; position: relative;
+      overflow: hidden; border: 1px solid var(--grey-200);
+    }
+    .gallery .img-wrap {
+      height: 240px; padding: 12px;
+      display: flex; align-items: center; justify-content: center;
+      background: var(--grey-50);
+    }
+    .gallery .img-wrap img {
+      max-width: 100%; max-height: 100%; object-fit: contain;
+    }
+    .arrow {
+      position: absolute; top: 50%; transform: translateY(-50%);
+      width: 36px; height: 36px; border-radius: 999px; border: none;
+      background: rgba(255,255,255,0.95); border: 1px solid var(--grey-200);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .arrow.left { left: 10px; }
+    .arrow.right { right: 10px; }
+    .gallery .dots {
+      display: flex; gap: 5px; justify-content: center;
+      padding: 0 0 12px;
+    }
+    .gallery .dot {
+      width: 6px; height: 6px; border-radius: 999px;
+      background: var(--grey-300); transition: width 0.2s, background 0.2s;
+    }
+    .gallery .dot.active { width: 18px; background: var(--vw-blue); }
+
+    /* Thumbnails strip */
+    .thumbs {
+      display: flex; gap: 8px; margin-top: 10px;
+      overflow-x: auto; scrollbar-width: none;
+    }
+    .thumbs::-webkit-scrollbar { display: none; }
+    .thumb {
+      flex-shrink: 0; width: 80px; height: 60px;
+      background: #fff; border: 1.5px solid var(--grey-200); border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      overflow: hidden;
+    }
+    .thumb img { max-width: 100%; max-height: 100%; object-fit: contain; }
+    .thumb.active { border-color: var(--vw-blue); }
+
+    /* Variantes section */
+    .variantes-title {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px; color: var(--grey-500); font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.8px;
+      margin-top: 22px; margin-bottom: 10px;
+    }
+    .variantes-list { display: flex; flex-direction: column; gap: 10px; }
+    .variante {
+      background: #fff; border: 1.5px solid var(--grey-200); border-radius: 12px;
+      padding: 12px 14px;
+      display: flex; align-items: center; gap: 12px;
+    }
+    .variante.active { border-color: var(--vw-blue); background: var(--vw-cyan-soft); }
+    .variante .radio {
+      width: 22px; height: 22px; border-radius: 999px;
+      border: 2px solid var(--grey-300); flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .variante.active .radio { border-color: var(--vw-blue); }
+    .variante .radio-inner {
+      width: 10px; height: 10px; border-radius: 999px;
+      background: var(--vw-blue); display: none;
+    }
+    .variante.active .radio-inner { display: block; }
+    .variante .info { flex: 1; min-width: 0; }
+    .variante .nombre-var { font-size: 14px; font-weight: 700; color: var(--grey-900); }
+    .variante .tier { font-size: 11px; color: var(--grey-500); margin-top: 2px; font-weight: 500; }
+    .variante .precio {
+      font-size: 16px; font-weight: 700; color: var(--vw-blue);
+      letter-spacing: -0.4px;
+    }
+
+    /* Versión seleccionada (card grande) */
+    .version-card {
+      margin-top: 22px;
+      background: #fff; border: 1.5px solid var(--vw-blue); border-radius: 14px;
+      padding: 16px 18px;
+    }
+    .version-card .eyebrow {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px; color: var(--vw-blue); font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.8px;
+    }
+    .version-card .nombre-version {
+      font-size: 17px; font-weight: 700; color: var(--grey-900);
+      letter-spacing: -0.3px; margin-top: 4px;
+    }
+    .version-card .specs {
+      display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px;
+    }
+    .version-card .spec-chip {
+      padding: 4px 10px; border-radius: 999px;
+      background: var(--grey-100); color: var(--grey-700);
+      font-size: 11px; font-weight: 600;
+    }
+    .version-card .precio-big {
+      font-size: 32px; font-weight: 700; color: var(--vw-blue);
+      letter-spacing: -1.2px; margin-top: 14px; line-height: 1;
+    }
+    .version-card .precio-nota {
+      font-size: 11.5px; color: var(--grey-500); margin-top: 6px;
+      line-height: 1.45; font-weight: 500;
+    }
+    .version-card .cuota-line {
+      font-size: 13px; color: var(--grey-700); margin-top: 8px;
+    }
+    .version-card .cuota-line .num { color: var(--vw-blue); font-weight: 700; }
+
+    /* ============== STICKY BOTTOM ============== */
+    .sticky-bottom {
+      position: sticky; bottom: 0; left: 0; right: 0; z-index: 25;
+      padding: 10px 12px 28px; margin-top: 32px;
+      background: rgba(255, 255, 255, 0.96);
+      backdrop-filter: blur(8px);
+      border-top: 1px solid var(--grey-200);
+      display: grid; grid-template-columns: 1fr 1fr; gap: 8px;
+    }
+    .sticky-bottom .btn-wa, .sticky-bottom .btn-sim {
+      height: 48px; border: none; border-radius: 10px;
+      font-size: 15px; font-weight: 700; color: #fff;
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+    }
+    .sticky-bottom .btn-wa { background: var(--vw-green); }
+    .sticky-bottom .btn-sim { background: var(--vw-blue); }
+
+    /* ============== MODAL CONTACTO ============== */
+    .modal-overlay {
+      display: none;
+      position: fixed; inset: 0; z-index: 100;
+      background: rgba(0,0,0,0.5); padding: 16px;
+      align-items: flex-end; justify-content: center;
+    }
+    .modal-overlay.open { display: flex; }
+    .modal-box {
+      background: #fff; border-radius: 18px 18px 0 0;
+      width: 100%; max-width: 480px;
+      padding: 22px 20px calc(20px + env(safe-area-inset-bottom, 0px));
+      position: relative; max-height: 90vh; overflow-y: auto;
+    }
+    .modal-close {
+      position: absolute; right: 14px; top: 14px;
+      width: 32px; height: 32px; border-radius: 999px;
+      background: var(--grey-100); border: none;
+      font-size: 18px; color: var(--grey-700);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .modal-eyebrow {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10.5px; color: var(--vw-cyan);
+      letter-spacing: 1.4px; text-transform: uppercase; font-weight: 700;
+      margin-bottom: 6px;
+    }
+    .modal-title {
+      font-size: 20px; font-weight: 700; color: var(--vw-blue);
+      letter-spacing: -0.4px; margin-bottom: 4px;
+    }
+    .modal-modelo {
+      font-size: 13.5px; color: var(--grey-700); font-weight: 600;
+      margin-bottom: 14px;
+    }
+    .modal-input {
+      width: 100%; height: 48px; padding: 0 14px;
+      background: var(--grey-100); border: 1.5px solid transparent;
+      border-radius: 10px; font-family: inherit;
+      font-size: 14px; font-weight: 500; margin-bottom: 10px;
+    }
+    .modal-input:focus { outline: none; border-color: var(--vw-blue); background: #fff; }
+    .modal-input.error { border-color: #DC2626; background: #FEF2F2; }
+    .modal-error { display: none; font-size: 12px; color: #DC2626; margin: -6px 0 8px 4px; }
+    .modal-error.show { display: block; }
+    .modal-checks-label {
+      font-size: 11.5px; color: var(--grey-500); font-weight: 600;
+      letter-spacing: 0.4px; text-transform: uppercase; margin-bottom: 4px;
+    }
+    .modal-checks { margin: 8px 0 14px; display: flex; flex-direction: column; gap: 8px; }
+    .modal-check {
+      display: flex; align-items: center; gap: 10px;
+      padding: 10px 12px; background: var(--grey-100); border-radius: 8px;
+      font-size: 13.5px; color: var(--grey-900); font-weight: 600; cursor: pointer;
+    }
+    .modal-check input { width: 18px; height: 18px; accent-color: var(--vw-blue); cursor: pointer; }
+    .modal-cta {
+      width: 100%; height: 50px; border: none; border-radius: 10px;
+      background: var(--vw-blue); color: #fff;
+      font-size: 15px; font-weight: 700; margin-top: 6px;
+    }
+    .modal-cta:disabled { opacity: 0.5; cursor: not-allowed; }
+    .modal-success { text-align: center; padding: 20px 0; }
+    .modal-success .check {
+      width: 64px; height: 64px; border-radius: 50%;
+      background: var(--vw-cyan-soft); color: var(--vw-blue);
+      display: flex; align-items: center; justify-content: center; margin: 0 auto 14px;
+    }
+    .modal-success h3 {
+      font-size: 22px; font-weight: 700; color: var(--vw-blue);
+      letter-spacing: -0.4px; margin-bottom: 6px;
+    }
+    .modal-success p { font-size: 13.5px; color: var(--grey-700); line-height: 1.4; }
+    .modal-success .wa-cta {
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      width: 100%; height: 52px; background: var(--vw-green); color: #fff;
+      border-radius: 12px; text-decoration: none;
+      font-size: 15px; font-weight: 700; margin-top: 18px;
+    }
+    @media (min-width: 768px) {
+      .modal-overlay { align-items: center; }
+      .modal-box { border-radius: 18px; max-width: 480px; max-height: 86vh; }
+    }
+
+    /* SVG icons */
+    .icon-stroke { stroke: currentColor; fill: none; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
+
+    /* Desktop limiter */
+    @media (min-width: 600px) {
+      body { max-width: 480px; margin: 0 auto; box-shadow: 0 0 40px rgba(0,0,0,0.06); }
+    }
+  </style>
+</head>
+<body>
+
+<header class="header">
+  <a href="home-nuevo.html" class="btn-back" aria-label="Volver">
+    <svg class="icon-stroke" width="20" height="20" viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+  </a>
+  <div class="header-info">
+    <div class="eyebrow">Volkswagen</div>
+    <div class="nombre" id="header-nombre">—</div>
+  </div>
+  <button class="btn-financiacion" onclick="abrirFinanciacion()">Financiación</button>
+</header>
+
+<section class="meta-row">
+  <div class="meta-chips" id="meta-chips"></div>
+  <div class="meta-precio">
+    <span class="lbl" id="meta-variantes-lbl">— variantes · desde</span>
+    <span class="valor num" id="meta-precio-desde">—</span>
+  </div>
+</section>
+
+<div class="tabs-wrap">
+  <div class="tabs" id="tabs"></div>
+</div>
+
+<div class="content">
+  <!-- Gallery -->
+  <div class="gallery">
+    <div class="img-wrap">
+      <img id="gallery-img" src="" alt="">
+    </div>
+    <button class="arrow left" onclick="navGallery(-1)" aria-label="Anterior">
+      <svg class="icon-stroke" width="20" height="20" viewBox="0 0 24 24" style="color:var(--vw-blue)"><polyline points="15 18 9 12 15 6"/></svg>
+    </button>
+    <button class="arrow right" onclick="navGallery(1)" aria-label="Siguiente">
+      <svg class="icon-stroke" width="20" height="20" viewBox="0 0 24 24" style="color:var(--vw-blue)"><polyline points="9 18 15 12 9 6"/></svg>
+    </button>
+    <div class="dots" id="gallery-dots"></div>
+  </div>
+
+  <!-- Thumbnails -->
+  <div class="thumbs" id="thumbs"></div>
+
+  <!-- Variantes -->
+  <div class="variantes-title" id="variantes-title">— variantes disponibles</div>
+  <div class="variantes-list" id="variantes-list"></div>
+
+  <!-- Versión seleccionada -->
+  <div class="version-card" id="version-card">
+    <div class="eyebrow">Versión elegida</div>
+    <div class="nombre-version" id="vc-nombre">—</div>
+    <div class="specs" id="vc-specs"></div>
+    <div class="precio-big num" id="vc-precio">—</div>
+    <div class="precio-nota">Precio final patenta cliente · stock limitado</div>
+    <div class="cuota-line">o desde <span class="num" id="vc-cuota">—</span> en <strong>24 cuotas</strong></div>
+  </div>
+</div>
+
+<nav class="sticky-bottom">
+  <button class="btn-wa" id="btn-me-interesa" onclick="abrirLead()" style="border:none;color:#fff">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+    Me interesa
+  </button>
+  <a class="btn-sim" id="btn-ver-financiaciones" href="simulador-nuevo.html" style="text-decoration:none;color:#fff">
+    <svg class="icon-stroke" width="18" height="18" viewBox="0 0 24 24" style="color:#fff"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+    Ver financiaciones
+  </a>
+</nav>
+
+<!-- ============== MODAL CONTACTO ============== -->
+<div class="modal-overlay" id="lead-overlay">
+  <div class="modal-box">
+    <button class="modal-close" onclick="cerrarLead()" aria-label="Cerrar">&times;</button>
+    <div id="lead-form-view">
+      <div class="modal-eyebrow">Lo quiero</div>
+      <div class="modal-title">Te contactamos en minutos</div>
+      <div class="modal-modelo" id="lead-modelo-info">Dejanos tus datos y un asesor se pone en contacto a la brevedad.</div>
+      <input class="modal-input" id="lead-nombre" type="text" placeholder="Nombre y apellido *">
+      <input class="modal-input" id="lead-telefono" type="tel" placeholder="Celular * (ej: 11 5566 7788)" maxlength="20">
+      <div class="modal-error" id="lead-tel-error">Ingresá un celular argentino válido (10 dígitos sin 0 ni 15).</div>
+      <input class="modal-input" id="lead-email" type="email" placeholder="Email (opcional)">
+      <div class="modal-checks-label">¿Cómo lo querés pagar?</div>
+      <div class="modal-checks">
+        <label class="modal-check"><input type="checkbox" id="lead-contado"> Contado</label>
+        <label class="modal-check"><input type="checkbox" id="lead-financiacion" checked> Financiación VWFS</label>
+        <label class="modal-check"><input type="checkbox" id="lead-usado"> Entrego mi usado en parte de pago</label>
+      </div>
+      <button class="modal-cta" id="lead-submit" onclick="enviarLead()">Enviar</button>
+    </div>
+    <div id="lead-success-view" style="display:none">
+      <div class="modal-success">
+        <div class="check">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+        </div>
+        <h3>¡Gracias!</h3>
+        <p>En unos minutos un asesor se va a estar poniendo en contacto.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // ============== CAMPAIGNS ==============
+  const CAMPAIGNS = {
+    financia_mas:   { id: 'financia_mas',   label: 'Financia Más',   color: '#00B0F0', bg: '#E6F7FE' },
+    especial_autos: { id: 'especial_autos', label: 'Especial Autos', color: '#7B2CBF', bg: '#F1E8FB' },
+    credito_vw:     { id: 'credito_vw',     label: 'Crédito VW',     color: '#001E50', bg: '#E1E6EF' },
+    tasa_cero:      { id: 'tasa_cero',      label: 'Tasa 0%',        color: '#0B8A3E', bg: '#E4F5EA' },
+  };
+
+  // ============== MODELOS Y VERSIONES ==============
+  // Cada modelo: metadata + lista de versions (cada version tiene name humano +
+  // photo + matchKey que se usa para hacer match con la planilla).
+  const MODELS = {
+    'polo': {
+      slug: 'polo', name: 'Polo', body: 'Hatchback Pequeño', bodyType: 'hatch',
+      origin: 'Brasil', campaign: CAMPAIGNS.financia_mas, versions: [
+        { id: 'track',       name: 'Polo MSI Track MT MY26',          short: 'Track',       tier: 'Entrada de gama', photo: 'imagenes/polo track.webp',       matchKey: 'polo track' },
+        { id: 'comfortline', name: '170 TSI Comfortline AT6 MY26',    short: 'Comfortline', tier: 'Intermedia',      photo: 'imagenes/polo comfortline.webp', matchKey: 'polo comfortline' },
+        { id: 'highline',    name: '170 TSI Highline AT6 MY26',       short: 'Highline',    tier: 'Tope de gama',    photo: 'imagenes/polo highline.webp',    matchKey: 'polo highline' },
+      ]
+    },
+    'virtus': {
+      slug: 'virtus', name: 'Virtus', body: 'Sedán Pequeño', bodyType: 'sedan',
+      origin: 'Brasil', campaign: CAMPAIGNS.financia_mas, versions: [
+        { id: 'msi',        name: 'Virtus MSI MT G1 MY26',           short: 'MSI',        tier: 'Entrada',         photo: 'imagenes/virtus MSI.webp',        matchKey: 'virtus msi' },
+        { id: 'trendline',  name: 'Virtus Trendline 170TSI AT G1',   short: 'Trendline',  tier: 'Intermedia',      photo: 'imagenes/virtus trendline.webp',  matchKey: 'virtus trendline' },
+        { id: 'highline',   name: 'Virtus Highline 170TSI AT MY26',  short: 'Highline',   tier: 'Tope de gama',    photo: 'imagenes/virtus highline.webp',   matchKey: 'virtus highline' },
+        { id: 'exclusive',  name: 'Virtus Exclusive 250TSI AT',      short: 'Exclusive',  tier: 'Tope sport',      photo: 'imagenes/virtus exclusive.webp',  matchKey: 'virtus exclusive' },
+      ]
+    },
+    'tera': {
+      slug: 'tera', name: 'Tera', body: 'SUV Crossover', bodyType: 'suv',
+      origin: 'Brasil', campaign: CAMPAIGNS.tasa_cero, isNew: true, versions: [
+        { id: 'trendline', name: 'Tera Trendline',  short: 'Trendline', tier: 'Entrada',     photo: 'imagenes/tera trendline.webp', matchKey: 'tera trend' },
+        { id: 'comfort',   name: 'Tera Comfort',    short: 'Comfort',   tier: 'Intermedia',  photo: 'imagenes/tera comfort.webp',   matchKey: 'tera comfort' },
+        { id: 'high',      name: 'Tera High',       short: 'High',      tier: 'Tope',        photo: 'imagenes/tera high.webp',      matchKey: 'tera high' },
+        { id: 'outfit',    name: 'Tera Outfit',     short: 'Outfit',    tier: 'Tope sport',  photo: 'imagenes/tera outfit.webp',    matchKey: 'tera outfit' },
+      ]
+    },
+    'saveiro': {
+      slug: 'saveiro', name: 'Saveiro', body: 'Pick-up Pequeña', bodyType: 'pickup',
+      origin: 'Brasil', campaign: CAMPAIGNS.credito_vw, versions: [
+        { id: 'comfortline', name: 'Saveiro Comfortline', short: 'Comfortline', tier: 'Única versión', photo: 'imagenes/saveiro comfortline.webp', matchKey: 'saveiro comfortline' },
+      ]
+    },
+    'nivus': {
+      slug: 'nivus', name: 'Nivus', body: 'SUV Crossover', bodyType: 'suv',
+      origin: 'Brasil', campaign: CAMPAIGNS.financia_mas, versions: [
+        { id: 'trendline',  name: 'Nivus Trendline 170TSI MT G1',  short: 'Trendline',  tier: 'Entrada',     photo: 'imagenes/nivus trendline.webp',  matchKey: 'nivus trendline' },
+        { id: 'comfortline',name: 'Nivus Comfortline 200 TSI AT',  short: 'Comfortline',tier: 'Intermedia',  photo: 'imagenes/nivus comfortline.webp',matchKey: 'nivus comfortline' },
+        { id: 'highline',   name: 'Nivus Highline 250 TSI AT',     short: 'Highline',   tier: 'Tope',        photo: 'imagenes/nivus highline.webp',   matchKey: 'nivus highline' },
+        { id: 'outfit',     name: 'Nivus Outfit',                  short: 'Outfit',     tier: 'Tope sport',  photo: 'imagenes/nivus outfit.webp',     matchKey: 'nivus outfit' },
+      ]
+    },
+    't-cross': {
+      slug: 't-cross', name: 'T-Cross', body: 'SUV Crossover', bodyType: 'suv',
+      origin: 'Brasil', campaign: CAMPAIGNS.financia_mas, versions: [
+        { id: 'trendline-mt',name: 'T-Cross Trendline MT',         short: 'Trendline MT',tier: 'Entrada MT',  photo: 'imagenes/t-cross trendline mt.webp', matchKey: 't-cross trendline' },
+        { id: 'trendline-at',name: 'T-Cross Trendline AT',         short: 'Trendline AT',tier: 'Entrada AT',  photo: 'imagenes/t-cross trendline at.webp', matchKey: 't-cross trendline at' },
+        { id: 'comfortline', name: 'T-Cross Comfortline 250TSI',   short: 'Comfortline', tier: 'Intermedia',  photo: 'imagenes/t-cross comfortline.webp',  matchKey: 't-cross comfortline' },
+        { id: 'highline',    name: 'T-Cross Highline 250TSI',      short: 'Highline',    tier: 'Tope',        photo: 'imagenes/t-cross highline.webp',     matchKey: 't-cross highline' },
+        { id: 'extreme',     name: 'T-Cross Extreme',              short: 'Extreme',     tier: 'Tope sport',  photo: 'imagenes/t-cross extreme.webp',      matchKey: 't-cross extreme' },
+      ]
+    },
+    'vento': {
+      slug: 'vento', name: 'Vento', body: 'Sedán Mediano', bodyType: 'sedan',
+      origin: 'México', campaign: null, versions: [
+        { id: 'gli', name: 'Vento GLI', short: 'GLI', tier: 'Única versión', photo: 'imagenes/vento gli.webp', matchKey: 'vento gli' },
+      ]
+    },
+    'amarok': {
+      slug: 'amarok', name: 'Amarok', body: 'Pick-up Mediana', bodyType: 'pickup',
+      origin: 'Argentina', campaign: CAMPAIGNS.credito_vw, versions: [
+        { id: 'trendline',   name: 'Amarok Trendline 4x2',      short: 'Trendline 4x2',    tier: 'Entrada',     photo: 'imagenes/amarok trendline 4x2.webp',     matchKey: 'amarok trendline' },
+        { id: 'comfort-mt',  name: 'Amarok Comfortline MT 4x2', short: 'Comfortline MT',   tier: 'Intermedia',  photo: 'imagenes/amarok comfortline mt 4x2.webp',matchKey: 'amarok comfortline mt' },
+        { id: 'comfort-at',  name: 'Amarok Comfortline AT 4x2', short: 'Comfortline AT',   tier: 'Intermedia AT',photo: 'imagenes/amarok comfortline at 4x2.webp',matchKey: 'amarok comfortline at' },
+        { id: 'comfort-v6',  name: 'Amarok Comfortline V6',     short: 'Comfortline V6',   tier: 'V6',          photo: 'imagenes/amarok comfortline v6.webp',    matchKey: 'amarok comfortline v6' },
+        { id: 'highline-v6', name: 'Amarok Highline V6',        short: 'Highline V6',      tier: 'V6 alto',     photo: 'imagenes/amarok highline v6.webp',       matchKey: 'amarok highline v6' },
+        { id: 'extreme-v6',  name: 'Amarok Extreme V6',         short: 'Extreme V6',      tier: 'V6 tope',     photo: 'imagenes/amarok extreme v6.webp',        matchKey: 'amarok extreme v6' },
+        { id: 'blackstyle',  name: 'Amarok Black Style V6',     short: 'Black Style V6',  tier: 'Edición',     photo: 'imagenes/amarok blackstyle v6.webp',     matchKey: 'amarok black' },
+        { id: 'hero',        name: 'Amarok Hero V6',            short: 'Hero V6',         tier: 'Edición',     photo: 'imagenes/amarok hero v6.webp',           matchKey: 'amarok hero' },
+      ]
+    },
+    'taos': {
+      slug: 'taos', name: 'Taos', body: 'SUV Compacta', bodyType: 'suv',
+      origin: 'Argentina', campaign: CAMPAIGNS.especial_autos, versions: [
+        { id: 'comfortline',     name: 'Taos Comfortline',          short: 'Comfortline',     tier: 'Entrada', photo: 'imagenes/taos comfortline.webp',       matchKey: 'taos comfortline' },
+        { id: 'highline',        name: 'Taos Highline',             short: 'Highline',        tier: 'Tope',    photo: 'imagenes/taos highline.webp',          matchKey: 'taos highline' },
+        { id: 'highline-bitono', name: 'Taos Highline Bitono',      short: 'Highline Bitono', tier: 'Tope',    photo: 'imagenes/taos highline bitono.webp',  matchKey: 'taos highline bitono' },
+      ]
+    },
+    'tiguan': {
+      slug: 'tiguan', name: 'Tiguan', body: 'SUV Mediana', bodyType: 'suv',
+      origin: 'México', campaign: CAMPAIGNS.especial_autos, versions: [
+        { id: 'rline', name: 'Tiguan R-Line', short: 'R-Line', tier: 'Única versión', photo: 'imagenes/tiguan rline.webp', matchKey: 'tiguan' },
+      ]
+    },
+  };
+
+  const TABS = ['Vista general', 'Acabados', 'Motor', 'Exterior', 'Interior', 'Resumen'];
+  const state = { slug: null, model: null, versionId: null, galleryIdx: 0, activeTab: 'Acabados' };
+
+  // ============== HELPERS ==============
+  function fmtPrice(n) { return n == null ? '—' : '$' + Math.round(n).toLocaleString('es-AR'); }
+  function getModel() {
+    const params = new URLSearchParams(location.search);
+    const slug = (params.get('slug') || 'polo').toLowerCase();
+    return MODELS[slug] || MODELS['polo'];
+  }
+
+  // ============== RENDER ==============
+  function renderHeader() {
+    const m = state.model;
+    document.getElementById('header-nombre').textContent = m.name;
+    document.getElementById('page-title').textContent = `VW ${m.name} · Baratito · Tito González Automotores`;
+  }
+
+  function renderMeta() {
+    const m = state.model;
+    const chipsHtml = [
+      `<span class="chip">${m.body}</span>`,
+      `<span class="chip">Origen ${m.origin}</span>`,
+      m.campaign ? `<span class="campaign-badge" style="background:${m.campaign.bg};color:${m.campaign.color}"><span class="dot" style="background:${m.campaign.color}"></span>${m.campaign.label}</span>` : ''
+    ].filter(Boolean).join('');
+    document.getElementById('meta-chips').innerHTML = chipsHtml;
+    document.getElementById('meta-variantes-lbl').textContent = `${m.versions.length} variantes · desde`;
+    const min = m.versions.map(v => v.precio).filter(p => p != null);
+    document.getElementById('meta-precio-desde').textContent = fmtPrice(min.length ? Math.min(...min) : null);
+  }
+
+  function renderTabs() {
+    const wrap = document.getElementById('tabs');
+    wrap.innerHTML = TABS.map(t => {
+      const cls = t === state.activeTab ? 'tab active' : 'tab';
+      return `<button class="${cls}" onclick="setTab('${t}')">${t}</button>`;
+    }).join('');
+  }
+
+  function setTab(t) {
+    state.activeTab = t;
+    renderTabs();
+    // Pequeño aviso para tabs que aún no tienen contenido propio
+    if (t !== 'Acabados') {
+      // En este primer pass solo Acabados tiene contenido. Las otras tabs se
+      // marcan como activa visualmente pero la galería + variantes se mantienen.
+    }
+  }
+
+  function renderGallery() {
+    const m = state.model;
+    const v = m.versions[state.galleryIdx];
+    document.getElementById('gallery-img').src = v.photo;
+    document.getElementById('gallery-img').alt = `VW ${m.name} ${v.short}`;
+    // Dots
+    document.getElementById('gallery-dots').innerHTML =
+      m.versions.map((_, i) => `<span class="dot${i === state.galleryIdx ? ' active' : ''}"></span>`).join('');
+  }
+
+  function navGallery(delta) {
+    const total = state.model.versions.length;
+    state.galleryIdx = (state.galleryIdx + delta + total) % total;
+    state.versionId = state.model.versions[state.galleryIdx].id;
+    renderGallery();
+    renderThumbs();
+    renderVariantes();
+    renderVersionCard();
+  }
+
+  function renderThumbs() {
+    const m = state.model;
+    document.getElementById('thumbs').innerHTML = m.versions.map((v, i) =>
+      `<button class="thumb${i === state.galleryIdx ? ' active' : ''}" onclick="selectVersion(${i})">
+         <img src="${v.photo}" alt="${v.short}">
+       </button>`
+    ).join('');
+  }
+
+  function selectVersion(i) {
+    state.galleryIdx = i;
+    state.versionId = state.model.versions[i].id;
+    renderGallery();
+    renderThumbs();
+    renderVariantes();
+    renderVersionCard();
+  }
+
+  function renderVariantes() {
+    const m = state.model;
+    document.getElementById('variantes-title').textContent =
+      `${m.versions.length} ${m.versions.length === 1 ? 'variante disponible' : 'variantes disponibles'}`;
+    document.getElementById('variantes-list').innerHTML = m.versions.map((v, i) => {
+      const active = i === state.galleryIdx;
+      return `
+        <button class="variante${active ? ' active' : ''}" onclick="selectVersion(${i})">
+          <span class="radio"><span class="radio-inner"></span></span>
+          <span class="info">
+            <div class="nombre-var">${v.short}</div>
+            <div class="tier">${v.tier}</div>
+          </span>
+          <span class="precio num">${fmtPrice(v.precio)}</span>
+        </button>
+      `;
+    }).join('');
+  }
+
+  function renderVersionCard() {
+    const m = state.model;
+    const v = m.versions[state.galleryIdx];
+    document.getElementById('vc-nombre').textContent = v.name;
+    const cuotaAprox = v.precio ? Math.round(v.precio / 50000) * 1000 : null;
+    document.getElementById('vc-precio').textContent = fmtPrice(v.precio);
+    document.getElementById('vc-cuota').textContent = fmtPrice(cuotaAprox);
+
+    // Specs chiquitas: tier + origen
+    const specsEl = document.getElementById('vc-specs');
+    specsEl.innerHTML = [
+      `<span class="spec-chip">${v.tier}</span>`,
+      `<span class="spec-chip">Origen ${m.origin}</span>`,
+      m.campaign ? `<span class="spec-chip" style="background:${m.campaign.bg};color:${m.campaign.color}">${m.campaign.label}</span>` : '',
+    ].filter(Boolean).join('');
+
+    // CTA WhatsApp con la versión actual
+    const precioTxt = v.precio ? ` a ${fmtPrice(v.precio)}` : '';
+    const msg = `Hola Tito Gonzalez, vi en baratito.com.ar el ${m.name} ${v.short}${precioTxt} y quería consultar disponibilidad.`;
+    // Link "Ver financiaciones" del sticky bottom apunta al simulador con el slug del modelo
+    const linkFin = document.getElementById('btn-ver-financiaciones');
+    if (linkFin) linkFin.href = `simulador-nuevo.html?slug=${encodeURIComponent(m.slug)}`;
+  }
+
+  function abrirFinanciacion() {
+    const m = state.model;
+    location.href = `simulador-nuevo.html?slug=${encodeURIComponent(m.slug)}`;
+  }
+
+  // ============== LEAD FORM ==============
+  const CRM_LEAD_URL = 'https://tito-crm.vercel.app/api/lead-externo';
+  const WA_FALLBACK = '5491137573604';
+  let leadModeloSeleccionado = '';
+  let leadPrecioSeleccionado = '';
+
+  function abrirLead() {
+    const m = state.model;
+    const v = m && m.versions[state.galleryIdx];
+    if (m && v) {
+      leadModeloSeleccionado = `${m.name} ${v.short}`;
+      leadPrecioSeleccionado = v.precio ? fmtPrice(v.precio) : '';
+      document.getElementById('lead-modelo-info').textContent =
+        'Volkswagen ' + leadModeloSeleccionado + (leadPrecioSeleccionado ? ' · ' + leadPrecioSeleccionado : '');
+    } else {
+      leadModeloSeleccionado = '';
+      leadPrecioSeleccionado = '';
+      document.getElementById('lead-modelo-info').textContent = 'Dejanos tus datos y un asesor se pone en contacto a la brevedad.';
+    }
+    document.getElementById('lead-form-view').style.display = 'block';
+    document.getElementById('lead-success-view').style.display = 'none';
+    document.getElementById('lead-nombre').value = '';
+    document.getElementById('lead-telefono').value = '';
+    document.getElementById('lead-email').value = '';
+    document.getElementById('lead-telefono').classList.remove('error');
+    document.getElementById('lead-tel-error').classList.remove('show');
+    document.getElementById('lead-contado').checked = false;
+    document.getElementById('lead-financiacion').checked = true;
+    document.getElementById('lead-usado').checked = false;
+    const btn = document.getElementById('lead-submit');
+    btn.disabled = false;
+    btn.textContent = 'Enviar consulta';
+    document.getElementById('lead-overlay').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function cerrarLead() {
+    document.getElementById('lead-overlay').classList.remove('open');
+    document.body.style.overflow = '';
+  }
+  document.getElementById('lead-overlay').addEventListener('click', function(ev) {
+    if (ev.target === this) cerrarLead();
+  });
+
+  function validarTelefono(tel) {
+    let limpio = tel.replace(/[\s\-\(\)\.]/g, '');
+    if (limpio.startsWith('+54')) limpio = limpio.substring(3);
+    if (limpio.startsWith('54') && limpio.length > 10) limpio = limpio.substring(2);
+    if (limpio.startsWith('0')) limpio = limpio.substring(1);
+    if (limpio.length === 12 && /^[1-9]\d{1}15\d{8}$/.test(limpio)) limpio = limpio.substring(0, 2) + limpio.substring(4);
+    if (limpio.length === 13 && /^[1-9]\d{2}15\d{8}$/.test(limpio)) limpio = limpio.substring(0, 3) + limpio.substring(5);
+    return /^[1-9]\d{9}$/.test(limpio) ? limpio : null;
+  }
+
+  async function enviarLead() {
+    const nombre = document.getElementById('lead-nombre').value.trim();
+    const telRaw = document.getElementById('lead-telefono').value.trim();
+    const email = document.getElementById('lead-email').value.trim();
+    const contado = document.getElementById('lead-contado').checked;
+    const financiacion = document.getElementById('lead-financiacion').checked;
+    const usado = document.getElementById('lead-usado').checked;
+
+    const partes = nombre.split(/\s+/).filter(p => p.length >= 3);
+    if (partes.length < 2) { alert('Ingresá tu nombre y apellido (mínimo 3 letras cada uno).'); return; }
+    const tel = validarTelefono(telRaw);
+    if (!tel) {
+      document.getElementById('lead-telefono').classList.add('error');
+      document.getElementById('lead-tel-error').classList.add('show');
+      return;
+    }
+    document.getElementById('lead-telefono').classList.remove('error');
+    document.getElementById('lead-tel-error').classList.remove('show');
+    const btn = document.getElementById('lead-submit');
+    btn.disabled = true; btn.textContent = 'Enviando…';
+    try {
+      const res = await fetch(CRM_LEAD_URL, {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          nombre, telefono: tel, email,
+          modelo: leadModeloSeleccionado,
+          precio: leadPrecioSeleccionado,
+          contado, financiacion, usado,
+        }),
+      });
+      const data = await res.json();
+      if (data && data.ok && data.vendedor) {
+        const t = (data.vendedor.telefono || '').replace(/\D/g, '');
+        const telWa = t.startsWith('54') ? t : '54' + (t.startsWith('9') ? t : '9' + t);
+        const msg = '[WEB | BT] Hola ' + data.vendedor.nombre + '! Soy ' + nombre +
+          '. Me interesa el ' + leadModeloSeleccionado +
+          (leadPrecioSeleccionado ? ' (' + leadPrecioSeleccionado + ')' : '') +
+          '. Vi la oferta en baratito.com.ar.';
+        document.getElementById('lead-wa-link').href = 'https://wa.me/' + telWa + '?text=' + encodeURIComponent(msg);
+        document.getElementById('lead-vendedor-msg').textContent =
+          (data.vendedor.nombre + ' ' + (data.vendedor.apellido || '')).trim() + ' va a ser tu asesor.';
+        document.getElementById('lead-form-view').style.display = 'none';
+        document.getElementById('lead-success-view').style.display = 'block';
+      } else {
+        throw new Error((data && data.error) || 'CRM sin respuesta');
+      }
+    } catch (err) {
+      console.warn('Lead error:', err);
+      const msg = 'Hola Tito González, soy ' + nombre +
+        '. Me interesa el ' + leadModeloSeleccionado + '. Tel ' + tel + '.';
+      document.getElementById('lead-wa-link').href = 'https://wa.me/' + WA_FALLBACK + '?text=' + encodeURIComponent(msg);
+      document.getElementById('lead-vendedor-msg').textContent = 'Te derivamos por WhatsApp.';
+      document.getElementById('lead-form-view').style.display = 'none';
+      document.getElementById('lead-success-view').style.display = 'block';
+    }
+  }
+
+  // ============== SHEET LOADER ==============
+  const SHEET_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTD40FCkAXCrVNslz1OtxnYm1DRhDulVOHaCxJ81-kiQL17KnfimCOPn3hJDHAvJsF9ROEZdePuRw2E/pub?gid=1432576316&single=true&output=csv';
+
+  function parseCSV(text) {
+    const filas = [];
+    for (const linea of text.trim().split('\n')) {
+      const cols = []; let dentro = false, celda = '';
+      for (let i = 0; i < linea.length; i++) {
+        const c = linea[i];
+        if (c === '"') dentro = !dentro;
+        else if (c === ',' && !dentro) { cols.push(celda.trim()); celda = ''; }
+        else celda += c;
+      }
+      cols.push(celda.trim());
+      filas.push(cols);
+    }
+    return filas;
+  }
+
+  // Devuelve la versión cuya matchKey es la más específica (más larga) que
+  // coincide con el nombre del Sheet. Evita que "polo" matchee "polo highline"
+  // de paso (porque "polo highline" tiene matchKey más largo y específico).
+  function findVersion(sheetName, versions) {
+    const n = (sheetName || '').toLowerCase();
+    let best = null, bestLen = 0;
+    for (const v of versions) {
+      const k = v.matchKey;
+      if (n.includes(k) && k.length > bestLen) { best = v; bestLen = k.length; }
+    }
+    return best;
+  }
+
+  async function cargarPreciosDesdeSheet() {
+    try {
+      const res = await fetch(SHEET_URL);
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      const text = await res.text();
+      const filas = parseCSV(text);
+      const m = state.model;
+      // Para cada fila del Sheet, intento matchear contra una versión y guardo
+      // el menor precio en caso de duplicados.
+      for (let i = 1; i < filas.length; i++) {
+        const f = filas[i];
+        if (!f || !f[0]) continue;
+        const nombre = f[0].trim();
+        const v = findVersion(nombre, m.versions);
+        if (!v) continue;
+        const ofertaStr = (f[2] || '').replace(/[$,]/g, '').trim();
+        const oferta = ofertaStr ? parseFloat(ofertaStr) : null;
+        if (!oferta || isNaN(oferta)) continue;
+        if (v.precio == null || oferta < v.precio) v.precio = oferta;
+      }
+      renderMeta();
+      renderVariantes();
+      renderVersionCard();
+    } catch (err) {
+      console.warn('No se pudieron cargar precios desde Sheet:', err);
+    }
+  }
+
+  // ============== INIT ==============
+  function init() {
+    state.model = getModel();
+    state.slug = state.model.slug;
+    state.versionId = state.model.versions[0].id;
+    state.galleryIdx = 0;
+
+    // Canonical URL apunta a la URL linda del modelo (la vercel.json rewrite la mapea)
+    const canonical = document.getElementById('canonical-link');
+    if (canonical) canonical.href = `https://baratito.com.ar/${state.slug}`;
+    // Title dinámico
+    const pageTitle = document.getElementById('page-title');
+    if (pageTitle) pageTitle.textContent = `${state.model.name} · Baratito · Tito González Automotores`;
+
+    renderHeader();
+    renderMeta();
+    renderTabs();
+    renderGallery();
+    renderThumbs();
+    renderVariantes();
+    renderVersionCard();
+
+    cargarPreciosDesdeSheet();
+  }
+  init();
+</script>
+
+</body>
+</html>

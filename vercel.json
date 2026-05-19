@@ -1,0 +1,38 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "cleanUrls": true,
+  "trailingSlash": false,
+  "rewrites": [
+    { "source": "/", "destination": "/home-nuevo.html" },
+    { "source": "/financiacion", "destination": "/simulador-nuevo.html" },
+    { "source": "/financiacion/:slug", "destination": "/simulador-nuevo.html?slug=:slug" },
+    { "source": "/polo",    "destination": "/modelo-nuevo.html?slug=polo" },
+    { "source": "/virtus",  "destination": "/modelo-nuevo.html?slug=virtus" },
+    { "source": "/tera",    "destination": "/modelo-nuevo.html?slug=tera" },
+    { "source": "/saveiro", "destination": "/modelo-nuevo.html?slug=saveiro" },
+    { "source": "/nivus",   "destination": "/modelo-nuevo.html?slug=nivus" },
+    { "source": "/t-cross", "destination": "/modelo-nuevo.html?slug=t-cross" },
+    { "source": "/vento",   "destination": "/modelo-nuevo.html?slug=vento" },
+    { "source": "/amarok",  "destination": "/modelo-nuevo.html?slug=amarok" },
+    { "source": "/taos",    "destination": "/modelo-nuevo.html?slug=taos" },
+    { "source": "/tiguan",  "destination": "/modelo-nuevo.html?slug=tiguan" }
+  ],
+  "headers": [
+    {
+      "source": "/(.*)\\.(html|css|js)",
+      "headers": [
+        { "key": "Cache-Control", "value": "public, max-age=0, must-revalidate" }
+      ]
+    },
+    {
+      "source": "/imagenes/(.*)",
+      "headers": [
+        { "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }
+      ]
+    }
+  ],
+  "redirects": [
+    { "source": "/modelo-nuevo.html", "destination": "/", "permanent": false },
+    { "source": "/home-nuevo.html", "destination": "/", "permanent": true }
+  ]
+}

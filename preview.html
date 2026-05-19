@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Preview Baratito · mobile + desktop</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --vw-blue: #001E50;
+      --vw-cyan: #00B0F0;
+      --grey-100: #F5F5F5;
+      --grey-200: #EBEBEB;
+      --grey-300: #D8D8D8;
+      --grey-500: #8A8A8A;
+      --grey-900: #1A1A1A;
+    }
+    html, body {
+      height: 100%;
+      font-family: 'DM Sans', system-ui, sans-serif;
+      background: #0B0B12;
+      color: #fff;
+      overflow: hidden;
+    }
+    .topbar {
+      height: 56px;
+      display: flex; align-items: center; gap: 14px;
+      padding: 0 18px;
+      border-bottom: 1px solid #222;
+      background: #0B0B12;
+    }
+    .topbar h1 {
+      font-size: 14px; font-weight: 700; letter-spacing: -0.2px;
+    }
+    .topbar h1 span { color: var(--vw-cyan); }
+    .topbar .pill {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px; letter-spacing: 1px; text-transform: uppercase;
+      padding: 4px 10px; border-radius: 999px;
+      background: rgba(0, 176, 240, 0.15); color: var(--vw-cyan);
+    }
+    .topbar .spacer { flex: 1; }
+    .topbar .switch {
+      display: flex; gap: 0;
+      background: #1A1A24; border-radius: 8px;
+      border: 1px solid #333; padding: 2px;
+    }
+    .topbar .switch button {
+      padding: 6px 14px; background: transparent; color: #aab;
+      border: none; font-family: inherit;
+      font-size: 12px; font-weight: 600; letter-spacing: -0.1px;
+      border-radius: 6px; cursor: pointer;
+      transition: all 0.15s;
+    }
+    .topbar .switch button.active {
+      background: var(--vw-blue); color: #fff;
+    }
+    .topbar a {
+      font-size: 12px; color: #aab; text-decoration: none;
+      padding: 6px 12px; border-radius: 8px;
+      border: 1px solid #333; transition: border-color 0.12s, color 0.12s;
+    }
+    .topbar a:hover { border-color: var(--vw-cyan); color: var(--vw-cyan); }
+
+    .stage {
+      height: calc(100vh - 56px);
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 460px;
+      gap: 0;
+      background: #14141B;
+    }
+
+    .panel {
+      display: flex; flex-direction: column;
+      min-width: 0; min-height: 0;
+      border-right: 1px solid #222;
+    }
+    .panel:last-child { border-right: none; border-left: 1px solid #222; }
+    .panel-head {
+      padding: 10px 16px;
+      display: flex; align-items: center; gap: 10px;
+      background: #0F0F18;
+      border-bottom: 1px solid #222;
+    }
+    .panel-head .dot {
+      width: 8px; height: 8px; border-radius: 50%;
+    }
+    .panel-head .dot.web { background: #5CD68F; }
+    .panel-head .dot.phone { background: var(--vw-cyan); }
+    .panel-head .label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px; letter-spacing: 1px; text-transform: uppercase;
+      font-weight: 700;
+    }
+    .panel-head .size {
+      margin-left: auto;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px; color: #777;
+    }
+    .panel-body {
+      flex: 1;
+      display: flex; align-items: flex-start; justify-content: center;
+      padding: 18px;
+      overflow: auto;
+      background: #14141B;
+    }
+
+    /* Desktop frame */
+    .frame-desktop {
+      width: 100%;
+      height: 100%;
+      border: 1px solid #2A2A38;
+      border-radius: 8px;
+      background: #fff;
+      overflow: hidden;
+    }
+    .frame-desktop iframe {
+      width: 100%; height: 100%;
+      border: none; display: block;
+    }
+
+    /* Phone frame */
+    .frame-phone {
+      width: 402px;
+      height: 100%;
+      max-height: 870px;
+      border: 1px solid #2A2A38;
+      border-radius: 24px;
+      background: #fff;
+      overflow: hidden;
+      box-shadow: 0 24px 80px rgba(0, 176, 240, 0.08);
+    }
+    .frame-phone iframe {
+      width: 100%; height: 100%;
+      border: none; display: block;
+    }
+
+    @media (max-width: 1100px) {
+      .stage {
+        grid-template-columns: 1fr;
+        grid-template-rows: 1fr 1fr;
+        height: calc(200vh - 56px);
+      }
+      .panel:last-child { border-left: none; border-top: 1px solid #222; }
+    }
+  </style>
+</head>
+<body>
+
+<header class="topbar">
+  <h1>Baratito <span>preview</span></h1>
+  <span class="pill">Live</span>
+  <div class="switch" id="page-switch">
+    <button data-page="home-nuevo.html" class="active">Home</button>
+    <button data-page="simulador-nuevo.html">Simulador</button>
+    <button data-page="modelo-nuevo.html?slug=polo">Modelo</button>
+  </div>
+  <span class="spacer"></span>
+  <a id="open-tab" href="home-nuevo.html" target="_blank">Abrir en tab nueva ↗</a>
+</header>
+
+<main class="stage">
+  <section class="panel">
+    <div class="panel-head">
+      <span class="dot web"></span>
+      <span class="label">Desktop · layout 1320 max-width</span>
+      <span class="size" id="size-desktop">—</span>
+    </div>
+    <div class="panel-body">
+      <div class="frame-desktop">
+        <iframe id="if-desktop" src="home-nuevo.html" title="Desktop preview"></iframe>
+      </div>
+    </div>
+  </section>
+
+  <section class="panel">
+    <div class="panel-head">
+      <span class="dot phone"></span>
+      <span class="label">Mobile · 402 × 870 (iPhone)</span>
+      <span class="size">402 × 870</span>
+    </div>
+    <div class="panel-body">
+      <div class="frame-phone">
+        <iframe id="if-phone" src="home-nuevo.html" title="Mobile preview"></iframe>
+      </div>
+    </div>
+  </section>
+</main>
+
+<script>
+  // Dimensiones del iframe desktop
+  const ifDesktop = document.getElementById('if-desktop');
+  const ifPhone = document.getElementById('if-phone');
+  const sizeLabel = document.getElementById('size-desktop');
+  const openTab = document.getElementById('open-tab');
+  function updateSize() {
+    sizeLabel.textContent = `${ifDesktop.clientWidth} × ${ifDesktop.clientHeight}`;
+  }
+  ifDesktop.addEventListener('load', updateSize);
+  window.addEventListener('resize', updateSize);
+  updateSize();
+
+  // Switch entre Home / Simulador / Modelo
+  // Agrego un cache-buster (?_=timestamp) para evitar que el iframe sirva contenido viejo.
+  function withBuster(page) {
+    const sep = page.includes('?') ? '&' : '?';
+    return page + sep + '_=' + Date.now();
+  }
+  document.querySelectorAll('#page-switch button').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('#page-switch button').forEach(b => b.classList.toggle('active', b === btn));
+      const page = btn.dataset.page;
+      ifDesktop.src = withBuster(page);
+      ifPhone.src = withBuster(page);
+      openTab.href = page;
+    });
+  });
+</script>
+
+</body>
+</html>
