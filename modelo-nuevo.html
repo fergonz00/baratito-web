@@ -127,6 +127,8 @@
 
     /* ============== CONTENT ============== */
     .content { padding: 14px 16px 0; }
+    /* Wrappers de columnas: en mobile son invisibles al layout */
+    .content-left, .content-right { display: contents; }
 
     /* Gallery */
     .gallery {
@@ -373,15 +375,22 @@
       }
       .btn-financiacion:hover { background: var(--vw-cyan-soft); }
 
-      /* META ROW */
+      /* META ROW: chips a la izq, "desde $X" a la derecha, en una sola fila */
       .meta-row {
-        padding: 28px max(40px, calc((100% - var(--max-w)) / 2 + 40px)) 18px;
+        padding: 24px max(40px, calc((100% - var(--max-w)) / 2 + 40px)) 20px;
+        display: flex; align-items: center; justify-content: space-between;
+        gap: 32px; flex-wrap: wrap;
       }
+      .meta-chips { flex: 1 1 auto; }
       .chip { padding: 6px 14px; font-size: 12.5px; }
       .campaign-badge { padding: 6px 14px; font-size: 12px; }
-      .meta-precio { margin-top: 16px; }
-      .meta-precio .lbl { font-size: 12px; }
-      .meta-precio .valor { font-size: 30px; letter-spacing: -1.2px; }
+      .meta-precio {
+        margin-top: 0;
+        flex-direction: column; align-items: flex-end;
+        text-align: right;
+      }
+      .meta-precio .lbl { font-size: 11px; }
+      .meta-precio .valor { font-size: 28px; letter-spacing: -1px; }
 
       /* TABS */
       .tabs-wrap {
@@ -398,49 +407,42 @@
       }
       .tab:not(.active):hover { background: var(--vw-cyan-soft); color: var(--vw-blue); }
 
-      /* CONTENT: grid 2 columnas */
+      /* CONTENT: 2 columnas reales con wrappers */
       .content {
-        padding: 36px max(40px, calc((100% - var(--max-w)) / 2 + 40px)) 80px;
+        padding: 32px max(40px, calc((100% - var(--max-w)) / 2 + 40px)) 80px;
         display: grid;
         grid-template-columns: 1.35fr 1fr;
         column-gap: 48px;
-        row-gap: 16px;
         align-items: start;
       }
-
-      /* Gallery: columna izquierda */
-      .gallery {
-        grid-column: 1; grid-row: 1;
-        border-radius: 18px;
+      .content-left, .content-right {
+        display: flex; flex-direction: column;
       }
+      .content-left { gap: 14px; }
+      .content-right { gap: 0; }
+
+      /* Gallery */
+      .gallery { border-radius: 18px; }
       .gallery .img-wrap { height: 480px; padding: 32px; }
       .arrow { width: 44px; height: 44px; }
       .arrow.left { left: 16px; }
       .arrow.right { right: 16px; }
       .gallery .dot.active { width: 22px; }
 
-      /* Thumbs: debajo de gallery */
-      .thumbs {
-        grid-column: 1; grid-row: 2;
-        margin-top: 0;
-        flex-wrap: wrap;
-      }
+      /* Thumbs */
+      .thumbs { margin-top: 0; flex-wrap: wrap; }
       .thumb {
         width: 100px; height: 74px;
         cursor: pointer; transition: border-color 0.15s, transform 0.15s;
       }
       .thumb:hover { border-color: var(--vw-blue); transform: translateY(-2px); }
 
-      /* Variantes: columna derecha, primera fila */
+      /* Variantes */
       .variantes-title {
-        grid-column: 2; grid-row: 1;
         margin-top: 0; margin-bottom: 12px;
         font-size: 12px;
       }
-      .variantes-list {
-        grid-column: 2; grid-row: 2;
-        gap: 10px;
-      }
+      .variantes-list { gap: 10px; }
       .variante {
         padding: 14px 16px;
         cursor: pointer; transition: border-color 0.15s, background 0.15s;
@@ -450,10 +452,9 @@
       .variante .tier { font-size: 12px; }
       .variante .precio { font-size: 17px; }
 
-      /* Version card: columna derecha, debajo */
+      /* Version card */
       .version-card {
-        grid-column: 2; grid-row: 3;
-        margin-top: 8px;
+        margin-top: 20px;
         padding: 24px;
         border-radius: 18px;
       }
@@ -510,29 +511,32 @@
 </div>
 
 <div class="content">
-  <!-- Gallery -->
-  <div class="gallery">
-    <div class="img-wrap">
-      <img id="gallery-img" src="" alt="">
+  <div class="content-left">
+    <!-- Gallery -->
+    <div class="gallery">
+      <div class="img-wrap">
+        <img id="gallery-img" src="" alt="">
+      </div>
+      <button class="arrow left" onclick="navGallery(-1)" aria-label="Anterior">
+        <svg class="icon-stroke" width="20" height="20" viewBox="0 0 24 24" style="color:var(--vw-blue)"><polyline points="15 18 9 12 15 6"/></svg>
+      </button>
+      <button class="arrow right" onclick="navGallery(1)" aria-label="Siguiente">
+        <svg class="icon-stroke" width="20" height="20" viewBox="0 0 24 24" style="color:var(--vw-blue)"><polyline points="9 18 15 12 9 6"/></svg>
+      </button>
+      <div class="dots" id="gallery-dots"></div>
     </div>
-    <button class="arrow left" onclick="navGallery(-1)" aria-label="Anterior">
-      <svg class="icon-stroke" width="20" height="20" viewBox="0 0 24 24" style="color:var(--vw-blue)"><polyline points="15 18 9 12 15 6"/></svg>
-    </button>
-    <button class="arrow right" onclick="navGallery(1)" aria-label="Siguiente">
-      <svg class="icon-stroke" width="20" height="20" viewBox="0 0 24 24" style="color:var(--vw-blue)"><polyline points="9 18 15 12 9 6"/></svg>
-    </button>
-    <div class="dots" id="gallery-dots"></div>
+
+    <!-- Thumbnails -->
+    <div class="thumbs" id="thumbs"></div>
   </div>
 
-  <!-- Thumbnails -->
-  <div class="thumbs" id="thumbs"></div>
+  <div class="content-right">
+    <!-- Variantes -->
+    <div class="variantes-title" id="variantes-title">— variantes disponibles</div>
+    <div class="variantes-list" id="variantes-list"></div>
 
-  <!-- Variantes -->
-  <div class="variantes-title" id="variantes-title">— variantes disponibles</div>
-  <div class="variantes-list" id="variantes-list"></div>
-
-  <!-- Versión seleccionada -->
-  <div class="version-card" id="version-card">
+    <!-- Versión seleccionada -->
+    <div class="version-card" id="version-card">
     <div class="eyebrow">Versión elegida</div>
     <div class="nombre-version" id="vc-nombre">—</div>
     <div class="specs" id="vc-specs"></div>
@@ -549,6 +553,7 @@
         Ver financiaciones
       </a>
     </div>
+  </div>
   </div>
 </div>
 
