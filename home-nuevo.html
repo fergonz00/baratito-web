@@ -574,12 +574,24 @@
         font-size: 10.5px; color: var(--grey-500); margin-top: 6px;
         line-height: 1.4; font-weight: 500;
       }
-      .featured-card .featured-foot .btn-ver {
-        height: 44px; padding: 0 18px; border: none;
-        background: var(--vw-blue); color: #fff;
-        border-radius: 10px; font-size: 14px; font-weight: 600;
-        display: flex; align-items: center; gap: 6px;
+      .featured-card .featured-actions {
+        display: flex; flex-direction: column; gap: 8px;
+        flex-shrink: 0;
       }
+      .featured-card .featured-foot .btn-ver {
+        height: 42px; padding: 0 16px; border: none;
+        background: var(--vw-blue); color: #fff;
+        border-radius: 10px; font-size: 13.5px; font-weight: 700;
+        display: flex; align-items: center; justify-content: center; gap: 6px;
+        cursor: pointer; text-decoration: none;
+        white-space: nowrap;
+      }
+      .featured-card .featured-foot .btn-ver:hover { background: #00163A; }
+      .featured-card .featured-foot .btn-ver-secondary {
+        background: #fff; color: var(--vw-blue);
+        border: 1.5px solid var(--vw-blue);
+      }
+      .featured-card .featured-foot .btn-ver-secondary:hover { background: var(--vw-cyan-soft); }
 
       /* FILTROS */
       .filters-wrap {
@@ -1138,10 +1150,15 @@ Sábados cerrado</div>
           <div class="precio num">${fmtPrice(destacado.priceFrom)}</div>
           <div class="precio-nota">Precio final patenta cliente</div>
         </div>
-        <button class="btn-ver" onclick="abrirLead('${destacado.name.replace(/'/g,"\\'")}', '${fmtPrice(destacado.priceFrom)}')">
-          Me interesa
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
-        </button>
+        <div class="featured-actions">
+          <button class="btn-ver" onclick="abrirLead('${destacado.name.replace(/'/g,"\\'")}', '${fmtPrice(destacado.priceFrom)}')">
+            Me interesa
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+          </button>
+          <a class="btn-ver btn-ver-secondary" href="modelo-nuevo.html?slug=${encodeURIComponent(destacado.slug)}">
+            Ver versiones
+          </a>
+        </div>
       </div>
     `;
   }
