@@ -247,6 +247,103 @@
     }
     .version-card .cuota-line .num { color: var(--vw-blue); font-weight: 700; }
 
+    /* ============== SPECS PANEL ============== */
+    .specs-panel-wrap { padding: 0 16px; }
+    .specs-panel {
+      margin-top: 22px;
+      background: #fff;
+      border: 1px solid var(--grey-200);
+      border-radius: 14px;
+      padding: 18px;
+    }
+    .specs-head {
+      display: flex; justify-content: space-between; align-items: center;
+      gap: 10px; margin-bottom: 14px;
+    }
+    .specs-eyebrow {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10.5px; color: var(--grey-500); font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.8px;
+    }
+    .specs-title {
+      font-size: 17px; font-weight: 700; color: var(--vw-blue);
+      letter-spacing: -0.3px; margin-top: 2px; line-height: 1.2;
+    }
+    .btn-comparar {
+      padding: 8px 14px; border: 1.5px solid var(--vw-blue);
+      border-radius: 999px; background: #fff; color: var(--vw-blue);
+      font-size: 12.5px; font-weight: 700;
+      display: flex; align-items: center; gap: 6px;
+      flex-shrink: 0; cursor: pointer;
+    }
+    .btn-comparar:hover { background: var(--vw-cyan-soft); }
+    .btn-comparar.active { background: var(--vw-blue); color: #fff; }
+    .btn-comparar.active svg { stroke: #fff; }
+    .specs-compare-bar {
+      display: none; align-items: center; gap: 10px;
+      padding: 10px 12px; background: var(--grey-50);
+      border-radius: 10px; margin-bottom: 14px;
+    }
+    .specs-compare-bar.open { display: flex; }
+    .compare-label {
+      font-size: 11px; color: var(--grey-500); font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.5px; flex-shrink: 0;
+    }
+    .compare-select {
+      flex: 1; min-width: 0; height: 38px; padding: 0 10px;
+      border: 1px solid var(--grey-200); border-radius: 8px;
+      font-family: inherit; font-size: 13.5px; background: #fff;
+      color: var(--grey-900); cursor: pointer;
+    }
+    .compare-select:focus { outline: none; border-color: var(--vw-blue); }
+    .specs-cols {
+      display: grid; grid-template-columns: 1fr; gap: 12px;
+    }
+    .specs-cols.comparing { grid-template-columns: 1fr 1fr; }
+    .specs-side { min-width: 0; }
+    .specs-col-head {
+      font-size: 14px; font-weight: 700; color: var(--vw-blue);
+      padding: 8px 12px; background: var(--vw-cyan-soft);
+      border-radius: 8px; margin-bottom: 12px;
+      text-align: center;
+    }
+    .specs-block { margin-bottom: 14px; }
+    .specs-block:last-child { margin-bottom: 0; }
+    .specs-block-title {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10.5px; color: var(--grey-500); font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 6px;
+    }
+    .specs-block-text {
+      font-size: 13.5px; color: var(--grey-900);
+      line-height: 1.5; font-weight: 500;
+    }
+    .specs-block-list { list-style: none; padding: 0; margin: 0; }
+    .specs-block-list li {
+      font-size: 12.5px; color: var(--grey-700);
+      padding: 4px 0 4px 18px; line-height: 1.4;
+      position: relative;
+    }
+    .specs-block-list li::before {
+      content: '✓'; position: absolute; left: 0;
+      color: var(--vw-blue); font-weight: 700;
+    }
+    .specs-soon {
+      text-align: center; padding: 28px 16px;
+      color: var(--grey-500); font-size: 13px; line-height: 1.5;
+    }
+    .specs-soon strong {
+      display: block; font-size: 14px; color: var(--vw-blue);
+      margin-bottom: 4px; font-weight: 700;
+    }
+    /* Comparación en mobile: cuando hay 2 cols, las apilamos para que se lean */
+    @media (max-width: 599.98px) {
+      .specs-cols.comparing { grid-template-columns: 1fr; gap: 16px; }
+      .specs-cols.comparing .specs-side {
+        padding: 12px; border: 1px solid var(--grey-200); border-radius: 12px;
+      }
+    }
+
     /* ============== STICKY BOTTOM ============== */
     .sticky-bottom {
       position: sticky; bottom: 0; left: 0; right: 0; z-index: 25;
@@ -484,6 +581,23 @@
 
       /* Sticky bottom oculto en desktop (las CTAs viven en la version-card) */
       .sticky-bottom { display: none; }
+
+      /* Specs panel full-width centrado */
+      .specs-panel-wrap {
+        padding: 0 max(40px, calc((100% - var(--max-w)) / 2 + 40px)) 64px;
+      }
+      .specs-panel { padding: 28px 32px; margin-top: 0; border-radius: 18px; }
+      .specs-head { margin-bottom: 20px; }
+      .specs-title { font-size: 22px; letter-spacing: -0.6px; }
+      .btn-comparar { padding: 10px 18px; font-size: 13.5px; }
+      .specs-compare-bar { padding: 14px 16px; margin-bottom: 20px; }
+      .compare-select { height: 44px; font-size: 14.5px; }
+      .specs-cols { gap: 24px; }
+      .specs-cols.comparing { grid-template-columns: 1fr 1fr; gap: 32px; }
+      .specs-col-head { font-size: 16px; padding: 12px 18px; margin-bottom: 16px; }
+      .specs-block-title { font-size: 11px; margin-bottom: 8px; }
+      .specs-block-text { font-size: 14.5px; }
+      .specs-block-list li { font-size: 13.5px; padding: 6px 0 6px 22px; }
     }
   </style>
 </head>
@@ -559,6 +673,29 @@
   </div>
 </div>
 
+<!-- Specs panel: ficha técnica + comparador (full-width abajo del grid) -->
+<section class="specs-panel-wrap">
+  <section class="specs-panel" id="specs-panel">
+    <div class="specs-head">
+      <div>
+        <div class="specs-eyebrow">Ficha técnica</div>
+        <h3 class="specs-title" id="specs-version-name">—</h3>
+      </div>
+      <button class="btn-comparar" id="btn-comparar" onclick="toggleComparar()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="3" x2="12" y2="21"/><line x1="3" y1="12" x2="21" y2="12"/></svg>
+        <span id="btn-comparar-label">Comparar</span>
+      </button>
+    </div>
+    <div class="specs-compare-bar" id="specs-compare-bar">
+      <span class="compare-label">vs.</span>
+      <select class="compare-select" id="compare-select" onchange="onCompareSelect()">
+        <option value="">— Elegí versión —</option>
+      </select>
+    </div>
+    <div class="specs-cols" id="specs-cols"></div>
+  </section>
+</section>
+
 <nav class="sticky-bottom">
   <button class="btn-wa" id="btn-me-interesa" onclick="abrirLead()" style="border:none;color:#fff">
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
@@ -618,9 +755,121 @@
     'polo': {
       slug: 'polo', name: 'Polo', body: 'Hatchback Pequeño', bodyType: 'hatch',
       origin: 'Brasil', campaign: CAMPAIGNS.financia_mas, versions: [
-        { id: 'track',       name: 'Polo MSI Track MT MY26',          short: 'Track',       tier: 'Entrada de gama', photo: 'imagenes/polo track.webp',       matchKey: 'polo track' },
-        { id: 'comfortline', name: '170 TSI Comfortline AT6 MY26',    short: 'Comfortline', tier: 'Intermedia',      photo: 'imagenes/polo comfortline.webp', matchKey: 'polo comfortline' },
-        { id: 'highline',    name: '170 TSI Highline AT6 MY26',       short: 'Highline',    tier: 'Tope de gama',    photo: 'imagenes/polo highline.webp',    matchKey: 'polo highline' },
+        {
+          id: 'track', name: 'Polo MSI Track MT MY26', short: 'Track',
+          tier: 'Entrada de gama', photo: 'imagenes/polo track.webp', matchKey: 'polo track',
+          specs: {
+            motor: '1.6 MSI · 1.598 cc · 4 cilindros · 110 CV · 155 Nm @ 4.000 rpm · nafta · Euro 5',
+            caja: 'Manual de 5 velocidades · Tracción delantera',
+            seguridad: [
+              'Airbags frontales + laterales delanteros (tórax y cabeza)',
+              'ABS + EBD',
+              'ESC + HHC (asistente de arranque en pendiente)',
+              'ISOFIX',
+              'Cinturón conductor ajustable en altura',
+            ],
+            confort: [
+              'Aire acondicionado',
+              'Volante multifunción',
+              'Levantacristales eléctricos delanteros',
+              'Asiento conductor con ajuste de altura',
+            ],
+            exterior: [
+              'Llantas de acero 15"',
+              'DRL halógenos',
+              'Faros halógenos',
+              'Espejos color carrocería',
+            ],
+            tecnologia: [
+              'VW Play 10" con Wireless App-Connect',
+              '4 parlantes',
+              '2 puertos USB',
+            ],
+          },
+        },
+        {
+          id: 'comfortline', name: '170 TSI Comfortline AT6 MY26', short: 'Comfortline',
+          tier: 'Intermedia', photo: 'imagenes/polo comfortline.webp', matchKey: 'polo comfortline',
+          specs: {
+            motor: '1.0 170 TSI · 999 cc · 3 cilindros · 101 CV · 170 Nm @ 1.750 rpm · nafta · Euro 6 Plus',
+            caja: 'Tiptronic 6 velocidades (automática) · Tracción delantera',
+            seguridad: [
+              'Airbags frontales + laterales (tórax y cabeza)',
+              'ABS + EBD · ESC + HHC',
+              'ISOFIX',
+              'Alarma + inmovilizador electrónico',
+              'Indicador presión de neumáticos',
+              'Desactivación airbag pasajero',
+            ],
+            confort: [
+              'Aire acondicionado',
+              'KESSY (apertura y encendido sin llave)',
+              'Levantacristales eléctricos delanteros y traseros',
+              'Sensor de estacionamiento trasero',
+              'Espejos eléctricos con Tilt Down',
+              'Apoyabrazos central delantero',
+              'Volante en cuero con levas',
+              'Control de velocidad crucero',
+              'Palanca de cambios en cuero',
+            ],
+            exterior: [
+              'Llantas de aleación 15"',
+              'DRL LED',
+              'Faros VW LED',
+              'Luz de giro en espejos exteriores',
+              'Grilla con detalles cromados',
+            ],
+            tecnologia: [
+              'VW Play 10" con Wireless App-Connect',
+              'VW Digital Cockpit',
+              '4 parlantes',
+              '4 puertos USB',
+            ],
+          },
+        },
+        {
+          id: 'highline', name: '170 TSI Highline AT6 MY26', short: 'Highline',
+          tier: 'Tope de gama', photo: 'imagenes/polo highline.webp', matchKey: 'polo highline',
+          specs: {
+            motor: '1.0 170 TSI · 999 cc · 3 cilindros · 101 CV · 170 Nm @ 1.750 rpm · nafta · Euro 6 Plus',
+            caja: 'Tiptronic 6 velocidades (automática) · Tracción delantera',
+            seguridad: [
+              'Airbags frontales + laterales (tórax y cabeza)',
+              'ABS + EBD · ESC + HHC',
+              'ISOFIX',
+              'Alarma + inmovilizador electrónico',
+              'Indicador presión de neumáticos',
+              'Espejo interior anti-encandilamiento automático',
+            ],
+            confort: [
+              'Climatizador automático táctil',
+              'Difusores de aire traseros',
+              'KESSY',
+              'Cargador inalámbrico',
+              'Sensor estacionamiento delantero y trasero',
+              'Cámara estacionamiento trasera',
+              'Coming & Leaving Home',
+              'Limpiaparabrisas automático con sensor de lluvia',
+              'Sensor crepuscular',
+              'Respaldo trasero plegable 1/3-2/3',
+              'Volante en cuero con levas',
+              'Control de velocidad crucero',
+              'Tapizado en cuero sintético',
+            ],
+            exterior: [
+              'Llantas de aleación 15"',
+              'DRL LED',
+              'Faros VW LED',
+              'Espejos eléctricos con Tilt Down',
+            ],
+            tecnologia: [
+              'VW Play 10" con Wireless App-Connect',
+              'Active Info Display',
+              '4 parlantes + 2 tweeters',
+              '4 USB + USB en apoyabrazos trasero',
+            ],
+          },
+        },
       ]
     },
     'virtus': {
@@ -703,7 +952,7 @@
   };
 
   const TABS = ['Vista general', 'Acabados', 'Motor', 'Exterior', 'Interior', 'Resumen'];
-  const state = { slug: null, model: null, versionId: null, galleryIdx: 0, activeTab: 'Acabados' };
+  const state = { slug: null, model: null, versionId: null, galleryIdx: 0, activeTab: 'Acabados', comparandoId: null };
 
   // ============== HELPERS ==============
   function fmtPrice(n) { return n == null ? '—' : '$' + Math.round(n).toLocaleString('es-AR'); }
@@ -833,6 +1082,105 @@
     if (linkFin) linkFin.href = finHref;
     const linkFinDesktop = document.getElementById('btn-ver-financiaciones-desktop');
     if (linkFinDesktop) linkFinDesktop.href = finHref;
+
+    // Renderizar ficha técnica de la versión actual
+    renderSpecs();
+  }
+
+  // ============== SPECS PANEL ==============
+  function escapeHtml(s) { return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+
+  function specsBlock(title, value) {
+    if (Array.isArray(value)) {
+      if (!value.length) return '';
+      return `<div class="specs-block">
+        <div class="specs-block-title">${title}</div>
+        <ul class="specs-block-list">${value.map(i => `<li>${escapeHtml(i)}</li>`).join('')}</ul>
+      </div>`;
+    }
+    if (!value) return '';
+    return `<div class="specs-block">
+      <div class="specs-block-title">${title}</div>
+      <div class="specs-block-text">${escapeHtml(value)}</div>
+    </div>`;
+  }
+
+  function renderSpecsCol(v, withHeader) {
+    const s = v.specs;
+    const head = withHeader ? `<div class="specs-col-head">${escapeHtml(v.short)}</div>` : '';
+    if (!s) {
+      return `<div class="specs-side">
+        ${head}
+        <div class="specs-soon">
+          <strong>Ficha técnica en proceso</strong>
+          Estamos cargando las especificaciones oficiales de esta versión.
+        </div>
+      </div>`;
+    }
+    const blocks = [
+      specsBlock('Motor', s.motor),
+      specsBlock('Caja de cambios', s.caja),
+      specsBlock('Seguridad', s.seguridad),
+      specsBlock('Confort', s.confort),
+      specsBlock('Exterior', s.exterior),
+      specsBlock('Tecnología', s.tecnologia),
+    ].join('');
+    return `<div class="specs-side">${head}${blocks}</div>`;
+  }
+
+  function renderSpecs() {
+    const m = state.model;
+    const v = m.versions[state.galleryIdx];
+    if (!v) return;
+    document.getElementById('specs-version-name').textContent = `${m.name} ${v.short}`;
+
+    const otherV = state.comparandoId ? m.versions.find(x => x.id === state.comparandoId && x.id !== v.id) : null;
+    const cols = document.getElementById('specs-cols');
+    cols.classList.toggle('comparing', !!otherV);
+    cols.innerHTML = renderSpecsCol(v, !!otherV) + (otherV ? renderSpecsCol(otherV, true) : '');
+
+    // Actualizar el select de comparación con las versiones disponibles (excepto la actual)
+    const sel = document.getElementById('compare-select');
+    const currentVal = sel.value;
+    sel.innerHTML = '<option value="">— Elegí versión —</option>' +
+      m.versions.filter(x => x.id !== v.id).map(x =>
+        `<option value="${escapeHtml(x.id)}" ${x.id === state.comparandoId ? 'selected' : ''}>${escapeHtml(x.short)}</option>`
+      ).join('');
+    // Si la versión que estábamos comparando pasó a ser la actual, limpiar selección
+    if (state.comparandoId === v.id) {
+      state.comparandoId = null;
+      sel.value = '';
+      cols.classList.remove('comparing');
+      cols.innerHTML = renderSpecsCol(v, false);
+    }
+  }
+
+  function toggleComparar() {
+    const bar = document.getElementById('specs-compare-bar');
+    const btn = document.getElementById('btn-comparar');
+    const m = state.model;
+    if (m.versions.length < 2) { return; } // no hay con quién comparar
+    if (bar.classList.contains('open')) {
+      cerrarComparar();
+    } else {
+      bar.classList.add('open');
+      btn.classList.add('active');
+      document.getElementById('btn-comparar-label').textContent = 'Cerrar';
+    }
+  }
+
+  function cerrarComparar() {
+    document.getElementById('specs-compare-bar').classList.remove('open');
+    document.getElementById('btn-comparar').classList.remove('active');
+    document.getElementById('btn-comparar-label').textContent = 'Comparar';
+    document.getElementById('compare-select').value = '';
+    state.comparandoId = null;
+    renderSpecs();
+  }
+
+  function onCompareSelect() {
+    state.comparandoId = document.getElementById('compare-select').value || null;
+    renderSpecs();
   }
 
   function abrirFinanciacion() {
