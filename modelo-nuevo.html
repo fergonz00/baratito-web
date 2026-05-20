@@ -255,6 +255,7 @@
       border: 1px solid var(--grey-200);
       border-radius: 18px;
       padding: 18px;
+      scroll-margin-top: 110px; /* offset por header + tabs sticky */
     }
     .specs-head {
       display: flex; justify-content: space-between; align-items: center;
@@ -854,6 +855,7 @@
   </div>
 </div>
 
+<script src="specs.js"></script>
 <script>
   // ============== CAMPAIGNS ==============
   const CAMPAIGNS = {
@@ -1105,8 +1107,21 @@
     },
   };
 
-  const TABS = ['Vista general', 'Acabados', 'Motor', 'Exterior', 'Interior', 'Resumen'];
-  const state = { slug: null, model: null, versionId: null, galleryIdx: 0, activeTab: 'Acabados', comparandoId: null };
+  // Merge specs externos (specs.js carga 'const SPECS = {...}') con MODELS.
+  // Si una versión ya tiene specs inline (ej: Polo), se respeta; si no, se busca en SPECS.
+  if (typeof SPECS !== 'undefined') {
+    for (const slug of Object.keys(MODELS)) {
+      const specsModel = SPECS[slug];
+      if (!specsModel) continue;
+      for (const v of MODELS[slug].versions) {
+        if (!v.specs && specsModel[v.id]) v.specs = specsModel[v.id];
+      }
+    }
+  }
+
+  // Tabs: cada uno es un rubro de la ficha técnica (más Resumen al final con todo)
+  const TABS = ['Destacado', 'Seguridad', 'Confort', 'Exterior', 'Tecnología', 'Resumen'];
+  const state = { slug: null, model: null, versionId: null, galleryIdx: 0, activeTab: 'Destacado', comparandoId: null };
 
   // ============== HELPERS ==============
   function fmtPrice(n) { return n == null ? '—' : '$' + Math.round(n).toLocaleString('es-AR'); }
@@ -1147,10 +1162,13 @@
   function setTab(t) {
     state.activeTab = t;
     renderTabs();
-    // Pequeño aviso para tabs que aún no tienen contenido propio
-    if (t !== 'Acabados') {
-      // En este primer pass solo Acabados tiene contenido. Las otras tabs se
-      // marcan como activa visualmente pero la galería + variantes se mantienen.
+    renderSpecs();
+    // Llevar al panel de ficha técnica (a menos que ya esté visible)
+    const panel = document.getElementById('specs-panel');
+    if (panel) {
+      const rect = panel.getBoundingClientRect();
+      const fueraDeVista = rect.top < 0 || rect.top > window.innerHeight * 0.6;
+      if (fueraDeVista) panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
   }
 
@@ -1317,15 +1335,34 @@
         </div>
       </div>`;
     }
-    return `<div class="specs-side">
-      ${head}
-      ${motorSection(s.motor)}
-      ${destacadosSection(s.destacados)}
-      ${equipaSection('seguridad', 'Seguridad', s.seguridad)}
-      ${equipaSection('confort', 'Confort', s.confort)}
-      ${equipaSection('exterior', 'Exterior', s.exterior)}
-      ${equipaSection('tecnologia', 'Tecnología', s.tecnologia)}
-    </div>`;
+    // Motor siempre va arriba (hero)
+    let blocks = motorSection(s.motor);
+    const tab = state.activeTab;
+    if (tab === 'Resumen') {
+      blocks += destacadosSection(s.destacados);
+      blocks += equipaSection('seguridad', 'Seguridad', s.seguridad);
+      blocks += equipaSection('confort', 'Confort', s.confort);
+      blocks += equipaSection('exterior', 'Exterior', s.exterior);
+      blocks += equipaSection('tecnologia', 'Tecnología', s.tecnologia);
+    } else if (tab === 'Destacado') {
+      blocks += destacadosSection(s.destacados);
+    } else if (tab === 'Seguridad') {
+      blocks += equipaSection('seguridad', 'Seguridad', s.seguridad);
+    } else if (tab === 'Confort') {
+      blocks += equipaSection('confort', 'Confort', s.confort);
+    } else if (tab === 'Exterior') {
+      blocks += equipaSection('exterior', 'Exterior', s.exterior);
+    } else if (tab === 'Tecnología') {
+      blocks += equipaSection('tecnologia', 'Tecnología', s.tecnologia);
+    } else {
+      // Fallback: mostrar todo
+      blocks += destacadosSection(s.destacados);
+      blocks += equipaSection('seguridad', 'Seguridad', s.seguridad);
+      blocks += equipaSection('confort', 'Confort', s.confort);
+      blocks += equipaSection('exterior', 'Exterior', s.exterior);
+      blocks += equipaSection('tecnologia', 'Tecnología', s.tecnologia);
+    }
+    return `<div class="specs-side">${head}${blocks}</div>`;
   }
 
   function renderSpecs() {
