@@ -250,98 +250,213 @@
     /* ============== SPECS PANEL ============== */
     .specs-panel-wrap { padding: 0 16px; }
     .specs-panel {
-      margin-top: 22px;
-      background: #fff;
+      margin-top: 24px;
+      background: linear-gradient(180deg, #fff 0%, var(--grey-50) 100%);
       border: 1px solid var(--grey-200);
-      border-radius: 14px;
+      border-radius: 18px;
       padding: 18px;
     }
     .specs-head {
       display: flex; justify-content: space-between; align-items: center;
-      gap: 10px; margin-bottom: 14px;
+      gap: 10px; margin-bottom: 16px;
     }
     .specs-eyebrow {
       font-family: 'JetBrains Mono', monospace;
-      font-size: 10.5px; color: var(--grey-500); font-weight: 700;
-      text-transform: uppercase; letter-spacing: 0.8px;
+      font-size: 10.5px; color: var(--vw-cyan); font-weight: 700;
+      text-transform: uppercase; letter-spacing: 1.2px;
     }
     .specs-title {
-      font-size: 17px; font-weight: 700; color: var(--vw-blue);
-      letter-spacing: -0.3px; margin-top: 2px; line-height: 1.2;
+      font-size: 19px; font-weight: 700; color: var(--vw-blue);
+      letter-spacing: -0.4px; margin-top: 3px; line-height: 1.15;
     }
     .btn-comparar {
-      padding: 8px 14px; border: 1.5px solid var(--vw-blue);
+      padding: 9px 16px; border: 1.5px solid var(--vw-blue);
       border-radius: 999px; background: #fff; color: var(--vw-blue);
       font-size: 12.5px; font-weight: 700;
       display: flex; align-items: center; gap: 6px;
       flex-shrink: 0; cursor: pointer;
+      transition: all 0.15s;
     }
     .btn-comparar:hover { background: var(--vw-cyan-soft); }
-    .btn-comparar.active { background: var(--vw-blue); color: #fff; }
+    .btn-comparar.active { background: var(--vw-blue); color: #fff; border-color: var(--vw-blue); }
     .btn-comparar.active svg { stroke: #fff; }
     .specs-compare-bar {
       display: none; align-items: center; gap: 10px;
-      padding: 10px 12px; background: var(--grey-50);
-      border-radius: 10px; margin-bottom: 14px;
+      padding: 12px 14px;
+      background: #fff;
+      border: 1px solid var(--grey-200);
+      border-radius: 12px; margin-bottom: 18px;
     }
     .specs-compare-bar.open { display: flex; }
     .compare-label {
-      font-size: 11px; color: var(--grey-500); font-weight: 700;
-      text-transform: uppercase; letter-spacing: 0.5px; flex-shrink: 0;
+      font-size: 11px; color: var(--vw-blue); font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.8px; flex-shrink: 0;
+      font-family: 'JetBrains Mono', monospace;
     }
     .compare-select {
-      flex: 1; min-width: 0; height: 38px; padding: 0 10px;
-      border: 1px solid var(--grey-200); border-radius: 8px;
-      font-family: inherit; font-size: 13.5px; background: #fff;
-      color: var(--grey-900); cursor: pointer;
+      flex: 1; min-width: 0; height: 40px; padding: 0 12px;
+      border: 1px solid var(--grey-200); border-radius: 10px;
+      font-family: inherit; font-size: 13.5px; background: var(--grey-50);
+      color: var(--grey-900); cursor: pointer; font-weight: 600;
     }
-    .compare-select:focus { outline: none; border-color: var(--vw-blue); }
-    .specs-cols {
-      display: grid; grid-template-columns: 1fr; gap: 12px;
-    }
+    .compare-select:focus { outline: none; border-color: var(--vw-blue); background: #fff; }
+
+    /* Layout columnas */
+    .specs-cols { display: grid; grid-template-columns: 1fr; gap: 14px; }
     .specs-cols.comparing { grid-template-columns: 1fr 1fr; }
-    .specs-side { min-width: 0; }
+    .specs-side { min-width: 0; display: flex; flex-direction: column; gap: 12px; }
     .specs-col-head {
-      font-size: 14px; font-weight: 700; color: var(--vw-blue);
-      padding: 8px 12px; background: var(--vw-cyan-soft);
-      border-radius: 8px; margin-bottom: 12px;
+      font-size: 14.5px; font-weight: 700; color: #fff;
+      padding: 10px 14px;
+      background: linear-gradient(135deg, var(--vw-blue) 0%, var(--vw-blue-deep) 100%);
+      border-radius: 10px;
       text-align: center;
+      letter-spacing: -0.2px;
     }
-    .specs-block { margin-bottom: 14px; }
-    .specs-block:last-child { margin-bottom: 0; }
-    .specs-block-title {
+
+    /* Cada sección es una card */
+    .specs-section {
+      background: #fff;
+      border: 1px solid var(--grey-200);
+      border-radius: 14px;
+      padding: 14px 16px;
+    }
+    .specs-section-header {
+      display: flex; align-items: center; gap: 8px;
+      margin-bottom: 10px;
+    }
+    .specs-section-icon {
+      width: 28px; height: 28px;
+      border-radius: 8px;
+      background: var(--vw-cyan-soft);
+      color: var(--vw-blue);
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .specs-section-icon svg { width: 16px; height: 16px; }
+    .specs-section-label {
+      font-size: 12.5px; font-weight: 700; color: var(--vw-blue);
+      text-transform: uppercase; letter-spacing: 0.6px;
+    }
+
+    /* Sección Motor: hero card */
+    .specs-section.is-motor {
+      background: linear-gradient(135deg, var(--vw-blue) 0%, var(--vw-blue-deep) 100%);
+      border-color: transparent;
+      color: #fff;
+    }
+    .is-motor .specs-section-icon { background: rgba(255,255,255,0.15); color: #fff; }
+    .is-motor .specs-section-label { color: rgba(255,255,255,0.85); }
+    .motor-nombre {
+      font-size: 22px; font-weight: 700; color: #fff;
+      letter-spacing: -0.6px; line-height: 1.1; margin-top: 2px;
+    }
+    .motor-subtitulo {
+      font-size: 12.5px; color: rgba(255,255,255,0.65);
+      margin-top: 4px; font-weight: 500;
+    }
+    .motor-stats {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
+      margin-top: 14px;
+    }
+    .stat-box {
+      padding: 12px;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 10px;
+    }
+    .stat-label {
+      display: block;
       font-family: 'JetBrains Mono', monospace;
-      font-size: 10.5px; color: var(--grey-500); font-weight: 700;
-      text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 6px;
+      font-size: 10px; color: var(--vw-cyan); font-weight: 700;
+      text-transform: uppercase; letter-spacing: 1px;
     }
-    .specs-block-text {
-      font-size: 13.5px; color: var(--grey-900);
-      line-height: 1.5; font-weight: 500;
+    .stat-value {
+      display: block;
+      font-size: 22px; font-weight: 700; color: #fff;
+      letter-spacing: -0.8px; line-height: 1; margin-top: 6px;
+      font-variant-numeric: tabular-nums;
     }
-    .specs-block-list { list-style: none; padding: 0; margin: 0; }
-    .specs-block-list li {
+    .stat-sub {
+      display: block;
+      font-size: 10.5px; color: rgba(255,255,255,0.55);
+      margin-top: 4px; font-weight: 500;
+    }
+    .motor-trans {
+      margin-top: 12px;
+      font-size: 12.5px; color: rgba(255,255,255,0.78);
+      padding-top: 12px;
+      border-top: 1px solid rgba(255,255,255,0.1);
+      line-height: 1.5;
+    }
+    .motor-trans strong { color: #fff; font-weight: 600; }
+
+    /* Sección Destacados */
+    .specs-section.is-destacados .specs-section-icon { background: #FFF4D6; color: #B7791F; }
+    .destacados-list { display: flex; flex-direction: column; gap: 6px; }
+    .destacado-item {
+      display: flex; align-items: flex-start; gap: 8px;
+      padding: 8px 10px;
+      background: var(--vw-cyan-soft);
+      border-radius: 8px;
+      font-size: 13px; color: var(--vw-blue); font-weight: 600;
+      line-height: 1.35;
+    }
+    .destacado-item svg {
+      width: 14px; height: 14px; flex-shrink: 0;
+      margin-top: 1px; color: var(--vw-blue);
+    }
+
+    /* Sección equipamiento */
+    .equipa-list {
+      list-style: none; padding: 0; margin: 0;
+      display: grid; grid-template-columns: 1fr; gap: 4px;
+    }
+    .equipa-list li {
       font-size: 12.5px; color: var(--grey-700);
-      padding: 4px 0 4px 18px; line-height: 1.4;
+      padding: 5px 0 5px 20px; line-height: 1.4;
       position: relative;
     }
-    .specs-block-list li::before {
-      content: '✓'; position: absolute; left: 0;
-      color: var(--vw-blue); font-weight: 700;
+    .equipa-list li::before {
+      content: ''; position: absolute; left: 0; top: 8px;
+      width: 12px; height: 12px;
+      background: var(--vw-cyan-soft);
+      border-radius: 50%;
     }
+    .equipa-list li::after {
+      content: ''; position: absolute; left: 3px; top: 11px;
+      width: 6px; height: 3px;
+      border-left: 1.5px solid var(--vw-blue);
+      border-bottom: 1.5px solid var(--vw-blue);
+      transform: rotate(-45deg);
+    }
+
+    /* Estado "próximamente" */
     .specs-soon {
-      text-align: center; padding: 28px 16px;
+      text-align: center; padding: 36px 20px;
+      background: #fff;
+      border: 1px dashed var(--grey-300);
+      border-radius: 14px;
       color: var(--grey-500); font-size: 13px; line-height: 1.5;
     }
+    .specs-soon-icon {
+      width: 48px; height: 48px; margin: 0 auto 12px;
+      background: var(--vw-cyan-soft); color: var(--vw-blue);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+    }
     .specs-soon strong {
-      display: block; font-size: 14px; color: var(--vw-blue);
+      display: block; font-size: 14.5px; color: var(--vw-blue);
       margin-bottom: 4px; font-weight: 700;
     }
-    /* Comparación en mobile: cuando hay 2 cols, las apilamos para que se lean */
+
+    /* Comparación en mobile: cuando hay 2 cols, las apilamos */
     @media (max-width: 599.98px) {
-      .specs-cols.comparing { grid-template-columns: 1fr; gap: 16px; }
-      .specs-cols.comparing .specs-side {
-        padding: 12px; border: 1px solid var(--grey-200); border-radius: 12px;
-      }
+      .specs-cols.comparing { grid-template-columns: 1fr; gap: 18px; }
+    }
+    /* Comparación en tablet+: motor stats en una sola columna si la card es angosta */
+    @media (max-width: 767.98px) {
+      .specs-cols.comparing .motor-stats { grid-template-columns: 1fr; }
     }
 
     /* ============== STICKY BOTTOM ============== */
@@ -759,12 +874,25 @@
           id: 'track', name: 'Polo MSI Track MT MY26', short: 'Track',
           tier: 'Entrada de gama', photo: 'imagenes/polo track.webp', matchKey: 'polo track',
           specs: {
-            motor: '1.6 MSI · 1.598 cc · 4 cilindros · 110 CV · 155 Nm @ 4.000 rpm · nafta · Euro 5',
-            caja: 'Manual de 5 velocidades · Tracción delantera',
+            motor: {
+              nombre: '1.6 MSI',
+              subtitulo: '1.598 cc · 4 cilindros · nafta · Euro 5',
+              potencia: '110 CV',
+              torque: '155 Nm',
+              torqueRpm: '@ 4.000 rpm',
+              caja: 'Manual 5 velocidades',
+              traccion: 'Tracción delantera',
+            },
+            destacados: [
+              'Aire acondicionado',
+              'VW Play 10" con Wireless App-Connect',
+              'Volante multifunción',
+              '6 airbags (frontales + laterales)',
+            ],
             seguridad: [
               'Airbags frontales + laterales delanteros (tórax y cabeza)',
               'ABS + EBD',
-              'ESC + HHC (asistente de arranque en pendiente)',
+              'ESC + HHC (asistente arranque en pendiente)',
               'ISOFIX',
               'Cinturón conductor ajustable en altura',
             ],
@@ -791,8 +919,21 @@
           id: 'comfortline', name: '170 TSI Comfortline AT6 MY26', short: 'Comfortline',
           tier: 'Intermedia', photo: 'imagenes/polo comfortline.webp', matchKey: 'polo comfortline',
           specs: {
-            motor: '1.0 170 TSI · 999 cc · 3 cilindros · 101 CV · 170 Nm @ 1.750 rpm · nafta · Euro 6 Plus',
-            caja: 'Tiptronic 6 velocidades (automática) · Tracción delantera',
+            motor: {
+              nombre: '1.0 170 TSI',
+              subtitulo: '999 cc · 3 cilindros turbo · nafta · Euro 6 Plus',
+              potencia: '101 CV',
+              torque: '170 Nm',
+              torqueRpm: '@ 1.750 rpm',
+              caja: 'Tiptronic 6 vel (automática)',
+              traccion: 'Tracción delantera',
+            },
+            destacados: [
+              'KESSY (acceso sin llave)',
+              'Sensor estacionamiento trasero',
+              'Volante en cuero con levas',
+              'VW Digital Cockpit',
+            ],
             seguridad: [
               'Airbags frontales + laterales (tórax y cabeza)',
               'ABS + EBD · ESC + HHC',
@@ -831,8 +972,21 @@
           id: 'highline', name: '170 TSI Highline AT6 MY26', short: 'Highline',
           tier: 'Tope de gama', photo: 'imagenes/polo highline.webp', matchKey: 'polo highline',
           specs: {
-            motor: '1.0 170 TSI · 999 cc · 3 cilindros · 101 CV · 170 Nm @ 1.750 rpm · nafta · Euro 6 Plus',
-            caja: 'Tiptronic 6 velocidades (automática) · Tracción delantera',
+            motor: {
+              nombre: '1.0 170 TSI',
+              subtitulo: '999 cc · 3 cilindros turbo · nafta · Euro 6 Plus',
+              potencia: '101 CV',
+              torque: '170 Nm',
+              torqueRpm: '@ 1.750 rpm',
+              caja: 'Tiptronic 6 vel (automática)',
+              traccion: 'Tracción delantera',
+            },
+            destacados: [
+              'Climatizador automático táctil',
+              'Cargador inalámbrico',
+              'Cámara + sensores estacionamiento 4 ruedas',
+              'Active Info Display',
+            ],
             seguridad: [
               'Airbags frontales + laterales (tórax y cabeza)',
               'ABS + EBD · ESC + HHC',
@@ -1090,18 +1244,63 @@
   // ============== SPECS PANEL ==============
   function escapeHtml(s) { return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 
-  function specsBlock(title, value) {
-    if (Array.isArray(value)) {
-      if (!value.length) return '';
-      return `<div class="specs-block">
-        <div class="specs-block-title">${title}</div>
-        <ul class="specs-block-list">${value.map(i => `<li>${escapeHtml(i)}</li>`).join('')}</ul>
+  // Iconos inline para cada sección
+  const SECTION_ICONS = {
+    motor: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>',
+    destacados: '<svg viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="0.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>',
+    seguridad: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>',
+    confort: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 9V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v3"/><path d="M2 11v5a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-5a2 2 0 0 0-4 0v2H6v-2a2 2 0 0 0-4 0z"/><path d="M4 18v2"/><path d="M20 18v2"/></svg>',
+    exterior: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 16H9m10 0h3v-3.15a1 1 0 0 0-.84-.99L16 11l-2.7-3.6a1 1 0 0 0-.8-.4H5.24a2 2 0 0 0-1.8 1.1l-.8 1.63A6 6 0 0 0 2 12.42V16h2"/><circle cx="6.5" cy="16.5" r="2.5"/><circle cx="16.5" cy="16.5" r="2.5"/></svg>',
+    tecnologia: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>',
+    check: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>',
+  };
+
+  function sectionHeader(iconKey, label) {
+    return `<div class="specs-section-header">
+      <span class="specs-section-icon">${SECTION_ICONS[iconKey]}</span>
+      <span class="specs-section-label">${label}</span>
+    </div>`;
+  }
+
+  function motorSection(motor) {
+    if (!motor) return '';
+    // Compat: si motor es string viejo formato, lo renderizo plano
+    if (typeof motor === 'string') {
+      return `<div class="specs-section is-motor">
+        ${sectionHeader('motor', 'Motor y transmisión')}
+        <div class="motor-nombre">${escapeHtml(motor)}</div>
       </div>`;
     }
-    if (!value) return '';
-    return `<div class="specs-block">
-      <div class="specs-block-title">${title}</div>
-      <div class="specs-block-text">${escapeHtml(value)}</div>
+    const stats = [];
+    if (motor.potencia) stats.push(`<div class="stat-box"><span class="stat-label">Potencia</span><span class="stat-value">${escapeHtml(motor.potencia)}</span></div>`);
+    if (motor.torque) stats.push(`<div class="stat-box"><span class="stat-label">Torque</span><span class="stat-value">${escapeHtml(motor.torque)}</span>${motor.torqueRpm ? `<span class="stat-sub">${escapeHtml(motor.torqueRpm)}</span>` : ''}</div>`);
+    const transBits = [];
+    if (motor.caja) transBits.push(`<strong>${escapeHtml(motor.caja)}</strong>`);
+    if (motor.traccion) transBits.push(escapeHtml(motor.traccion));
+    return `<div class="specs-section is-motor">
+      ${sectionHeader('motor', 'Motor y transmisión')}
+      <div class="motor-nombre">${escapeHtml(motor.nombre || '')}</div>
+      ${motor.subtitulo ? `<div class="motor-subtitulo">${escapeHtml(motor.subtitulo)}</div>` : ''}
+      ${stats.length ? `<div class="motor-stats">${stats.join('')}</div>` : ''}
+      ${transBits.length ? `<div class="motor-trans">${transBits.join(' · ')}</div>` : ''}
+    </div>`;
+  }
+
+  function destacadosSection(items) {
+    if (!items || !items.length) return '';
+    return `<div class="specs-section is-destacados">
+      ${sectionHeader('destacados', 'Lo destacado')}
+      <div class="destacados-list">
+        ${items.map(i => `<div class="destacado-item">${SECTION_ICONS.check}<span>${escapeHtml(i)}</span></div>`).join('')}
+      </div>
+    </div>`;
+  }
+
+  function equipaSection(iconKey, label, items) {
+    if (!items || !items.length) return '';
+    return `<div class="specs-section">
+      ${sectionHeader(iconKey, label)}
+      <ul class="equipa-list">${items.map(i => `<li>${escapeHtml(i)}</li>`).join('')}</ul>
     </div>`;
   }
 
@@ -1112,20 +1311,21 @@
       return `<div class="specs-side">
         ${head}
         <div class="specs-soon">
+          <div class="specs-soon-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
           <strong>Ficha técnica en proceso</strong>
           Estamos cargando las especificaciones oficiales de esta versión.
         </div>
       </div>`;
     }
-    const blocks = [
-      specsBlock('Motor', s.motor),
-      specsBlock('Caja de cambios', s.caja),
-      specsBlock('Seguridad', s.seguridad),
-      specsBlock('Confort', s.confort),
-      specsBlock('Exterior', s.exterior),
-      specsBlock('Tecnología', s.tecnologia),
-    ].join('');
-    return `<div class="specs-side">${head}${blocks}</div>`;
+    return `<div class="specs-side">
+      ${head}
+      ${motorSection(s.motor)}
+      ${destacadosSection(s.destacados)}
+      ${equipaSection('seguridad', 'Seguridad', s.seguridad)}
+      ${equipaSection('confort', 'Confort', s.confort)}
+      ${equipaSection('exterior', 'Exterior', s.exterior)}
+      ${equipaSection('tecnologia', 'Tecnología', s.tecnologia)}
+    </div>`;
   }
 
   function renderSpecs() {
