@@ -31,7 +31,11 @@
       --grey-500: #8A8A8A;
       --grey-700: #4A4A4A;
       --grey-900: #1A1A1A;
+      --max-w: 1320px;
     }
+
+    /* Mobile-first: oculto en mobile, visible en desktop */
+    .desktop-only { display: none !important; }
     html, body {
       font-family: 'DM Sans', system-ui, -apple-system, sans-serif;
       color: var(--grey-900); background: var(--grey-100);
@@ -343,9 +347,140 @@
     /* SVG icons */
     .icon-stroke { stroke: currentColor; fill: none; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
 
-    /* Desktop limiter */
-    @media (min-width: 600px) {
-      body { max-width: 480px; margin: 0 auto; box-shadow: 0 0 40px rgba(0,0,0,0.06); }
+    /* ============== TABLET (600-1023): columna estrecha centrada ============== */
+    @media (min-width: 600px) and (max-width: 1023.98px) {
+      body { max-width: 600px; margin: 0 auto; box-shadow: 0 0 40px rgba(0,0,0,0.06); }
+    }
+
+    /* ============== DESKTOP (≥ 1024px) ============== */
+    @media (min-width: 1024px) {
+      body { background: #fff; max-width: none; box-shadow: none; }
+      .desktop-only { display: revert !important; }
+
+      /* HEADER */
+      .header {
+        padding: 0 max(40px, calc((100% - var(--max-w)) / 2 + 40px));
+        height: 88px;
+        gap: 24px;
+      }
+      .btn-back { width: 42px; height: 42px; }
+      .btn-back:hover { background: var(--vw-cyan-soft); }
+      .header-info .eyebrow { font-size: 12px; letter-spacing: 0.8px; }
+      .header-info .nombre { font-size: 28px; letter-spacing: -1px; }
+      .btn-financiacion {
+        padding: 12px 22px; border-radius: 10px;
+        font-size: 14px;
+      }
+      .btn-financiacion:hover { background: var(--vw-cyan-soft); }
+
+      /* META ROW */
+      .meta-row {
+        padding: 28px max(40px, calc((100% - var(--max-w)) / 2 + 40px)) 18px;
+      }
+      .chip { padding: 6px 14px; font-size: 12.5px; }
+      .campaign-badge { padding: 6px 14px; font-size: 12px; }
+      .meta-precio { margin-top: 16px; }
+      .meta-precio .lbl { font-size: 12px; }
+      .meta-precio .valor { font-size: 30px; letter-spacing: -1.2px; }
+
+      /* TABS */
+      .tabs-wrap {
+        top: 88px;
+        padding: 14px 0;
+      }
+      .tabs {
+        padding: 0 max(40px, calc((100% - var(--max-w)) / 2 + 40px));
+        gap: 8px; overflow-x: visible;
+      }
+      .tab {
+        padding: 10px 18px; font-size: 13.5px;
+        cursor: pointer; transition: background 0.15s;
+      }
+      .tab:not(.active):hover { background: var(--vw-cyan-soft); color: var(--vw-blue); }
+
+      /* CONTENT: grid 2 columnas */
+      .content {
+        padding: 36px max(40px, calc((100% - var(--max-w)) / 2 + 40px)) 80px;
+        display: grid;
+        grid-template-columns: 1.35fr 1fr;
+        column-gap: 48px;
+        row-gap: 16px;
+        align-items: start;
+      }
+
+      /* Gallery: columna izquierda */
+      .gallery {
+        grid-column: 1; grid-row: 1;
+        border-radius: 18px;
+      }
+      .gallery .img-wrap { height: 480px; padding: 32px; }
+      .arrow { width: 44px; height: 44px; }
+      .arrow.left { left: 16px; }
+      .arrow.right { right: 16px; }
+      .gallery .dot.active { width: 22px; }
+
+      /* Thumbs: debajo de gallery */
+      .thumbs {
+        grid-column: 1; grid-row: 2;
+        margin-top: 0;
+        flex-wrap: wrap;
+      }
+      .thumb {
+        width: 100px; height: 74px;
+        cursor: pointer; transition: border-color 0.15s, transform 0.15s;
+      }
+      .thumb:hover { border-color: var(--vw-blue); transform: translateY(-2px); }
+
+      /* Variantes: columna derecha, primera fila */
+      .variantes-title {
+        grid-column: 2; grid-row: 1;
+        margin-top: 0; margin-bottom: 12px;
+        font-size: 12px;
+      }
+      .variantes-list {
+        grid-column: 2; grid-row: 2;
+        gap: 10px;
+      }
+      .variante {
+        padding: 14px 16px;
+        cursor: pointer; transition: border-color 0.15s, background 0.15s;
+      }
+      .variante:not(.active):hover { border-color: var(--vw-blue); background: var(--grey-50); }
+      .variante .nombre-var { font-size: 15px; }
+      .variante .tier { font-size: 12px; }
+      .variante .precio { font-size: 17px; }
+
+      /* Version card: columna derecha, debajo */
+      .version-card {
+        grid-column: 2; grid-row: 3;
+        margin-top: 8px;
+        padding: 24px;
+        border-radius: 18px;
+      }
+      .version-card .nombre-version { font-size: 20px; letter-spacing: -0.5px; }
+      .version-card .precio-big { font-size: 44px; letter-spacing: -1.8px; margin-top: 16px; }
+      .version-card .cuota-line { font-size: 14px; margin-top: 10px; }
+
+      /* CTAs integrados dentro de version-card en desktop */
+      .vc-ctas-desktop {
+        margin-top: 20px;
+        display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
+      }
+      .vc-ctas-desktop .btn-wa-desktop,
+      .vc-ctas-desktop .btn-sim-desktop {
+        height: 52px; border: none; border-radius: 10px;
+        font-size: 14.5px; font-weight: 700; color: #fff;
+        display: flex; align-items: center; justify-content: center; gap: 8px;
+        cursor: pointer; text-decoration: none;
+        transition: background 0.15s;
+      }
+      .vc-ctas-desktop .btn-wa-desktop { background: var(--vw-green); }
+      .vc-ctas-desktop .btn-wa-desktop:hover { background: #1FB855; }
+      .vc-ctas-desktop .btn-sim-desktop { background: var(--vw-blue); }
+      .vc-ctas-desktop .btn-sim-desktop:hover { background: #00163A; }
+
+      /* Sticky bottom oculto en desktop (las CTAs viven en la version-card) */
+      .sticky-bottom { display: none; }
     }
   </style>
 </head>
@@ -404,6 +539,16 @@
     <div class="precio-big num" id="vc-precio">—</div>
     <div class="precio-nota">Precio final patenta cliente · stock limitado</div>
     <div class="cuota-line">o desde <span class="num" id="vc-cuota">—</span> en <strong>24 cuotas</strong></div>
+    <div class="vc-ctas-desktop desktop-only">
+      <button class="btn-wa-desktop" onclick="abrirLead()">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+        Me interesa
+      </button>
+      <a class="btn-sim-desktop" id="btn-ver-financiaciones-desktop" href="simulador-nuevo.html">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        Ver financiaciones
+      </a>
+    </div>
   </div>
 </div>
 
@@ -674,9 +819,12 @@
     // CTA WhatsApp con la versión actual
     const precioTxt = v.precio ? ` a ${fmtPrice(v.precio)}` : '';
     const msg = `Hola Tito Gonzalez, vi en baratito.com.ar el ${m.name} ${v.short}${precioTxt} y quería consultar disponibilidad.`;
-    // Link "Ver financiaciones" del sticky bottom apunta al simulador con el slug del modelo
+    // Link "Ver financiaciones" (sticky bottom mobile + CTA desktop) apunta al simulador con el slug
+    const finHref = `simulador-nuevo.html?slug=${encodeURIComponent(m.slug)}`;
     const linkFin = document.getElementById('btn-ver-financiaciones');
-    if (linkFin) linkFin.href = `simulador-nuevo.html?slug=${encodeURIComponent(m.slug)}`;
+    if (linkFin) linkFin.href = finHref;
+    const linkFinDesktop = document.getElementById('btn-ver-financiaciones-desktop');
+    if (linkFinDesktop) linkFinDesktop.href = finHref;
   }
 
   function abrirFinanciacion() {
