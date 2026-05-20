@@ -1293,6 +1293,7 @@ Sábados cerrado</div>
       // (queda hayStock=false y applyFilters lo filtra).
       const minEnStockPorSlug = {};
       const stockPorSlug = {};
+      const versionsEnStockPorSlug = {};
       for (let i = 1; i < filas.length; i++) {
         const f = filas[i];
         if (!f || !f[0]) continue;
@@ -1309,10 +1310,12 @@ Sábados cerrado</div>
           minEnStockPorSlug[slug] = oferta;
         }
         stockPorSlug[slug] = true;
+        versionsEnStockPorSlug[slug] = (versionsEnStockPorSlug[slug] || 0) + 1;
       }
       for (const m of MODELS) {
         if (minEnStockPorSlug[m.slug]) m.priceFrom = minEnStockPorSlug[m.slug];
         m.hayStock = stockPorSlug[m.slug] === true;
+        if (versionsEnStockPorSlug[m.slug]) m.versions = versionsEnStockPorSlug[m.slug];
       }
       renderModels();
       renderFeatured();
