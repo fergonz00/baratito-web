@@ -1509,50 +1509,28 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     document.getElementById('lead-telefono').classList.remove('error');
     document.getElementById('lead-tel-error').classList.remove('show');
     const btn = document.getElementById('lead-submit');
-    btn.disabled = true; btn.textContent = 'Enviando…';
-    // Timeout de 8s: si el CRM no responde rapido, abortamos y caemos al fallback
-    // para que el formulario no quede colgado en "Enviando..." indefinidamente.
-    const ctrl = new AbortController();
-    const timeoutId = setTimeout(() => ctrl.abort(), 8000);
+    btn.disabled = true;
+    btn.textContent = 'Enviando…';
+
     try {
-      const res = await fetch(CRM_LEAD_URL, {
-        method: 'POST', headers: { 'Content-Type': 'application/json' },
+      await fetch(CRM_LEAD_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           nombre, telefono: tel, email,
           modelo: leadModeloSeleccionado,
           precio: leadPrecioSeleccionado,
           contado, financiacion, usado,
+          via: 'modelo',
           origen: 'Web – baratito.com.ar',
         }),
-        signal: ctrl.signal,
       });
-      clearTimeout(timeoutId);
-      const data = await res.json();
-      if (data && data.ok && data.vendedor) {
-        const t = (data.vendedor.telefono || '').replace(/\D/g, '');
-        const telWa = t.startsWith('54') ? t : '54' + (t.startsWith('9') ? t : '9' + t);
-        const msg = '[WEB | BT] Hola ' + data.vendedor.nombre + '! Soy ' + nombre +
-          '. Me interesa el ' + leadModeloSeleccionado +
-          (leadPrecioSeleccionado ? ' (' + leadPrecioSeleccionado + ')' : '') +
-          '. Vi la oferta en baratito.com.ar.';
-        document.getElementById('lead-wa-link').href = 'https://wa.me/' + telWa + '?text=' + encodeURIComponent(msg);
-        document.getElementById('lead-vendedor-msg').textContent =
-          (data.vendedor.nombre + ' ' + (data.vendedor.apellido || '')).trim() + ' va a ser tu asesor.';
-        document.getElementById('lead-form-view').style.display = 'none';
-        document.getElementById('lead-success-view').style.display = 'block';
-      } else {
-        throw new Error((data && data.error) || 'CRM sin respuesta');
-      }
     } catch (err) {
-      clearTimeout(timeoutId);
       console.warn('Lead error:', err);
-      const msg = 'Hola Tito González, soy ' + nombre +
-        '. Me interesa el ' + leadModeloSeleccionado + '. Tel ' + tel + '.';
-      document.getElementById('lead-wa-link').href = 'https://wa.me/' + WA_FALLBACK + '?text=' + encodeURIComponent(msg);
-      document.getElementById('lead-vendedor-msg').textContent = 'Te derivamos por WhatsApp.';
-      document.getElementById('lead-form-view').style.display = 'none';
-      document.getElementById('lead-success-view').style.display = 'block';
+      // Aun si la red falla mostramos el mensaje (el lead lo retomamos por backup)
     }
+    document.getElementById('lead-form-view').style.display = 'none';
+    document.getElementById('lead-success-view').style.display = 'block';
   }
 
   // ============== SHEET LOADER ==============
