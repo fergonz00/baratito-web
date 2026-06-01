@@ -1736,6 +1736,9 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     btn.disabled = true;
     btn.textContent = 'Enviando…';
 
+    // Timeout de 8s para no colgar el form si el CRM no responde.
+    const ctrl = new AbortController();
+    const timeoutId = setTimeout(() => ctrl.abort(), 8000);
     try {
       const haySim = sim.version && sim.campana && sim.plazo;
       const modeloStr = haySim ? sim.version.nombreSheet : (sim.modelo ? sim.modelo.name : '');
@@ -1752,13 +1755,16 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           via: haySim ? 'simulador-online' : 'simulador-asesor',
           origen: 'Web – baratito.com.ar',
         }),
+        signal: ctrl.signal,
       });
+      clearTimeout(timeoutId);
       // El CRM recibe el lead. Sea exitoso o no, mostramos siempre el mismo mensaje.
       const data = await res.json().catch(() => null);
       if (!data || !data.ok) console.warn('CRM respondió sin ok:', data);
       $('modal-form-view').style.display = 'none';
       $('modal-success-view').style.display = 'block';
     } catch (err) {
+      clearTimeout(timeoutId);
       console.warn('Lead error:', err);
       // Aun si falla la red mostramos el mismo mensaje (el lead lo retomamos por backup)
       $('modal-form-view').style.display = 'none';

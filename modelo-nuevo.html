@@ -1510,6 +1510,10 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     document.getElementById('lead-tel-error').classList.remove('show');
     const btn = document.getElementById('lead-submit');
     btn.disabled = true; btn.textContent = 'Enviando…';
+    // Timeout de 8s: si el CRM no responde rapido, abortamos y caemos al fallback
+    // para que el formulario no quede colgado en "Enviando..." indefinidamente.
+    const ctrl = new AbortController();
+    const timeoutId = setTimeout(() => ctrl.abort(), 8000);
     try {
       const res = await fetch(CRM_LEAD_URL, {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
@@ -1520,7 +1524,9 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           contado, financiacion, usado,
           origen: 'Web – baratito.com.ar',
         }),
+        signal: ctrl.signal,
       });
+      clearTimeout(timeoutId);
       const data = await res.json();
       if (data && data.ok && data.vendedor) {
         const t = (data.vendedor.telefono || '').replace(/\D/g, '');
@@ -1538,6 +1544,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         throw new Error((data && data.error) || 'CRM sin respuesta');
       }
     } catch (err) {
+      clearTimeout(timeoutId);
       console.warn('Lead error:', err);
       const msg = 'Hola Tito González, soy ' + nombre +
         '. Me interesa el ' + leadModeloSeleccionado + '. Tel ' + tel + '.';
