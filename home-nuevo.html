@@ -1285,6 +1285,34 @@ Sábados cerrado</div>
 
   // ============== SHEET LOADER ==============
   const SHEET_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTD40FCkAXCrVNslz1OtxnYm1DRhDulVOHaCxJ81-kiQL17KnfimCOPn3hJDHAvJsF9ROEZdePuRw2E/pub?gid=1432576316&single=true&output=csv';
+  const API_OFERTAS_URL = 'https://precios.titogonzalez.online/api/public/ofertas';
+
+  // Devuelve filas tipo CSV: [modelo, lista, oferta, stock]. Primero la API
+  // del portal (en vivo, incluye precio por color en "precio_desde");
+  // si falla, el CSV publicado del Sheet de siempre.
+  async function fetchFilasOfertas() {
+    try {
+      const res = await fetch(API_OFERTAS_URL);
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      const data = await res.json();
+      if (!data.ok || !Array.isArray(data.modelos)) throw new Error('respuesta inválida');
+      const filas = [['modelo', 'lista', 'oferta', 'stock']];
+      for (const m of data.modelos) {
+        filas.push([
+          m.modelo,
+          String(m.precio_lista || ''),
+          String(m.precio_desde || m.oferta_fyf || ''),
+          m.stock_disponible ? 'stock disponible' : 'sin stock',
+        ]);
+      }
+      return filas;
+    } catch (err) {
+      console.warn('API del portal falló, uso CSV del Sheet:', err);
+      const res = await fetch(SHEET_URL);
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      return parseCSV(await res.text());
+    }
+  }
 
   function parseCSV(text) {
     const filas = [];
@@ -1315,10 +1343,7 @@ Sábados cerrado</div>
 
   async function cargarPreciosDesdeSheet() {
     try {
-      const res = await fetch(SHEET_URL);
-      if (!res.ok) throw new Error('HTTP ' + res.status);
-      const text = await res.text();
-      const filas = parseCSV(text);
+      const filas = await fetchFilasOfertas();
       // Solo consideramos el "Desde" sobre versiones EN STOCK. Si todas las
       // versiones de un modelo están sin stock, el modelo no se muestra
       // (queda hayStock=false y applyFilters lo filtra).
