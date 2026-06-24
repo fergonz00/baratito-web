@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#001E50">
+  <meta name="robots" content="noindex">
+  <title>Amarok · Plan de Ahorro · Tito González Automotores</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --vw-blue: #001E50;
+      --vw-blue-deep: #00133A;
+      --vw-cyan: #00B0F0;
+      --vw-green: #25D366;
+      --grey-100: #F5F5F5;
+      --grey-200: #EBEBEB;
+      --grey-500: #8A8A8A;
+      --grey-700: #4A4A4A;
+      --grey-900: #1A1A1A;
+    }
+    html, body {
+      font-family: 'DM Sans', system-ui, -apple-system, sans-serif;
+      color: var(--grey-900); background: var(--grey-100);
+      -webkit-font-smoothing: antialiased;
+    }
+    a { text-decoration: none; color: inherit; }
+    button { font-family: inherit; cursor: pointer; }
+
+    .hero {
+      background: linear-gradient(160deg, var(--vw-blue) 0%, var(--vw-blue-deep) 100%);
+      color: #fff; padding: 28px 20px 90px; text-align: center;
+    }
+    .hero img.logo { height: 46px; width: auto; margin: 0 auto 28px; display: block; }
+    .hero .badge {
+      display: inline-block; background: rgba(0,176,240,.18); color: var(--vw-cyan);
+      font-size: 13px; font-weight: 600; letter-spacing: .03em; text-transform: uppercase;
+      padding: 6px 14px; border-radius: 999px; margin-bottom: 16px;
+    }
+    .hero h1 { font-size: 30px; line-height: 1.15; font-weight: 700; max-width: 620px; margin: 0 auto 12px; }
+    .hero p { font-size: 16px; color: #cdd6e6; max-width: 520px; margin: 0 auto; }
+
+    .wrap { max-width: 460px; margin: -64px auto 40px; padding: 0 16px; }
+    .card {
+      background: #fff; border-radius: 18px; padding: 24px 22px;
+      box-shadow: 0 12px 40px rgba(0,30,80,.14); border: 1px solid var(--grey-200);
+    }
+    .card h2 { font-size: 19px; font-weight: 700; margin-bottom: 4px; }
+    .card .sub { font-size: 14px; color: var(--grey-500); margin-bottom: 18px; }
+
+    label { display: block; font-size: 13px; font-weight: 600; color: var(--grey-700); margin: 0 0 6px; }
+    .field { margin-bottom: 14px; }
+    input, textarea {
+      width: 100%; font-family: inherit; font-size: 15px; color: var(--grey-900);
+      border: 1px solid var(--grey-200); border-radius: 11px; padding: 12px 14px; background: #fff;
+      transition: border-color .15s;
+    }
+    input:focus, textarea:focus { outline: none; border-color: var(--vw-cyan); }
+    textarea { resize: vertical; min-height: 70px; }
+    .hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+
+    .btn {
+      width: 100%; background: var(--vw-blue); color: #fff; border: none; border-radius: 11px;
+      padding: 14px; font-size: 16px; font-weight: 600; margin-top: 4px;
+      transition: opacity .15s;
+    }
+    .btn:hover { opacity: .92; }
+    .btn:disabled { opacity: .5; cursor: not-allowed; }
+    .legal { font-size: 12px; color: var(--grey-500); text-align: center; margin-top: 12px; }
+
+    .ok { text-align: center; padding: 8px 0; }
+    .ok .check { width: 56px; height: 56px; border-radius: 50%; background: #E6F9EF; color: var(--vw-green);
+      display: flex; align-items: center; justify-content: center; font-size: 30px; margin: 0 auto 14px; }
+    .ok h2 { font-size: 20px; margin-bottom: 6px; }
+    .ok p { font-size: 14px; color: var(--grey-700); margin-bottom: 18px; }
+    .btn-wa {
+      display: inline-flex; align-items: center; gap: 8px; background: var(--vw-green); color: #fff;
+      border-radius: 11px; padding: 12px 20px; font-size: 15px; font-weight: 600;
+    }
+    .err { background: #FDECEC; color: #B42318; font-size: 13px; border-radius: 10px; padding: 10px 12px; margin-bottom: 12px; display: none; }
+    .foot { text-align: center; font-size: 12px; color: var(--grey-500); padding: 0 16px 28px; }
+
+    @media (max-width: 480px) { .hero h1 { font-size: 25px; } }
+  </style>
+</head>
+<body>
+  <section class="hero">
+    <img class="logo" src="imagenes/logo-tito-white.png" alt="Tito González Automotores">
+    <span class="badge">Plan de Ahorro VW</span>
+    <h1>Tu Amarok con Plan de Ahorro</h1>
+    <p>Dejanos tus datos y un asesor te contacta con la mejor opción de plan para tu nueva Amarok.</p>
+  </section>
+
+  <div class="wrap">
+    <div class="card" id="card">
+      <div id="formView">
+        <h2>Quiero que me contacten</h2>
+        <p class="sub">Te respondemos a la brevedad.</p>
+        <div class="err" id="err"></div>
+        <form id="leadForm" autocomplete="on">
+          <div class="field">
+            <label for="nombre">Nombre y apellido *</label>
+            <input id="nombre" name="nombre" type="text" required placeholder="Tu nombre">
+          </div>
+          <div class="field">
+            <label for="telefono">Teléfono / WhatsApp *</label>
+            <input id="telefono" name="telefono" type="tel" required placeholder="Ej: 11 3757 3604" inputmode="tel">
+          </div>
+          <div class="field">
+            <label for="email">Email</label>
+            <input id="email" name="email" type="email" placeholder="tucorreo@mail.com">
+          </div>
+          <div class="field">
+            <label for="comentario">Comentario (opcional)</label>
+            <textarea id="comentario" name="comentario" placeholder="Contanos qué versión te interesa, etc."></textarea>
+          </div>
+          <!-- honeypot anti-bots: invisible para personas -->
+          <div class="hp" aria-hidden="true">
+            <label>No completar</label>
+            <input id="hp" name="hp" type="text" tabindex="-1" autocomplete="off">
+          </div>
+          <button class="btn" id="submitBtn" type="submit">Quiero más info</button>
+          <p class="legal">Al enviar aceptás ser contactado por Tito González Automotores.</p>
+        </form>
+      </div>
+
+      <div class="ok" id="okView" style="display:none">
+        <div class="check">✓</div>
+        <h2>¡Listo! Te vamos a contactar</h2>
+        <p>Recibimos tus datos. Un asesor de Plan de Ahorro se va a comunicar con vos.</p>
+        <a class="btn-wa" href="https://wa.me/5491137573604?text=Hola%20Tito%20Gonzalez%2C%20consulto%20por%20el%20Plan%20de%20Ahorro%20de%20la%20Amarok.">
+          Escribir por WhatsApp
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <p class="foot">Tito González Automotores · Concesionario Oficial Volkswagen</p>
+
+  <script>
+    const form = document.getElementById('leadForm')
+    const btn = document.getElementById('submitBtn')
+    const errBox = document.getElementById('err')
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault()
+      errBox.style.display = 'none'
+      const payload = {
+        nombre: document.getElementById('nombre').value.trim(),
+        telefono: document.getElementById('telefono').value.trim(),
+        email: document.getElementById('email').value.trim(),
+        comentario: document.getElementById('comentario').value.trim(),
+        hp: document.getElementById('hp').value,
+      }
+      if (!payload.nombre || !payload.telefono) {
+        errBox.textContent = 'Completá nombre y teléfono.'
+        errBox.style.display = 'block'
+        return
+      }
+      btn.disabled = true
+      btn.textContent = 'Enviando...'
+      try {
+        const res = await fetch('/api/lead', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+        })
+        const data = await res.json().catch(() => ({}))
+        if (!res.ok) throw new Error(data.error || 'Error')
+        document.getElementById('formView').style.display = 'none'
+        document.getElementById('okView').style.display = 'block'
+      } catch (err) {
+        errBox.textContent = 'No pudimos enviar tus datos. Probá de nuevo o escribinos por WhatsApp.'
+        errBox.style.display = 'block'
+        btn.disabled = false
+        btn.textContent = 'Quiero más info'
+      }
+    })
+  </script>
+</body>
+</html>
