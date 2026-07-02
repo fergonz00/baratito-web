@@ -4,7 +4,7 @@
 // expuesto en el cliente (Camino B).
 
 const CRM_ENDPOINT = 'https://crm.titogonzalez.online/api/lead-externo'
-const ORIGEN = 'Envios Masivos'
+const ORIGEN = 'Envios Masivos — Amarok Adj 2'
 
 module.exports = async (req, res) => {
   if (req.method === 'OPTIONS') {
