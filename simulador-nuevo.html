@@ -1356,12 +1356,17 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       });
       const m = MODELS.find(x => x.slug === slug);
       if (m) {
+        // Solo versiones con stock: el precio de una unidad que no esta no se
+        // publica (mismo criterio que la home y las fichas).
         const enStock = VERSIONS_POR_SLUG[slug].filter(v => v.enStock);
-        const ref = (enStock[0] || VERSIONS_POR_SLUG[slug][0]);
+        m.hayStock = enStock.length > 0;
+        const ref = enStock[0];
         if (ref) {
           m.priceFrom = ref.priceOferta;
           m.priceLista = ref.priceLista;
           m.dataModelo = ref.nombreSheet;
+        } else {
+          m.priceFrom = null;
         }
       }
     }
@@ -1403,6 +1408,10 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     }
   }
 
+  // Recien cuando el portal contesta se muestran precios: los priceFrom de
+  // MODELS son solo un placeholder viejo y no se publican nunca.
+  let PRECIOS_LISTOS = false;
+
   async function cargarPrecios() {
     try {
       await cargarPreciosAPI();
@@ -1412,6 +1421,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       await cargarPreciosCSV().catch(e => console.warn('CSV también falló:', e));
     }
     ordenarVersiones();
+    PRECIOS_LISTOS = Object.keys(VERSIONS_POR_SLUG).length > 0;
   }
 
   // ============== CARGA DE CAMPAÑAS ==============
@@ -1474,7 +1484,9 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     MODELS.forEach(m => {
       const opt = document.createElement('option');
       opt.value = m.slug;
-      opt.textContent = `${m.name} · desde ${fmt(m.priceFrom)}`;
+      if (!PRECIOS_LISTOS) opt.textContent = `${m.name} · cargando precio…`;
+      else if (m.priceFrom) opt.textContent = `${m.name} · desde ${fmt(m.priceFrom)}`;
+      else opt.textContent = `${m.name} · consultar stock`;
       sel.appendChild(opt);
     });
   }
