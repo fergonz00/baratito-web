@@ -196,6 +196,26 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     }
     .gate-card .arrow { color: var(--grey-500); flex-shrink: 0; align-self: center; }
     .gate-card:hover .arrow { color: var(--vw-blue); }
+    .gate-form {
+      display: none; margin-top: 18px; text-align: left;
+      background: #fff; border: 1px solid var(--grey-200); border-radius: 14px;
+      padding: 20px; box-shadow: 0 6px 22px rgba(0,30,80,0.06);
+    }
+    body.gate-datos .gate-form { display: block; }
+    body.gate-datos .gate-cards { display: none; }
+    .gate-form .gate-form-title {
+      font-size: 17px; font-weight: 700; color: var(--vw-blue); margin-bottom: 4px;
+    }
+    .gate-form .gate-form-sub {
+      font-size: 13px; color: var(--grey-500); line-height: 1.5; margin-bottom: 14px;
+    }
+    .gate-form .gate-legal {
+      font-size: 11px; color: var(--grey-500); line-height: 1.45; margin-top: 10px;
+    }
+    .gate-volver {
+      display: block; margin: 12px auto 0; background: none; border: none;
+      font-size: 13px; color: var(--grey-500); text-decoration: underline; cursor: pointer;
+    }
     .gate-bypass {
       margin-top: 14px; padding: 0;
       background: none; border: none; color: var(--grey-700);
@@ -948,6 +968,20 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         <svg class="arrow" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
       </button>
     </div>
+
+    <!-- Para simular online hay que dejar nombre y celular: sin eso no se
+         muestra ninguna cuota. -->
+    <div class="gate-form" id="gate-form">
+      <div class="gate-form-title">Dejanos tu nombre y celular</div>
+      <div class="gate-form-sub">Es el paso previo para simular online. Un asesor te contacta para confirmar la cuota, el stock y la aprobación crediticia.</div>
+      <input class="modal-input" id="g-nombre" type="text" placeholder="Nombre y apellido *" autocomplete="name">
+      <div class="modal-error" id="g-nombre-error">Escribí nombre y apellido (mínimo 3 letras cada uno).</div>
+      <input class="modal-input" id="g-telefono" type="tel" placeholder="Celular * (ej: 11 5566 7788)" maxlength="20" autocomplete="tel">
+      <div class="modal-error" id="g-tel-error">Ingresá un celular argentino válido (10 dígitos sin 0 ni 15).</div>
+      <button class="modal-cta" id="g-submit" onclick="gateEnviarDatos()">Empezar a simular</button>
+      <div class="gate-legal">Al continuar aceptás que un asesor de Tito González Automotores te contacte por este medio.</div>
+      <button class="gate-volver" onclick="gateVolver()">Volver</button>
+    </div>
   </div>
 </section>
 
@@ -1213,6 +1247,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
 <script>
   // ============== DATA (compartido con home-nuevo.html) ==============
+  // Precios: API en vivo del portal primero (igual que home/modelo), CSV como fallback.
+  const API_OFERTAS_URL = 'https://precios.titogonzalez.online/api/public/ofertas';
   const PRECIOS_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTD40FCkAXCrVNslz1OtxnYm1DRhDulVOHaCxJ81-kiQL17KnfimCOPn3hJDHAvJsF9ROEZdePuRw2E/pub?gid=1432576316&single=true&output=csv';
   const CAMPANAS_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTD40FCkAXCrVNslz1OtxnYm1DRhDulVOHaCxJ81-kiQL17KnfimCOPn3hJDHAvJsF9ROEZdePuRw2E/pub?gid=2146569390&single=true&output=csv';
   const CRM_LEAD_URL = 'https://tito-crm.vercel.app/api/lead-externo';
@@ -1297,57 +1333,85 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       .trim();
   }
 
-  async function cargarPrecios() {
-    try {
-      const res = await fetch(PRECIOS_CSV_URL);
-      if (!res.ok) throw new Error('HTTP ' + res.status);
-      const text = await res.text();
-      const filas = parseCSV(text);
-      // Header esperado: modelo, precio_lista, oferta_vigente_con_fyf, stock, dto, colores
-      for (let i = 1; i < filas.length; i++) {
-        const f = filas[i];
-        if (!f || !f[0]) continue;
-        const slug = matchSlug(f[0]);
-        if (!slug) continue;
-        const nombreSheet = f[0].trim();
-        const lista = parseFloat((f[1] || '').replace(/[$,\s]/g, '')) || null;
-        const oferta = parseFloat((f[2] || '').replace(/[$,\s]/g, '')) || null;
-        if (!oferta) continue;
-        const stockTxt = (f[3] || '').toLowerCase();
-        const enStock = stockTxt.includes('stock disponible');
-        const colores = (f[5] || '').trim();
-        if (!VERSIONS_POR_SLUG[slug]) VERSIONS_POR_SLUG[slug] = [];
-        VERSIONS_POR_SLUG[slug].push({
-          slug,
-          nombreSheet,
-          displayName: prettyVersion(nombreSheet),
-          priceOferta: oferta,
-          priceLista: lista || oferta,
-          enStock,
-          colores,
-        });
-      }
-      // Ordenar: en stock primero, luego por precio ascendente
-      for (const slug of Object.keys(VERSIONS_POR_SLUG)) {
-        VERSIONS_POR_SLUG[slug].sort((a, b) => {
-          if (a.enStock !== b.enStock) return a.enStock ? -1 : 1;
-          return a.priceOferta - b.priceOferta;
-        });
-        // Actualizar el priceFrom del modelo a la oferta más barata EN STOCK (o la más barata absoluta)
-        const m = MODELS.find(x => x.slug === slug);
-        if (m) {
-          const enStock = VERSIONS_POR_SLUG[slug].filter(v => v.enStock);
-          const ref = (enStock[0] || VERSIONS_POR_SLUG[slug][0]);
-          if (ref) {
-            m.priceFrom = ref.priceOferta;
-            m.priceLista = ref.priceLista;
-            m.dataModelo = ref.nombreSheet;
-          }
+  // Empuja una versión a VERSIONS_POR_SLUG (evita depender del origen).
+  function pushVersion(slug, nombreSheet, oferta, lista, enStock, colores) {
+    if (!VERSIONS_POR_SLUG[slug]) VERSIONS_POR_SLUG[slug] = [];
+    VERSIONS_POR_SLUG[slug].push({
+      slug,
+      nombreSheet,
+      displayName: prettyVersion(nombreSheet),
+      priceOferta: oferta,
+      priceLista: lista || oferta,
+      enStock,
+      colores,
+    });
+  }
+
+  // Ordena las versiones (en stock primero, luego precio asc) y fija el priceFrom del modelo.
+  function ordenarVersiones() {
+    for (const slug of Object.keys(VERSIONS_POR_SLUG)) {
+      VERSIONS_POR_SLUG[slug].sort((a, b) => {
+        if (a.enStock !== b.enStock) return a.enStock ? -1 : 1;
+        return a.priceOferta - b.priceOferta;
+      });
+      const m = MODELS.find(x => x.slug === slug);
+      if (m) {
+        const enStock = VERSIONS_POR_SLUG[slug].filter(v => v.enStock);
+        const ref = (enStock[0] || VERSIONS_POR_SLUG[slug][0]);
+        if (ref) {
+          m.priceFrom = ref.priceOferta;
+          m.priceLista = ref.priceLista;
+          m.dataModelo = ref.nombreSheet;
         }
       }
-    } catch (err) {
-      console.warn('No se pudieron cargar precios:', err);
     }
+  }
+
+  // Precios en vivo desde la API del portal (misma fuente que la home).
+  async function cargarPreciosAPI() {
+    const res = await fetch(API_OFERTAS_URL);
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const data = await res.json();
+    if (!data || !data.ok || !Array.isArray(data.modelos)) throw new Error('respuesta inválida');
+    for (const m of data.modelos) {
+      const slug = matchSlug(m.modelo || '');
+      if (!slug) continue;
+      const oferta = Number(m.precio_desde || m.oferta_fyf) || null;
+      if (!oferta) continue;
+      const colores = Array.isArray(m.colores) ? m.colores.map(c => c.color).join(', ') : '';
+      pushVersion(slug, String(m.modelo).trim(), oferta, Number(m.precio_lista) || oferta, !!m.stock_disponible, colores);
+    }
+  }
+
+  // Fallback: precios del CSV publicado del Sheet (con lag).
+  async function cargarPreciosCSV() {
+    const res = await fetch(PRECIOS_CSV_URL);
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const text = await res.text();
+    const filas = parseCSV(text);
+    // Header esperado: modelo, precio_lista, oferta_vigente_con_fyf, stock, dto, colores
+    for (let i = 1; i < filas.length; i++) {
+      const f = filas[i];
+      if (!f || !f[0]) continue;
+      const slug = matchSlug(f[0]);
+      if (!slug) continue;
+      const lista = parseFloat((f[1] || '').replace(/[$,\s]/g, '')) || null;
+      const oferta = parseFloat((f[2] || '').replace(/[$,\s]/g, '')) || null;
+      if (!oferta) continue;
+      const enStock = (f[3] || '').toLowerCase().includes('stock disponible');
+      pushVersion(slug, f[0].trim(), oferta, lista, enStock, (f[5] || '').trim());
+    }
+  }
+
+  async function cargarPrecios() {
+    try {
+      await cargarPreciosAPI();
+    } catch (err) {
+      console.warn('API de ofertas falló, uso CSV de fallback:', err);
+      for (const k in VERSIONS_POR_SLUG) delete VERSIONS_POR_SLUG[k];
+      await cargarPreciosCSV().catch(e => console.warn('CSV también falló:', e));
+    }
+    ordenarVersiones();
   }
 
   // ============== CARGA DE CAMPAÑAS ==============
@@ -1686,8 +1750,9 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     }
     $('modal-form-view').style.display = 'block';
     $('modal-success-view').style.display = 'none';
-    $('m-nombre').value = '';
-    $('m-telefono').value = '';
+    const previo = leadGuardado();
+    $('m-nombre').value = previo ? previo.nombre : '';
+    $('m-telefono').value = previo ? previo.telefono : '';
     $('m-email').value = '';
     $('m-telefono').classList.remove('error');
     $('m-tel-error').classList.remove('show');
@@ -1740,6 +1805,12 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       const haySim = sim.version && sim.campana && sim.plazo;
       const modeloStr = haySim ? sim.version.nombreSheet : (sim.modelo ? sim.modelo.name : '');
       const precioStr = haySim ? fmt(sim.version.priceOferta) : '';
+      // El CRM no guarda el objeto `simulacion`, así que la simulación va en el
+      // comentario: es lo que el vendedor necesita ver al abrir el lead.
+      const r = window._simResultado;
+      const comentario = (haySim && r)
+        ? `Simuló online: ${r.plan} · ${r.plazo} cuotas de ${fmt(r.cuota)} · entrega ${fmt(r.entrega)} · financia ${fmt(r.monto)} · ${r.version} (${r.provincia}).`
+        : 'Pidió que lo contacten desde el simulador (sin simulación cargada).';
       await fetch(CRM_LEAD_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -1749,6 +1820,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           precio: precioStr,
           financiacion: true,
           simulacion: window._simResultado || null,
+          comentario,
           via: haySim ? 'simulador-online' : 'simulador-asesor',
           origen: 'Web – baratito.com.ar',
         }),
@@ -1842,6 +1914,14 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   // Si no hay Sin Quebranto, cae a Especial Autos. Si no, a Financia Más.
   function mostrarEjemploHero() {
     if (!CAMPANAS_CARGADAS || Object.keys(VERSIONS_POR_SLUG).length === 0) return;
+    // El ejemplo del hero tambien es una cuota: sin datos, no se muestra.
+    if (!leadGuardado()) {
+      $('hero-eg-eyebrow').textContent = 'Ejemplo';
+      $('hero-eg-title').textContent = 'Dejanos tu nombre y celular';
+      $('hero-eg-cuota').textContent = '$ ••••••';
+      $('hero-eg-meta').textContent = 'y te mostramos la cuota al instante';
+      return;
+    }
 
     // Versión candidata: la primera versión en stock que esté en FINANCIA_MAS
     let version = null;
@@ -1899,14 +1979,80 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
   // ============== GATE ==============
   // 'asesor' → abre modal de contacto sin requerir simulación.
-  // 'online' → muestra el simulador (form + result + planes + FAQ).
+  // 'online' → pide nombre + celular ANTES de mostrar el simulador. Nadie ve
+  //            una cuota sin dejar sus datos; el lead entra al CRM en el acto.
+  const LS_LEAD = 'tga_sim_lead';
+
+  function leadGuardado() {
+    try {
+      const raw = localStorage.getItem(LS_LEAD);
+      if (!raw) return null;
+      const d = JSON.parse(raw);
+      return (d && d.nombre && d.telefono) ? d : null;
+    } catch (err) { return null; }
+  }
+
+  function abrirSimulador() {
+    mostrarEjemploHero();
+    document.body.classList.remove('gate-datos');
+    document.body.classList.add('choice-made');
+    window.scrollTo({ top: 0, behavior: 'instant' });
+  }
+
   function gateElegir(opcion) {
     if (opcion === 'asesor') {
       abrirModalContacto(true);
-    } else {
-      document.body.classList.add('choice-made');
-      window.scrollTo({ top: 0, behavior: 'instant' });
+      return;
     }
+    // Ya se identificó en este dispositivo: no lo hacemos cargar los datos otra vez.
+    if (leadGuardado()) { abrirSimulador(); return; }
+    document.body.classList.add('gate-datos');
+    $('g-nombre').focus();
+  }
+
+  function gateVolver() {
+    document.body.classList.remove('gate-datos');
+  }
+
+  async function gateEnviarDatos() {
+    const nombre = $('g-nombre').value.trim();
+    const tel = $('g-telefono').value.trim();
+    const okNombre = nombre.split(/\s+/).filter(p => p.length >= 3).length >= 2;
+    $('g-nombre').classList.toggle('error', !okNombre);
+    $('g-nombre-error').classList.toggle('show', !okNombre);
+    const telLimpio = validarTelefono(tel);
+    $('g-telefono').classList.toggle('error', !telLimpio);
+    $('g-tel-error').classList.toggle('show', !telLimpio);
+    if (!okNombre || !telLimpio) return;
+
+    const btn = $('g-submit');
+    btn.disabled = true;
+    btn.textContent = 'Enviando…';
+    try {
+      await fetch(CRM_LEAD_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          nombre,
+          telefono: telLimpio,
+          modelo: sim.modelo ? sim.modelo.name : '',
+          financiacion: true,
+          via: 'simulador-online',
+          comentario: 'Entró a simular online en baratito.com.ar (todavía sin simulación cargada).',
+          origen: 'Web – baratito.com.ar',
+        }),
+      });
+    } catch (err) {
+      // Si la red falla igual lo dejamos pasar: el dato ya quedó guardado local
+      // y el lead se reintenta cuando pide que lo contacten.
+      console.warn('Lead del gate falló:', err);
+    }
+    try {
+      localStorage.setItem(LS_LEAD, JSON.stringify({ nombre, telefono: telLimpio, ts: Date.now() }));
+    } catch (err) { /* modo incógnito: seguimos igual */ }
+    btn.disabled = false;
+    btn.textContent = 'Empezar a simular';
+    abrirSimulador();
   }
 
   // ============== INIT ==============
