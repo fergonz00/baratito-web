@@ -253,6 +253,10 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       font-size: 13px; color: var(--grey-700); margin-top: 8px;
     }
     .version-card .cuota-line .num { color: var(--vw-blue); font-weight: 700; }
+    .version-card .fin-legal {
+      font-size: 10.5px; color: var(--grey-500); margin-top: 6px;
+      line-height: 1.45; font-weight: 500;
+    }
 
     /* ============== SPECS PANEL ============== */
     .specs-panel-wrap { padding: 0 16px; }
@@ -785,7 +789,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <div class="specs" id="vc-specs"></div>
     <div class="precio-big num" id="vc-precio">—</div>
     <div class="precio-nota">Precio final patenta cliente · stock limitado</div>
-    <div class="cuota-line">o desde <span class="num" id="vc-cuota">—</span> en <strong>24 cuotas</strong></div>
+    <div class="cuota-line" id="vc-fin" style="display:none"></div>
+    <div class="fin-legal" id="vc-fin-legal" style="display:none"></div>
     <div class="vc-ctas-desktop">
       <button class="btn-wa-desktop" onclick="abrirLead()">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
@@ -869,6 +874,9 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   };
 
   // ============== MODELOS Y VERSIONES ==============
+  // Nota: el campo `campaign` de cada modelo quedo como referencia historica y
+  // NO se usa para pintar nada. La campana que se muestra sale del CSV de VWFS
+  // y se resuelve por version (ver campanaDeVersion / badgeDeVersion).
   // Cada modelo: metadata + lista de versions (cada version tiene name humano +
   // photo + matchKey que se usa para hacer match con la planilla).
   const MODELS = {
@@ -1152,10 +1160,11 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
   function renderMeta() {
     const m = state.model;
+    const badge = m.versions.length ? badgeDeVersion(m.versions[state.galleryIdx]) : null;
     const chipsHtml = [
       `<span class="chip">${m.body}</span>`,
       `<span class="chip">Origen ${m.origin}</span>`,
-      m.campaign ? `<span class="campaign-badge" style="background:${m.campaign.bg};color:${m.campaign.color}"><span class="dot" style="background:${m.campaign.color}"></span>${m.campaign.label}</span>` : ''
+      badge ? `<span class="campaign-badge" style="background:${badge.bg};color:${badge.color}"><span class="dot" style="background:${badge.color}"></span>${badge.label}</span>` : ''
     ].filter(Boolean).join('');
     document.getElementById('meta-chips').innerHTML = chipsHtml;
     document.getElementById('meta-variantes-lbl').textContent = `${m.versions.length} variantes · desde`;
@@ -1201,6 +1210,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     renderGallery();
     renderThumbs();
     renderVariantes();
+    renderMeta();
     renderVersionCard();
   }
 
@@ -1219,6 +1229,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     renderGallery();
     renderThumbs();
     renderVariantes();
+    renderMeta();
     renderVersionCard();
   }
 
@@ -1245,16 +1256,31 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     const m = state.model;
     const v = m.versions[state.galleryIdx];
     document.getElementById('vc-nombre').textContent = v.name;
-    const cuotaAprox = v.precio ? Math.round(v.precio / 50000) * 1000 : null;
     document.getElementById('vc-precio').textContent = fmtPrice(v.precio);
-    document.getElementById('vc-cuota').textContent = fmtPrice(cuotaAprox);
+
+    // Financiacion: claim cualitativo armado con la campana VWFS real de ESTA
+    // version. Nunca un valor de cuota "desde": sin CFTEA publicado no se puede.
+    const camp = campanaDeVersion(v);
+    const finEl = document.getElementById('vc-fin');
+    const finLegalEl = document.getElementById('vc-fin-legal');
+    if (camp) {
+      const tasaTxt = camp.tna === 0 ? 'TNA 0%' : `TNA ${String(camp.tna).replace('.', ',')}%`;
+      finEl.innerHTML = `Financiá hasta <span class="num">${fmtPrice(camp.tope)}</span> en <strong>${camp.plazo} cuotas</strong> · ${tasaTxt}`;
+      finEl.style.display = '';
+      finLegalEl.textContent = `${camp.nombre} · VW Financial Services${camp.uva ? ', cuota ajustada por UVA' : ''}. Sujeto a aprobación crediticia. Consultá CFT, gastos y valor de cuota con tu asesor.`;
+      finLegalEl.style.display = '';
+    } else {
+      finEl.style.display = 'none';
+      finLegalEl.style.display = 'none';
+    }
 
     // Specs chiquitas: tier + origen
     const specsEl = document.getElementById('vc-specs');
+    const badge = badgeDeVersion(v);
     specsEl.innerHTML = [
       `<span class="spec-chip">${v.tier}</span>`,
       `<span class="spec-chip">Origen ${m.origin}</span>`,
-      m.campaign ? `<span class="spec-chip" style="background:${m.campaign.bg};color:${m.campaign.color}">${m.campaign.label}</span>` : '',
+      badge ? `<span class="spec-chip" style="background:${badge.bg};color:${badge.color}">${badge.label}</span>` : '',
     ].filter(Boolean).join('');
 
     // CTA WhatsApp con la versión actual
@@ -1612,6 +1638,10 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         const stock = (f[3] || '').trim().toLowerCase();
         const enStock = stock.includes('stock disponible');
         if (enStock) v.enStock = true;
+        // Nombre completo tal cual viene del portal: es la clave con la que el
+        // CSV de campanas define elegibilidad (Financia Mas va por version).
+        if (!v.sheetNames) v.sheetNames = [];
+        if (!v.sheetNames.includes(nombre)) v.sheetNames.push(nombre);
         if (v.precio == null || oferta < v.precio) v.precio = oferta;
       }
       // Filtrar versiones sin stock antes de renderizar.
@@ -1632,6 +1662,90 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     } catch (err) {
       console.warn('No se pudieron cargar precios desde Sheet:', err);
     }
+  }
+
+  // ============== CAMPANAS VWFS ==============
+  // Mismo CSV que usa el simulador (gid 2146569390). De aca sale el claim de
+  // financiacion: monto financiable, plazo y TNA reales por version.
+  const CAMPANAS_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTD40FCkAXCrVNslz1OtxnYm1DRhDulVOHaCxJ81-kiQL17KnfimCOPn3hJDHAvJsF9ROEZdePuRw2E/pub?gid=2146569390&single=true&output=csv';
+  let CAMPANAS_VWFS = null;  // [{ nombre, grupo, plazo, tna, max, uva }]
+  let FINANCIA_MAS = [];     // nombres de Sheet elegibles para Financia Mas
+
+  async function cargarCampanas() {
+    try {
+      const res = await fetch(CAMPANAS_CSV_URL);
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      const filas = parseCSV(await res.text());
+      const lista = [];
+      const modelosFM = new Set();
+      for (let i = 1; i < filas.length; i++) {
+        const f = filas[i];
+        if (!f || !f[1] || !f[3]) continue;
+        if ((f[2] || '').trim().toLowerCase() === 'usado') continue;
+        const plazo = parseInt(f[3]) || 0;
+        if (!plazo) continue;
+        const tna = parseFloat((f[4] || '').replace(',', '.'));
+        const max = parseFloat((f[8] || '0').replace(/[$,\s]/g, '').trim()) || 0;
+        const esAmarok = (f[9] || '').trim().toUpperCase() === 'SI';
+        const uva = (f[10] || '').trim().toUpperCase() === 'SI';
+        const modelos = (f[12] || '').trim().toUpperCase();
+        let grupo = 'TODOS';
+        if (esAmarok) grupo = 'AMAROK';
+        else if (modelos === 'FINANCIA_MAS') {
+          grupo = 'FM';
+          (f[13] || '').split('|').forEach(x => { const t = x.trim(); if (t) modelosFM.add(t); });
+        }
+        lista.push({ nombre: (f[1] || '').trim(), grupo, plazo, tna: isNaN(tna) ? null : tna, max, uva });
+      }
+      CAMPANAS_VWFS = lista;
+      FINANCIA_MAS = Array.from(modelosFM);
+    } catch (err) {
+      console.warn('No se pudieron cargar campanas VWFS:', err);
+      CAMPANAS_VWFS = null;
+    }
+    // Sin campanas no se muestra nada de financiacion: preferimos el hueco
+    // antes que un numero sin respaldo.
+    if (state.model && state.model.versions.length) {
+      renderMeta();
+      renderVersionCard();
+    }
+  }
+
+  // Campana a comunicar para una version: entre las de TNA 0% sin UVA que le
+  // apliquen, la de plazo mas largo (a igual plazo, la de mayor monto). El tope
+  // se recorta al precio del auto (no se puede financiar mas que el vehiculo).
+  function campanaDeVersion(v) {
+    if (!CAMPANAS_VWFS || !v) return null;
+    const nombres = v.sheetNames || [];
+    const esAmarok = state.model.slug === 'amarok'
+      || nombres.some(n => n.toLowerCase().includes('amarok'));
+    const esFM = nombres.some(n => FINANCIA_MAS.includes(n));
+
+    const aplican = CAMPANAS_VWFS.filter(c => {
+      if (esAmarok) return c.grupo === 'AMAROK';
+      if (c.grupo === 'AMAROK') return false;
+      if (c.grupo === 'FM') return esFM;
+      return true;
+    }).filter(c => c.max > 0);
+
+    const cero = aplican.filter(c => c.tna === 0 && !c.uva);
+    const pool = cero.length ? cero : aplican;
+    if (!pool.length) return null;
+    pool.sort((a, b) => (b.plazo - a.plazo) || (b.max - a.max));
+    const best = pool[0];
+    return Object.assign({}, best, {
+      esFM,
+      tope: v.precio ? Math.min(best.max, v.precio) : best.max,
+    });
+  }
+
+  function badgeDeVersion(v) {
+    const c = campanaDeVersion(v);
+    if (!c) return null;
+    if (/financia m/i.test(c.nombre)) return CAMPAIGNS.financia_mas;
+    if (/especial/i.test(c.nombre)) return CAMPAIGNS.especial_autos;
+    if (c.tna === 0) return CAMPAIGNS.tasa_cero;
+    return CAMPAIGNS.credito_vw;
   }
 
   // ============== INIT ==============
@@ -1657,6 +1771,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     renderVersionCard();
 
     cargarPreciosDesdeSheet();
+    cargarCampanas();
   }
   init();
 </script>
