@@ -1739,7 +1739,35 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       versionSheet: sim.version.nombreSheet,
       provincia: sim.provincia,
     };
+    programarSeguimiento();
   }
+
+  // Avisa al lead que la persona avanzó, con la simulación que quedó a la
+  // vista. Se manda unos segundos después del último cambio (y al irse de la
+  // página), así el vendedor ve lo último que simuló y no cada intento.
+  let timerSeguimiento = null;
+  let pidioContacto = false;
+
+  function textoSeguimiento() {
+    const resumen = resumenSimulacion();
+    if (!resumen) return null;
+    // Si ya pidió que lo llamen, eso encabeza el comentario y no se pierde
+    // aunque después siga probando combinaciones.
+    return (pidioContacto ? 'PIDIÓ QUE LO CONTACTEN. ' : 'Avanzó con la simulación. ') + resumen;
+  }
+
+  function programarSeguimiento() {
+    clearTimeout(timerSeguimiento);
+    timerSeguimiento = setTimeout(() => {
+      const txt = textoSeguimiento();
+      if (txt) mandarSeguimiento(txt);
+    }, 4000);
+  }
+
+  window.addEventListener('pagehide', () => {
+    const txt = textoSeguimiento();
+    if (txt) mandarSeguimiento(txt, true);
+  });
 
   function toggleDesglose() {
     const btn = $('btn-desglose');
@@ -1815,28 +1843,35 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
     try {
       const haySim = sim.version && sim.campana && sim.plazo;
-      const modeloStr = haySim ? sim.version.nombreSheet : (sim.modelo ? sim.modelo.name : '');
-      const precioStr = haySim ? fmt(sim.version.priceOferta) : '';
-      // El CRM no guarda el objeto `simulacion`, así que la simulación va en el
-      // comentario: es lo que el vendedor necesita ver al abrir el lead.
-      const r = window._simResultado;
-      const comentario = (haySim && r)
-        ? `Simuló online: ${r.plan} · ${r.plazo} cuotas de ${fmt(r.cuota)} · entrega ${fmt(r.entrega)} · financia ${fmt(r.monto)} · ${r.version} (${r.provincia}).`
-        : 'Pidió que lo contacten desde el simulador (sin simulación cargada).';
-      await fetch(CRM_LEAD_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          nombre, telefono: tel, email,
-          modelo: modeloStr,
-          precio: precioStr,
-          financiacion: true,
-          simulacion: window._simResultado || null,
-          comentario,
-          via: haySim ? 'simulador-online' : 'simulador-asesor',
-          origen: 'Web – baratito.com.ar',
-        }),
-      });
+      const resumen = resumenSimulacion();
+      const comentario = (haySim && resumen)
+        ? 'PIDIÓ QUE LO CONTACTEN. ' + resumen
+        : 'PIDIÓ QUE LO CONTACTEN desde el simulador (no llegó a simular).';
+
+      // Si ya se identificó en el gate, el lead existe: se actualiza ese mismo
+      // en vez de generar uno nuevo por la misma persona.
+      const previo = leadGuardado();
+      const vigente = previo && previo.leadId && (Date.now() - (previo.leadTs || 0) < VENTANA_LEAD_MS);
+      pidioContacto = true;
+      if (vigente) {
+        mandarSeguimiento(comentario);
+      } else {
+        await fetch(CRM_LEAD_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            nombre, telefono: tel, email,
+            modelo: haySim ? sim.version.nombreSheet : (sim.modelo ? sim.modelo.name : ''),
+            precio: haySim ? fmt(sim.version.priceOferta) : '',
+            financiacion: true,
+            comentario,
+            via: haySim ? 'simulador-online' : 'simulador-asesor',
+            origen: ORIGEN_SIMULADOR,
+          }),
+        }).then(r => r.json()).then(data => {
+          if (data && data.lead_id) guardarLead({ nombre, telefono: tel, ts: Date.now(), leadId: data.lead_id, leadTs: Date.now() });
+        }).catch(err => console.warn('Lead error:', err));
+      }
     } catch (err) {
       console.warn('Lead error:', err);
       // Aun si falla la red mostramos el mismo mensaje (el lead lo retomamos por backup)
@@ -1994,6 +2029,9 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   // 'online' → pide nombre + celular ANTES de mostrar el simulador. Nadie ve
   //            una cuota sin dejar sus datos; el lead entra al CRM en el acto.
   const LS_LEAD = 'tga_sim_lead';
+  const CRM_ACTUALIZAR_URL = 'https://tito-crm.vercel.app/api/lead-externo/actualizar';
+  const ORIGEN_SIMULADOR = 'Web – Simulador';
+  const VENTANA_LEAD_MS = 20 * 60 * 60 * 1000;  // el CRM acepta seguimiento 24 hs
 
   function leadGuardado() {
     try {
@@ -2002,6 +2040,65 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       const d = JSON.parse(raw);
       return (d && d.nombre && d.telefono) ? d : null;
     } catch (err) { return null; }
+  }
+
+  function guardarLead(datos) {
+    try { localStorage.setItem(LS_LEAD, JSON.stringify(datos)); } catch (err) { /* incógnito */ }
+  }
+
+  // Crea el lead en el CRM. Devuelve el registro guardado (con leadId si el CRM
+  // contestó). Si ya hay uno de esta visita, no crea otro.
+  async function crearLead(nombre, telefono, comentario) {
+    const previo = leadGuardado();
+    const vigente = previo && previo.leadId && (Date.now() - (previo.leadTs || 0) < VENTANA_LEAD_MS);
+    if (vigente) return previo;
+    const datos = { nombre, telefono, ts: Date.now() };
+    try {
+      const res = await fetch(CRM_LEAD_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          nombre, telefono,
+          modelo: sim.modelo ? sim.modelo.name : '',
+          financiacion: true,
+          via: 'simulador-online',
+          comentario,
+          origen: ORIGEN_SIMULADOR,
+        }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (data && data.lead_id) { datos.leadId = data.lead_id; datos.leadTs = Date.now(); }
+    } catch (err) {
+      // Si la red falla igual lo dejamos entrar: el dato quedó local y se
+      // reintenta cuando pida que lo contacten.
+      console.warn('No se pudo crear el lead:', err);
+    }
+    guardarLead(datos);
+    return datos;
+  }
+
+  // Le cuenta al MISMO lead en qué quedó: si avanzó y qué simuló.
+  let ultimoSeguimiento = '';
+  function mandarSeguimiento(comentario, conBeacon) {
+    const d = leadGuardado();
+    if (!d || !d.leadId || comentario === ultimoSeguimiento) return;
+    ultimoSeguimiento = comentario;
+    const body = JSON.stringify({ lead_id: d.leadId, telefono: d.telefono, comentario });
+    try {
+      if (conBeacon && navigator.sendBeacon) {
+        navigator.sendBeacon(CRM_ACTUALIZAR_URL, new Blob([body], { type: 'text/plain' }));
+        return;
+      }
+      fetch(CRM_ACTUALIZAR_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body, keepalive: true })
+        .catch(err => console.warn('Seguimiento falló:', err));
+    } catch (err) { console.warn('Seguimiento falló:', err); }
+  }
+
+  // Texto de la simulación vigente (lo que ve el vendedor en el lead).
+  function resumenSimulacion() {
+    const r = window._simResultado;
+    if (!r) return null;
+    return `Simuló: ${r.version} · ${r.plan} · ${r.plazo} cuotas de ${fmt(r.cuota)} · entrega ${fmt(r.entrega)} · financia ${fmt(r.monto)} (${r.provincia}).`;
   }
 
   function abrirSimulador() {
@@ -2016,8 +2113,14 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       abrirModalContacto(true);
       return;
     }
-    // Ya se identificó en este dispositivo: no lo hacemos cargar los datos otra vez.
-    if (leadGuardado()) { abrirSimulador(); return; }
+    // Ya se identificó en este dispositivo: no le pedimos los datos de nuevo,
+    // pero si el lead de la visita anterior ya venció se abre uno nuevo.
+    const previo = leadGuardado();
+    if (previo) {
+      crearLead(previo.nombre, previo.telefono, 'Volvió al simulador online de baratito.com.ar. Todavía NO avanzó con la simulación.');
+      abrirSimulador();
+      return;
+    }
     document.body.classList.add('gate-datos');
     $('g-nombre').focus();
   }
@@ -2040,28 +2143,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     const btn = $('g-submit');
     btn.disabled = true;
     btn.textContent = 'Enviando…';
-    try {
-      await fetch(CRM_LEAD_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          nombre,
-          telefono: telLimpio,
-          modelo: sim.modelo ? sim.modelo.name : '',
-          financiacion: true,
-          via: 'simulador-online',
-          comentario: 'Entró a simular online en baratito.com.ar (todavía sin simulación cargada).',
-          origen: 'Web – baratito.com.ar',
-        }),
-      });
-    } catch (err) {
-      // Si la red falla igual lo dejamos pasar: el dato ya quedó guardado local
-      // y el lead se reintenta cuando pide que lo contacten.
-      console.warn('Lead del gate falló:', err);
-    }
-    try {
-      localStorage.setItem(LS_LEAD, JSON.stringify({ nombre, telefono: telLimpio, ts: Date.now() }));
-    } catch (err) { /* modo incógnito: seguimos igual */ }
+    await crearLead(nombre, telLimpio, 'Entró al simulador online de baratito.com.ar. Todavía NO avanzó con la simulación.');
     btn.disabled = false;
     btn.textContent = 'Empezar a simular';
     abrirSimulador();
