@@ -232,7 +232,6 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       font-size: 13px; color: var(--grey-500); text-decoration: line-through;
       text-decoration-thickness: 1px; margin-top: 2px;
     }
-    .model-card .precio-valor.con-oferta { color: #C8102E; }
     .model-card .precio-nota {
       font-size: 11px; color: var(--grey-500); margin-top: 8px;
       line-height: 1.4; font-weight: 500;
@@ -604,7 +603,6 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         font-size: 15px; color: var(--grey-500); text-decoration: line-through;
         text-decoration-thickness: 1px; margin-top: 2px;
       }
-      .featured-card .featured-foot .precio.con-oferta { color: #C8102E; }
       .featured-card .featured-foot .precio {
         font-size: 32px; font-weight: 700; color: var(--vw-blue);
         letter-spacing: -1px; margin-top: 2px;
@@ -1180,7 +1178,7 @@ Sábados cerrado</div>
             <div class="precio-wrap">
               <div class="precio-eyebrow">Desde · contado</div>
               ${m.priceList ? `<div class="precio-lista num">${fmtPrice(m.priceList)}</div>` : ''}
-              <div class="precio-valor num${m.priceList ? ' con-oferta' : ''}" data-precio-slot>${precioStr}</div>
+              <div class="precio-valor num" data-precio-slot>${precioStr}</div>
               <div class="precio-nota">Precio final patenta cliente · stock limitado</div>
             </div>
             <div class="meta-row">
@@ -1227,7 +1225,7 @@ Sábados cerrado</div>
         <div>
           <div class="precio-eye">Desde · contado</div>
           ${destacado.priceList ? `<div class="precio-lista num">${fmtPrice(destacado.priceList)}</div>` : ''}
-          <div class="precio num${destacado.priceList ? ' con-oferta' : ''}">${fmtPrice(destacado.priceFrom)}</div>
+          <div class="precio num">${fmtPrice(destacado.priceFrom)}</div>
           <div class="precio-nota">Precio final patenta cliente</div>
         </div>
         <div class="featured-actions">
