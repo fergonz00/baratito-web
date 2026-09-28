@@ -1222,9 +1222,11 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
   function renderThumbs() {
     const m = state.model;
+    // Las miniaturas se ven a 100px y se cargan todas juntas al abrir, asi que
+    // van contra imagenes/thumbs/ (260px, ~8 KB) en vez de la foto de 1400px.
     document.getElementById('thumbs').innerHTML = m.versions.map((v, i) =>
       `<button class="thumb${i === state.galleryIdx ? ' active' : ''}" onclick="selectVersion(${i})">
-         <img src="${v.photo}" alt="${v.short}">
+         <img src="${v.photo.replace('imagenes/', 'imagenes/thumbs/')}" alt="${v.short}" loading="lazy">
        </button>`
     ).join('');
   }

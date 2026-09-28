@@ -1073,6 +1073,12 @@ Sábados cerrado</div>
     renderRow('filter-price', PRICE_FILTERS, 'price', true);
   }
 
+  // Las tarjetas muestran la foto a 420x240 (la destacada a ~465), asi que
+  // usan imagenes/cards/ (900px, ~35 KB) en vez de la de 1400px de la galeria.
+  function fotoCard(ruta) {
+    return ruta.replace('imagenes/', 'imagenes/cards/');
+  }
+
   function renderModels() {
     const filtered = applyFilters();
     const totalEl = document.getElementById('results-total');
@@ -1104,7 +1110,7 @@ Sábados cerrado</div>
         <div class="model-card${sinStock}" data-slug="${m.slug}">
           <a class="card-link" href="modelo-nuevo.html?slug=${encodeURIComponent(m.slug)}">
             <div class="foto-wrap">
-              <div class="foto"><img src="${m.foto}" alt="VW ${m.name}" loading="${loadingAttr}"${fetchPriority}></div>
+              <div class="foto"><img src="${fotoCard(m.foto)}" alt="VW ${m.name}" loading="${loadingAttr}"${fetchPriority}></div>
               ${nuevoBadge}
             </div>
             <div class="info">
@@ -1151,7 +1157,7 @@ Sábados cerrado</div>
         <div class="featured-eyebrow">Destacado${camp ? ' · ' + camp.label : ''}</div>
         ${campBadge}
       </div>
-      <div class="featured-foto"><img src="${destacado.foto}" alt="VW ${destacado.name}"></div>
+      <div class="featured-foto"><img src="${fotoCard(destacado.foto)}" alt="VW ${destacado.name}"></div>
       <div class="featured-info">
         <div class="vw-eye">Volkswagen</div>
         <div class="nombre num">${destacado.name}</div>
