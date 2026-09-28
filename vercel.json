@@ -3,16 +3,16 @@
     { "source": "/", "destination": "/home-nuevo.html" },
     { "source": "/plandeahorro-formularios", "destination": "/plan-amarok.html" },
     { "source": "/financiacion", "destination": "/simulador-nuevo.html" },
-    { "source": "/polo",    "destination": "/modelo-nuevo.html?slug=polo" },
-    { "source": "/virtus",  "destination": "/modelo-nuevo.html?slug=virtus" },
-    { "source": "/tera",    "destination": "/modelo-nuevo.html?slug=tera" },
-    { "source": "/saveiro", "destination": "/modelo-nuevo.html?slug=saveiro" },
-    { "source": "/nivus",   "destination": "/modelo-nuevo.html?slug=nivus" },
-    { "source": "/t-cross", "destination": "/modelo-nuevo.html?slug=t-cross" },
-    { "source": "/vento",   "destination": "/modelo-nuevo.html?slug=vento" },
-    { "source": "/amarok",  "destination": "/modelo-nuevo.html?slug=amarok" },
-    { "source": "/taos",    "destination": "/modelo-nuevo.html?slug=taos" },
-    { "source": "/tiguan",  "destination": "/modelo-nuevo.html?slug=tiguan" }
+    { "source": "/polo",    "destination": "/m/polo.html" },
+    { "source": "/virtus",  "destination": "/m/virtus.html" },
+    { "source": "/tera",    "destination": "/m/tera.html" },
+    { "source": "/saveiro", "destination": "/m/saveiro.html" },
+    { "source": "/nivus",   "destination": "/m/nivus.html" },
+    { "source": "/t-cross", "destination": "/m/t-cross.html" },
+    { "source": "/vento",   "destination": "/m/vento.html" },
+    { "source": "/amarok",  "destination": "/m/amarok.html" },
+    { "source": "/taos",    "destination": "/m/taos.html" },
+    { "source": "/tiguan",  "destination": "/m/tiguan.html" }
   ],
   "headers": [
     {

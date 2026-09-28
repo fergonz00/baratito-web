@@ -88,6 +88,16 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       display: flex; align-items: center; justify-content: space-between; gap: 10px;
     }
     .logo-tito { height: 36px; width: auto; display: block; }
+    .nav-mobile {
+      display: flex; gap: 18px; padding: 0 16px 10px;
+      overflow-x: auto; -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+    }
+    .nav-mobile::-webkit-scrollbar { display: none; }
+    .nav-mobile a {
+      font-size: 13px; font-weight: 600; color: var(--grey-700);
+      text-decoration: none; white-space: nowrap; padding: 2px 0;
+    }
     .btn-wa-header {
       width: 40px; height: 40px; border-radius: 999px; border: none;
       background: var(--vw-green); flex-shrink: 0;
@@ -480,6 +490,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         gap: 32px;
       }
       .logo-tito { height: 60px; }
+      .nav-mobile { display: none; }
       .nav-desktop { display: flex; gap: 32px; align-items: center; }
       .nav-link {
         font-size: 14px; font-weight: 600; color: var(--grey-700);
@@ -848,6 +859,12 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       <span class="wa-label">WhatsApp</span>
     </a>
   </div>
+  <nav class="nav-mobile" aria-label="Secciones">
+    <a href="#modelos">Modelos</a>
+    <a href="/financiacion">Financiación</a>
+    <a href="/plandeahorro-formularios">Plan de ahorro</a>
+    <a href="https://tienda.baratito.com.ar">Repuestos</a>
+  </nav>
 </header>
 
 <!-- ============== HERO ============== -->
