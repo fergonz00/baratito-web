@@ -1075,8 +1075,14 @@ Sábados cerrado</div>
 
   // Las tarjetas muestran la foto a 420x240 (la destacada a ~465), asi que
   // usan imagenes/cards/ (900px, ~35 KB) en vez de la de 1400px de la galeria.
+  //
+  // El ?v= no es decorativo: Vercel sirve las imagenes con Cache-Control
+  // immutable por un ano, asi que al reemplazar una foto sin cambiarle el
+  // nombre el navegador de quien ya visito el sitio sigue mostrando la vieja y
+  // ni siquiera pregunta si cambio. Subirlo cada vez que se reemplacen.
+  const FOTO_V = '2';
   function fotoCard(ruta) {
-    return ruta.replace('imagenes/', 'imagenes/cards/');
+    return ruta.replace('imagenes/', 'imagenes/cards/') + '?v=' + FOTO_V;
   }
 
   function renderModels() {

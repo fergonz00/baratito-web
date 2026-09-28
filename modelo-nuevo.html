@@ -1199,10 +1199,17 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     }
   }
 
+  // Vercel sirve las imagenes con Cache-Control immutable por un ano, asi que
+  // al reemplazar una foto sin cambiarle el nombre el navegador de quien ya
+  // visito el sitio sigue mostrando la vieja y ni siquiera pregunta si cambio.
+  // Subir FOTO_V cada vez que se reemplacen las fotos.
+  const FOTO_V = '2';
+  function foto(ruta) { return ruta + '?v=' + FOTO_V; }
+
   function renderGallery() {
     const m = state.model;
     const v = m.versions[state.galleryIdx];
-    document.getElementById('gallery-img').src = v.photo;
+    document.getElementById('gallery-img').src = foto(v.photo);
     document.getElementById('gallery-img').alt = `VW ${m.name} ${v.short}`;
     // Dots
     document.getElementById('gallery-dots').innerHTML =
@@ -1226,7 +1233,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     // van contra imagenes/thumbs/ (260px, ~8 KB) en vez de la foto de 1400px.
     document.getElementById('thumbs').innerHTML = m.versions.map((v, i) =>
       `<button class="thumb${i === state.galleryIdx ? ' active' : ''}" onclick="selectVersion(${i})">
-         <img src="${v.photo.replace('imagenes/', 'imagenes/thumbs/')}" alt="${v.short}" loading="lazy">
+         <img src="${foto(v.photo.replace('imagenes/', 'imagenes/thumbs/'))}" alt="${v.short}" loading="lazy">
        </button>`
     ).join('');
   }
