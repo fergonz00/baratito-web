@@ -218,7 +218,7 @@
     var dif = '';
     if (r.cambioModelo > 0) {
       dif = 'Retirás un auto de <b>' + fmt(r.lista) + '</b>, más caro que el valor móvil del plan (' +
-        fmt(p.valorMovil) + '): pagás <b>' + fmt(r.cambioModelo) + '</b> de diferencia junto con el anticipo.';
+        fmt(p.valorMovil) + '): pagás <b>' + fmt(r.cambioModelo) + '</b> de diferencia junto con el anticipo, a valores de hoy.';
     } else if (r.saldoAFavor > 0) {
       dif = 'Retirás un auto de <b>' + fmt(r.lista) + '</b>, más barato que el valor móvil del plan (' +
         fmt(p.valorMovil) + '). Esos <b>' + fmt(r.saldoAFavor) + '</b> no se devuelven en efectivo: cancelan cuotas del final.';
@@ -239,13 +239,10 @@
         '<div class="monto num">' + fmt(o.anticipo) + '</div>' +
         '<div class="sub">' + detalle + '. Con la cuota ' + o.cuotaPaga + ' paga.</div>' +
         '<ul>' +
-          '<li><span>Cuotas hasta adjudicar</span><b class="num">' + fmt(o.cuotasHastaAdjudicar) + '</b></li>' +
-          '<li><span>Al adjudicar y retirar</span><b class="num">' + fmt(o.alAdjudicarYRetirar) + '</b></li>' +
-          '<li><span>Total hasta llevarte el auto</span><b class="num">' + fmt(o.desembolsoHastaRetirar) + '</b></li>' +
           (o.cuotasCanceladas > 0
-            ? '<li><span>Cuotas del final ya canceladas</span><b>' + o.cuotasCanceladas + '</b></li>' +
-              '<li><span>Terminás de pagar en la cuota</span><b>' + o.ultimaCuota + ' de ' + MESES + '</b></li>'
-            : '<li><span>Terminás de pagar en la cuota</span><b>' + o.ultimaCuota + ' de ' + MESES + '</b></li>') +
+            ? '<li><span>Cuotas del final ya canceladas</span><b>' + o.cuotasCanceladas + '</b></li>'
+            : '') +
+          '<li><span>Terminás de pagar en la cuota</span><b>' + o.ultimaCuota + ' de ' + MESES + '</b></li>' +
         '</ul>' +
       '</div>';
     });
@@ -254,9 +251,12 @@
     var o8 = r.opciones.filter(function (o) { return o.acto === 8; })[0] || r.opciones[0];
     var menor = o8.cuotas.reduce(function (a, c) { return Math.min(a, c.importe); }, Infinity);
     $('cuota').innerHTML = 'Cuotas desde <b class="num">' + fmt(menor) + '</b> por mes · ' + MESES + ' cuotas en total';
-    $('letra').textContent = 'Valor móvil del plan ' + fmt(p.valorMovil) + '. ' + p.diferimiento + '. ' + p.recupero +
-      '. "Al adjudicar y retirar" incluye el derecho de adjudicación (' + fmt(p.derechoAdjudicacion) +
-      ') y los gastos de entrega. No incluye patentamiento ni seguro.';
+    $('letra').innerHTML = 'Valor móvil del plan ' + fmt(p.valorMovil) + '. ' + p.diferimiento + '. ' + p.recupero + '.' +
+      '<br><br>El anticipo y las cuotas de arriba <b>no incluyen</b> el derecho de adjudicación (1% + IVA del valor móvil) ' +
+      'ni los gastos de entrega (10% + IVA del precio del auto que retirás), que se pagan al adjudicar y antes de ' +
+      'retirar la unidad. Tampoco incluyen patentamiento ni seguro.' +
+      '<br><br>Son <b>valores de referencia</b>, calculados con la grilla vigente y los precios de lista de hoy: ' +
+      'el total real se arma con la lista del mes en que se factura la unidad.';
     $('comentario').placeholder = 'Plan ' + p.nombre + ', retiro ' + r.modelo;
   }
 
