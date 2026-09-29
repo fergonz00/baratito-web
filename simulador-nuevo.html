@@ -1970,14 +1970,9 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   // Si no hay Sin Quebranto, cae a Especial Autos. Si no, a Financia Más.
   function mostrarEjemploHero() {
     if (!CAMPANAS_CARGADAS || Object.keys(VERSIONS_POR_SLUG).length === 0) return;
-    // El ejemplo del hero tambien es una cuota: sin datos, no se muestra.
-    if (!leadGuardado()) {
-      $('hero-eg-eyebrow').textContent = 'Ejemplo';
-      $('hero-eg-title').textContent = 'Dejanos tu nombre y celular';
-      $('hero-eg-cuota').textContent = '$ ••••••';
-      $('hero-eg-meta').textContent = 'y te mostramos la cuota al instante';
-      return;
-    }
+    // El ejemplo SIEMPRE se muestra: es un caso de ejemplo con la grilla real, no la
+    // cuota del visitante. Taparlo dejaba la pagina sin un solo numero y el que llega
+    // de un aviso se iba sin ver nada. El gate sigue para simular con SU modelo.
 
     // Versión candidata: la primera versión en stock que esté en FINANCIA_MAS
     let version = null;
