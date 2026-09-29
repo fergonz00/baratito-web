@@ -138,6 +138,7 @@
               {"@type":"PostalAddress","streetAddress":"Av. Independencia 980","addressLocality":"Ciudad Autonoma de Buenos Aires","addressCountry":"AR"}],
    "areaServed":"Argentina","foundingDate":"1926"}
   </script>
+  <script async src="/atribucion.js"></script>
 </head>
 <body>
 <header class="header">
@@ -339,6 +340,7 @@
         comentario: coment,
         modelo: r ? r.modelo : null,
         hp: $('hp').value,
+        ...(typeof atribucion === 'function' ? atribucion() : {}),
       }),
     }).then(function (res) { return res.json().then(function (d) { return { ok: res.ok, d: d }; }); })
       .then(function (res) {

@@ -125,6 +125,7 @@
 
     @media (max-width: 480px) { .hero h1 { font-size: 25px; } }
   </style>
+  <script async src="/atribucion.js"></script>
 </head>
 <body>
   <section class="hero">
@@ -198,6 +199,7 @@
         email: document.getElementById('email').value.trim(),
         comentario: document.getElementById('comentario').value.trim(),
         hp: document.getElementById('hp').value,
+        ...(typeof atribucion === 'function' ? atribucion() : {}),
       }
       if (!payload.nombre || !payload.telefono) {
         errBox.textContent = 'Completá nombre y teléfono.'

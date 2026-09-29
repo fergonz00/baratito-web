@@ -763,6 +763,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
               {"@type":"PostalAddress","streetAddress":"Av. Independencia 980","addressLocality":"Ciudad Autonoma de Buenos Aires","addressCountry":"AR"}],
    "areaServed":"Argentina","foundingDate":"1926"}
   </script>
+  <script async src="/atribucion.js"></script>
 </head>
 <body>
 <!-- Google Tag Manager (noscript) -->
@@ -1608,6 +1609,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           contado, financiacion, usado,
           via: 'modelo',
           origen: 'Web – baratito.com.ar',
+          ...(typeof atribucion === 'function' ? atribucion() : {}),
         }),
       });
     } catch (err) {

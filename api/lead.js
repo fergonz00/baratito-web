@@ -20,6 +20,10 @@ module.exports = async (req, res) => {
     // Vercel parsea JSON automáticamente; por las dudas contemplamos string.
     const body = typeof req.body === 'string' ? JSON.parse(req.body || '{}') : (req.body || {})
     const { nombre, telefono, email, comentario, modelo, hp } = body
+    // De donde vino el cliente (lo pone atribucion.js en el navegador). Se
+    // reenvia tal cual: el CRM lo guarda en leads para poder atribuir el lead a
+    // su click de Google y devolverle la conversion despues.
+    const { gclid, utm_source, utm_medium, utm_campaign, utm_term, landing_page } = body
 
     // Honeypot: si viene relleno, es un bot. Respondemos OK pero no hacemos nada.
     if (hp) return res.status(200).json({ ok: true })
@@ -47,7 +51,12 @@ module.exports = async (req, res) => {
         comentario: comentario || null,
         origen: ORIGEN,
         area: 'plan_ahorro',
-
+        gclid: gclid || null,
+        utm_source: utm_source || null,
+        utm_medium: utm_medium || null,
+        utm_campaign: utm_campaign || null,
+        utm_term: utm_term || null,
+        landing_page: landing_page || null,
       }),
     })
 
