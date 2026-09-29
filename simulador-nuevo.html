@@ -2015,10 +2015,10 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   });
 
   // ============== EJEMPLO HERO ==============
-  // Un ejemplo de verdad y navegable: el visitante elige modelo y ve cuanto sale de
-  // contado, cuanto entrega y cuanto le queda por mes. UNA sola financiacion (la de
-  // mejor condicion vigente); el resto de los planes los arma el asesor.
-  const EG = { camp: null, nombre: '', plazo: 0, versiones: [] };
+  // Un ejemplo navegable: el visitante elige el modelo y ve, sin dejar datos, cuanto
+  // paga de contado y cuanto por mes. Cada modelo muestra UNA financiacion, la mejor
+  // que tenga vigente (todos llegan a TNA 0%); el resto de los planes los arma el asesor.
+  const EG = { opciones: [] };
 
   function todasLasVersiones() {
     const out = [];
@@ -2036,67 +2036,76 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     return true;
   }
 
-  function elegirCampanaEjemplo() {
+  // Orden de preferencia para el ejemplo: primero lo simple y sin sorpresas (tasa 0 y
+  // sin pago final), al final lo que tiene UVA o tasa alta.
+  function prioridadCampana(nombre) {
+    const n = nombre.toLowerCase();
+    if (n.includes('sin quebranto')) return 1;
+    if (n.includes('uva')) return 5;
+    if (n.includes('prendario')) return 6;
+    if (n.includes('largo plazo')) return 6;
+    if (n.includes('tna 0')) return 2;
+    return 4;
+  }
+
+  function mejorCampanaPara(version) {
     let mejor = null;
-    const versiones = todasLasVersiones();
     for (const [nombre, camp] of Object.entries(CAMPANAS_CARGADAS)) {
-      const n = nombre.toLowerCase();
-      let prio = 99;
-      if (n.includes('sin quebranto')) prio = 1;
-      else if (n.includes('especial autos')) prio = 2;
-      else if (n.includes('financia m\u00e1s')) prio = 3;
-      else continue;
-      if (!versiones.some(v => v.enStock && aplicaCampana(v, camp))) continue;
-      if (!mejor || prio < mejor.prio) mejor = { nombre, camp, prio };
+      if (!aplicaCampana(version, camp)) continue;
+      const plazos = Object.keys(camp.plazos).map(Number).sort((a, b) => a - b);
+      if (!plazos.length) continue;
+      const prio = prioridadCampana(nombre);
+      if (!mejor || prio < mejor.prio) mejor = { nombre, camp, plazo: plazos[0], prio };
     }
     return mejor;
   }
 
   function pintarEjemplo() {
     const sel = $('hero-eg-modelo');
-    const v = EG.versiones.find(x => x.nombreSheet === sel.value) || EG.versiones[0];
-    if (!v) return;
-    const datos = EG.camp.plazos[EG.plazo];
-    const contado = v.priceOferta;
+    const op = EG.opciones.find(o => o.v.nombreSheet === sel.value) || EG.opciones[0];
+    if (!op) return;
+    const datos = op.camp.plazos[op.plazo];
+    const contado = op.v.priceOferta;
     const financia = Math.min(datos.max || contado, contado);
     const entrega = Math.max(contado - financia, 0);
     const cuota = Math.round(financia / 1000 * datos.cp);
+    $('hero-eg-eyebrow').textContent = op.nombre;
     $('hero-eg-contado').textContent = fmt(entrega);
-    $('hero-eg-plazo').textContent = EG.plazo;
+    $('hero-eg-plazo').textContent = op.plazo;
     $('hero-eg-cuota').textContent = fmt(cuota);
     $('hero-eg-total').textContent = fmt(contado);
   }
 
   function mostrarEjemploHero() {
     if (!CAMPANAS_CARGADAS || Object.keys(VERSIONS_POR_SLUG).length === 0) return;
-    const elegida = elegirCampanaEjemplo();
-    if (!elegida) return;
-    EG.camp = elegida.camp;
-    EG.nombre = elegida.nombre;
-    const plazos = Object.keys(EG.camp.plazos).map(Number).sort((a, b) => a - b);
-    EG.plazo = plazos[0];
+    const opciones = [];
+    for (const v of todasLasVersiones()) {
+      if (!v.enStock) continue;
+      const mejor = mejorCampanaPara(v);
+      if (mejor) opciones.push({ v, nombre: mejor.nombre, camp: mejor.camp, plazo: mejor.plazo });
+    }
+    if (opciones.length === 0) return;
+
     // Agrupadas por modelo (el mas accesible primero) y dentro por precio: ordenar solo
     // por precio mezclaba Nivus, Polo, Tera, Nivus... y parecia una lista al azar.
-    const elegibles = todasLasVersiones().filter(v => v.enStock && aplicaCampana(v, EG.camp));
     const minPorSlug = {};
-    for (const v of elegibles) {
-      if (!(v.slug in minPorSlug) || v.priceOferta < minPorSlug[v.slug]) minPorSlug[v.slug] = v.priceOferta;
+    for (const o of opciones) {
+      const s = o.v.slug;
+      if (!(s in minPorSlug) || o.v.priceOferta < minPorSlug[s]) minPorSlug[s] = o.v.priceOferta;
     }
-    EG.versiones = elegibles.sort((a, b) =>
-      (minPorSlug[a.slug] - minPorSlug[b.slug]) || (a.priceOferta - b.priceOferta));
-    if (EG.versiones.length === 0) return;
+    EG.opciones = opciones.sort((a, b) =>
+      (minPorSlug[a.v.slug] - minPorSlug[b.v.slug]) || (a.v.priceOferta - b.v.priceOferta));
 
-    $('hero-eg-eyebrow').textContent = EG.nombre;
     const sel = $('hero-eg-modelo');
     const nombreDe = (slug) => (MODELS.find(m => m.slug === slug) || {}).name || slug;
     let html = '', slugActual = null;
-    for (const v of EG.versiones) {
-      if (v.slug !== slugActual) {
+    for (const o of EG.opciones) {
+      if (o.v.slug !== slugActual) {
         if (slugActual !== null) html += '</optgroup>';
-        html += `<optgroup label="${nombreDe(v.slug)}">`;
-        slugActual = v.slug;
+        html += `<optgroup label="${nombreDe(o.v.slug)}">`;
+        slugActual = o.v.slug;
       }
-      html += `<option value="${v.nombreSheet}">${v.displayName}</option>`;
+      html += `<option value="${o.v.nombreSheet}">${o.v.displayName}</option>`;
     }
     if (slugActual !== null) html += '</optgroup>';
     sel.innerHTML = html;
