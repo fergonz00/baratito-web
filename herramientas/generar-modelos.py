@@ -70,6 +70,70 @@ def specs():
     return json.loads(salida.stdout)
 
 
+def bloque_js(texto, marca):
+    """Recorta un objeto JS ({...}) contando llaves, sin contar las que van dentro
+    de un string. Sirve para sacar MODELS del molde sin evaluar todo el script."""
+    i = texto.index(marca)
+    j = texto.index("{", i)
+    nivel, k, comilla, escape = 0, j, None, False
+    while k < len(texto):
+        c = texto[k]
+        if escape:
+            escape = False
+        elif c == "\\":
+            escape = True
+        elif comilla:
+            if c == comilla:
+                comilla = None
+        elif c in "'\"`":
+            comilla = c
+        elif c == "{":
+            nivel += 1
+        elif c == "}":
+            nivel -= 1
+            if nivel == 0:
+                return texto[j:k + 1]
+        k += 1
+    raise ValueError("no pude recortar " + marca)
+
+
+def a_json(codigo_js):
+    # MODELS referencia CAMPAIGNS (las campañas del mes), que no viene en el recorte.
+    # Un proxy que devuelve null para cualquier propiedad alcanza: de MODELS solo
+    # queremos las specs.
+    programa = (
+        "const CAMPAIGNS = new Proxy({}, { get: () => null });"
+        "const src = require('fs').readFileSync(0, 'utf8');"
+        "process.stdout.write(JSON.stringify(eval('(' + src + ')')));"
+    )
+    salida = subprocess.run(
+        ["node", "-e", programa],
+        input=codigo_js, capture_output=True, text=True, encoding="utf-8", timeout=60,
+    )
+    if salida.returncode != 0:
+        raise ValueError(salida.stderr[:200])
+    return json.loads(salida.stdout)
+
+
+def specs_del_molde(molde_txt):
+    """El Polo NO esta en specs.js: sus specs viven inline en MODELS, dentro del
+    molde. Sin esto quedaba como la unica pagina sin ficha tecnica."""
+    try:
+        modelos_js = a_json(bloque_js(molde_txt, "const MODELS"))
+    except Exception as e:
+        print("  aviso: no pude leer las specs inline del molde (%s)" % str(e)[:60])
+        return {}
+    fuera = {}
+    for slug, m in modelos_js.items():
+        versiones = {}
+        for v in m.get("versions", []):
+            if v.get("specs") and v.get("id"):
+                versiones[v["id"]] = v["specs"]
+        if versiones:
+            fuera[slug] = versiones
+    return fuera
+
+
 def linda(clave):
     partes = re.split(r"[-_ ]", clave)
     return " ".join(p.upper() if p.lower() in SIGLAS else p.capitalize() for p in partes)
@@ -140,6 +204,9 @@ def generar():
     os.makedirs(SALIDA, exist_ok=True)
     hechos = []
     todas = specs()
+    # La pagina hace lo mismo: si una version tiene specs inline, se respetan.
+    for slug, versiones in specs_del_molde(molde.decode("utf-8")).items():
+        todas.setdefault(slug, {}).update(versiones)
     sin_ficha = []
 
     for slug, nombre, body in modelos():
