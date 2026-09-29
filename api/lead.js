@@ -4,7 +4,8 @@
 // expuesto en el cliente (Camino B).
 
 const CRM_ENDPOINT = 'https://crm.titogonzalez.online/api/lead-externo'
-const ORIGEN = 'Envios Masivos — Amarok Adj 2'
+// Guion largo (U+2013), igual que el resto de los origenes web del CRM.
+const ORIGEN = 'Web – Plan de Ahorro'
 
 module.exports = async (req, res) => {
   if (req.method === 'OPTIONS') {
@@ -42,11 +43,11 @@ module.exports = async (req, res) => {
         nombre,
         telefono,
         email: email || null,
-        modelo: modelo || 'Amarok',
+        modelo: modelo || null,
         comentario: comentario || null,
         origen: ORIGEN,
         area: 'plan_ahorro',
-        via_em: true,
+
       }),
     })
 

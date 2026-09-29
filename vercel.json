@@ -1,7 +1,8 @@
 {
   "rewrites": [
     { "source": "/", "destination": "/home-nuevo.html" },
-    { "source": "/plandeahorro-formularios", "destination": "/plan-amarok.html" },
+    { "source": "/plan-de-ahorro", "destination": "/planes.html" },
+    { "source": "/plandeahorro-formularios", "destination": "/planes.html" },
     { "source": "/financiacion", "destination": "/simulador-nuevo.html" },
     { "source": "/polo",    "destination": "/m/polo.html" },
     { "source": "/virtus",  "destination": "/m/virtus.html" },
