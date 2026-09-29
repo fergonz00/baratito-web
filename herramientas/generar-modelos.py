@@ -16,8 +16,10 @@ IMPORTANTE: cada vez que se edite modelo-nuevo.html hay que volver a correrlo, o
 generacion.
 """
 import hashlib
+import json
 import os
 import re
+import subprocess
 import sys
 
 RAIZ = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -39,11 +41,106 @@ def modelos():
     return encontrados
 
 
+
+SPECS_JS = os.path.join(RAIZ, "specs.js")
+
+# Siglas que no se capitalizan como una palabra cualquiera.
+SIGLAS = {"msi", "tsi", "gli", "gts", "tdi", "at", "mt", "cs", "cd", "v6", "4x2", "4x4"}
+
+
+def specs():
+    """Lee specs.js. Es JavaScript (comillas simples, y strings con comillas dobles
+    adentro como '10" con App-Connect'), asi que lo convierte node, no un regex."""
+    codigo = (
+        "const fs=require('fs');"
+        "const src=fs.readFileSync(process.argv[1],'utf8');"
+        r"const S=eval('('+src.replace(/^[\s\S]*?const SPECS\s*=\s*/,'').replace(/;\s*$/,'')+')');"
+        "process.stdout.write(JSON.stringify(S));"
+    )
+    try:
+        salida = subprocess.run(
+            ["node", "-e", codigo, SPECS_JS], capture_output=True, text=True, encoding="utf-8", timeout=60
+        )
+    except FileNotFoundError:
+        print("  aviso: sin node, las paginas salen sin ficha tecnica")
+        return {}
+    if salida.returncode != 0:
+        print("  aviso: no pude leer specs.js, las paginas salen sin ficha tecnica")
+        return {}
+    return json.loads(salida.stdout)
+
+
+def linda(clave):
+    partes = re.split(r"[-_ ]", clave)
+    return " ".join(p.upper() if p.lower() in SIGLAS else p.capitalize() for p in partes)
+
+
+def ficha_tecnica(nombre, versiones):
+    """El texto que Google no veia: lo pintaba el JS y quedaban 222 palabras por pagina."""
+    if not versiones:
+        return ""
+    bloques = []
+    for clave, v in versiones.items():
+        m = v.get("motor") or {}
+        partes = []
+        motor = " ".join(x for x in [m.get("nombre"), m.get("subtitulo")] if x)
+        if motor:
+            partes.append("<p>Motor %s.</p>" % escapar(motor))
+        potencia = ", ".join(
+            x for x in [m.get("potencia"), " ".join(y for y in [m.get("torque"), m.get("torqueRpm")] if y)] if x
+        )
+        mecanica = ". ".join(x for x in [potencia, m.get("caja"), m.get("traccion")] if x)
+        if mecanica:
+            partes.append("<p>%s.</p>" % escapar(mecanica))
+        for etiqueta, campo in (
+            ("Equipamiento destacado", "destacados"),
+            ("Seguridad", "seguridad"),
+            ("Confort", "confort"),
+            ("Exterior", "exterior"),
+            ("Tecnologia", "tecnologia"),
+        ):
+            items = v.get(campo) or []
+            if items:
+                partes.append(
+                    "<p><b>%s:</b> %s.</p>" % (etiqueta, escapar(" · ".join(items)))
+                )
+        if partes:
+            bloques.append(
+                "<article><h3>%s %s</h3>%s</article>" % (escapar(nombre), escapar(linda(clave)), "".join(partes))
+            )
+    if not bloques:
+        return ""
+    return (
+        '\n<section class="ficha-seo">'
+        "<h2>Ficha técnica del Volkswagen %s</h2>%s"
+        '<p class="ficha-nota">Datos de los flyers oficiales de Volkswagen Argentina. '
+        "El equipamiento puede variar según la versión y la disponibilidad.</p>"
+        "</section>\n"
+    ) % (escapar(nombre), "".join(bloques))
+
+
+def escapar(t):
+    return str(t).replace("&", "&amp;").replace("<", "&lt;")
+
+
+ESTILO_FICHA = """
+    .ficha-seo { padding: 28px 16px; background: var(--grey-100, #F5F5F5); }
+    .ficha-seo h2 { font-size: 19px; font-weight: 800; color: var(--vw-blue, #001E50); letter-spacing: -0.4px; }
+    .ficha-seo article { background: #fff; border-radius: 12px; padding: 14px; margin-top: 12px; }
+    .ficha-seo h3 { font-size: 15px; font-weight: 700; color: var(--vw-blue, #001E50); }
+    .ficha-seo p { font-size: 13px; color: var(--grey-700, #4A4A4A); line-height: 1.55; margin-top: 6px; }
+    .ficha-seo .ficha-nota { font-size: 11.5px; color: var(--grey-500, #8A8A8A); margin-top: 14px; }
+    @media (min-width: 900px) { .ficha-seo { padding: 40px; } .ficha-seo article { padding: 20px; } }
+"""
+
+
 def generar():
     molde = open(MOLDE, "rb").read()
     firma = hashlib.sha1(molde).hexdigest()[:12]
     os.makedirs(SALIDA, exist_ok=True)
     hechos = []
+    todas = specs()
+    sin_ficha = []
 
     for slug, nombre, body in modelos():
         titulo = "Volkswagen %s 0km — precio y versiones | Tito Gonzalez" % nombre
@@ -80,6 +177,20 @@ def generar():
         marca = ('<title id="page-title">%s</title>' % titulo).encode("utf-8")
         h = h.replace(marca, marca + extra.encode("utf-8"))
 
+        # La ficha tecnica, como TEXTO. Antes solo la pintaba el JS y cada pagina
+        # tenia 222 palabras para Google.
+        ficha = ficha_tecnica(nombre, todas.get(slug))
+        if ficha:
+            h = h.replace(b"</style>", ESTILO_FICHA.encode("utf-8") + b"  </style>", 1)
+            marca = b'<nav class="nav-pie"'
+            if marca in h:
+                h = h.replace(marca, ficha.encode("utf-8") + marca, 1)
+            else:
+                i = h.rindex(b"</body>")
+                h = h[:i] + ficha.encode("utf-8") + h[i:]
+        else:
+            sin_ficha.append(slug)
+
         destino = os.path.join(SALIDA, slug + ".html")
         open(destino, "wb").write(h)
         hechos.append(slug)
@@ -87,6 +198,8 @@ def generar():
     open(os.path.join(SALIDA, ".molde"), "w").write(firma)
     print("generadas %d paginas en m/ (molde %s):" % (len(hechos), firma))
     print("  " + ", ".join(hechos))
+    if sin_ficha:
+        print("  sin ficha tecnica (no estan en specs.js): " + ", ".join(sin_ficha))
 
 
 if __name__ == "__main__":
