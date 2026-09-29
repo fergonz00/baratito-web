@@ -576,10 +576,37 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       .featured-card {
         background: #fff; border-radius: 20px; padding: 28px;
         box-shadow: 0 1px 2px rgba(0,30,80,0.04), 0 20px 60px rgba(0,30,80,0.08);
-        transition: opacity 0.22s ease;
+        position: relative; overflow: hidden;
       }
-      /* Puntitos del destacado rotativo */
-      .featured-dots { display: flex; justify-content: center; gap: 9px; margin-top: 16px; }
+      /* El que sale se corre para un lado y el que entra llega del otro. Los
+         dos se cruzan en el aire: el cuadro nunca queda vacio. */
+      .featured-slide {
+        transition: transform 0.45s cubic-bezier(0.22, 0.61, 0.36, 1),
+                    opacity 0.34s ease;
+      }
+      .featured-capa {
+        position: absolute; top: 28px; left: 28px; right: 28px;
+        pointer-events: none;
+        /* El que se va se apaga mas rapido de lo que tarda en correrse: si no,
+           se leen los dos nombres encimados a mitad de camino. */
+        transition: transform 0.45s cubic-bezier(0.22, 0.61, 0.36, 1),
+                    opacity 0.2s ease;
+      }
+      /* Flechas y puntitos */
+      .featured-nav {
+        display: flex; align-items: center; justify-content: center;
+        gap: 14px; margin-top: 16px;
+      }
+      .featured-arrow {
+        width: 34px; height: 34px; flex: none;
+        display: flex; align-items: center; justify-content: center;
+        padding: 0; border: 1px solid rgba(0,30,80,0.14); border-radius: 50%;
+        background: #fff; color: var(--vw-blue); cursor: pointer;
+        transition: background 0.2s, border-color 0.2s, transform 0.15s;
+      }
+      .featured-arrow:hover { background: var(--vw-blue); border-color: var(--vw-blue); color: #fff; }
+      .featured-arrow:active { transform: scale(0.92); }
+      .featured-dots { display: flex; justify-content: center; gap: 9px; }
       .featured-dot {
         width: 8px; height: 8px; padding: 0; border: 0; border-radius: 50%;
         background: rgba(0,30,80,0.18); cursor: pointer;
@@ -860,6 +887,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
               {"@type":"PostalAddress","streetAddress":"Av. Independencia 980","addressLocality":"Ciudad Autonoma de Buenos Aires","addressCountry":"AR"}],
    "areaServed":"Argentina","foundingDate":"1926"}
   </script>
+  <script defer src="/atribucion.js"></script>
 </head>
 <body>
 <!-- Google Tag Manager (noscript) -->
@@ -940,7 +968,11 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <!-- Desktop featured model card -->
     <aside class="hero-featured-desktop desktop-only" id="featured-wrap">
       <div class="featured-card" id="featured-card"></div>
-      <div class="featured-dots" id="featured-dots" role="tablist" aria-label="Modelo destacado"></div>
+      <div class="featured-nav">
+        <button class="featured-arrow" data-dest-paso="-1" aria-label="Ver el modelo anterior"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg></button>
+        <div class="featured-dots" id="featured-dots" role="tablist" aria-label="Modelo destacado"></div>
+        <button class="featured-arrow" data-dest-paso="1" aria-label="Ver el modelo siguiente"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></button>
+      </div>
     </aside>
   </div>
 </section>
@@ -1270,26 +1302,57 @@ Sábados cerrado</div>
     return lista.slice(i).concat(lista.slice(0, i));
   }
 
-  // Trae la foto del que sigue antes de mostrarlo: si no, se ve el hueco.
-  function precargarSiguiente() {
-    const lista = destacados();
-    const prox = lista[(destIdx + 1) % lista.length];
-    if (prox) new Image().src = fotoCard(prox.foto);
+  // Las fotos de todos, una sola vez: si la del que entra todavia no bajo,
+  // se ve el hueco blanco justo en el cambio. Son las mismas que usa la
+  // grilla de abajo, asi que no es trafico de mas.
+  let fotosPedidas = false;
+  function precargarFotos() {
+    if (fotosPedidas) return;
+    fotosPedidas = true;
+    for (const m of MODELS) new Image().src = fotoCard(m.foto);
   }
 
-  function irADestacado(n, conFundido) {
+  const DEST_CORRIDA = 44;  // px que se desplaza cada uno al entrar y al salir
+
+  function irADestacado(n, animado) {
     const lista = destacados();
     if (!lista.length) return;
-    destIdx = ((n % lista.length) + lista.length) % lista.length;
     const card = document.getElementById('featured-card');
     if (!card) return;
-    if (!conFundido || DEST_QUIETO.matches) { renderFeatured(); precargarSiguiente(); return; }
-    card.style.opacity = '0';
-    setTimeout(function () {
-      renderFeatured();
-      card.style.opacity = '1';
-      precargarSiguiente();
-    }, 220);
+    const desde = destIdx;
+    destIdx = ((n % lista.length) + lista.length) % lista.length;
+    if (destIdx === desde && animado) return;
+
+    // Hacia donde va: adelante si el camino corto es para adelante. Asi la
+    // flecha de atras se ve venir de la izquierda y no al reves.
+    const vuelta = ((destIdx - desde) % lista.length + lista.length) % lista.length;
+    const signo = (vuelta * 2 <= lista.length) ? 1 : -1;
+
+    // El contenido viejo se despega como capa encima y se va; el nuevo ya
+    // esta abajo, entrando. Nunca se ve el cuadro vacio.
+    const saliendo = card.querySelector('.featured-slide');
+    const conMovimiento = animado && saliendo && !DEST_QUIETO.matches;
+    if (conMovimiento) card.removeChild(saliendo);
+
+    renderFeatured();
+    if (!conMovimiento) return;
+
+    const entrando = card.querySelector('.featured-slide');
+    if (!entrando) return;
+    saliendo.classList.add('featured-capa');
+    card.appendChild(saliendo);
+    entrando.style.transition = 'none';
+    entrando.style.opacity = '0';
+    entrando.style.transform = 'translateX(' + (DEST_CORRIDA * signo) + 'px)';
+    // Obliga al navegador a tomar ese estado de arranque. Sin esto junta el
+    // antes y el despues en un solo paso y el movimiento no se ve.
+    void card.offsetWidth;
+    entrando.style.transition = '';
+    entrando.style.opacity = '1';
+    entrando.style.transform = 'translateX(0)';
+    saliendo.style.opacity = '0';
+    saliendo.style.transform = 'translateX(' + (-DEST_CORRIDA * signo) + 'px)';
+    setTimeout(function () { if (saliendo.parentNode) saliendo.remove(); }, 520);
   }
 
   function frenarRotacion() {
@@ -1347,6 +1410,7 @@ Sábados cerrado</div>
          </span>`
       : '';
     card.innerHTML = `
+      <div class="featured-slide">
       <div class="featured-top">
         <div class="featured-eyebrow">Destacado${camp ? ' · ' + camp.label : ''}</div>
         ${campBadge}
@@ -1373,6 +1437,7 @@ Sábados cerrado</div>
             Ver versiones
           </a>
         </div>
+      </div>
       </div>
     `;
   }
@@ -1482,6 +1547,7 @@ Sábados cerrado</div>
           contado, financiacion, usado,
           via: 'home',
           origen: 'Web – baratito.com.ar',
+          ...(typeof atribucion === 'function' ? atribucion() : {}),
         }),
       });
     } catch (err) {
@@ -1605,6 +1671,12 @@ Sábados cerrado</div>
       arrancarRotacion();
       return;
     }
+    const flecha = ev.target.closest('.featured-arrow');
+    if (flecha) {
+      irADestacado(destIdx + parseInt(flecha.dataset.destPaso, 10), true);
+      arrancarRotacion();  // recien movida a mano, se le da el tiempo entero
+      return;
+    }
     const chip = ev.target.closest('.filter-chip');
     if (!chip) return;
     const key = chip.dataset.key;
@@ -1620,6 +1692,7 @@ Sábados cerrado</div>
   renderModels();
   renderFeatured();
   engancharRotacion();
+  precargarFotos();
   cargarPreciosDesdeSheet();
 </script>
 
