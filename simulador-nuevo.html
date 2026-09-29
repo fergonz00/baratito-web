@@ -953,7 +953,23 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       .modal-overlay { align-items: center; }
       .modal-box { border-radius: 18px; max-width: 480px; max-height: 86vh; }
     }
+  
+    .nav-pie {
+      display: flex; flex-wrap: wrap; gap: 14px 22px;
+      padding: 24px 16px calc(24px + env(safe-area-inset-bottom, 0px));
+      background: var(--vw-blue, #001E50); margin-top: 24px;
+    }
+    .nav-pie a { color: #fff; font-size: 13px; font-weight: 600; text-decoration: none; opacity: 0.85; }
   </style>
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"AutoDealer","name":"Tito Gonzalez Automotores",
+   "alternateName":"Baratito","url":"https://www.baratito.com.ar/","telephone":"+541137573604",
+   "email":"ventas@titovw.com.ar","priceRange":"$$",
+   "brand":{"@type":"Brand","name":"Volkswagen"},
+   "address":[{"@type":"PostalAddress","streetAddress":"Av. Entre Rios 1338","addressLocality":"Ciudad Autonoma de Buenos Aires","addressCountry":"AR"},
+              {"@type":"PostalAddress","streetAddress":"Av. Independencia 980","addressLocality":"Ciudad Autonoma de Buenos Aires","addressCountry":"AR"}],
+   "areaServed":"Argentina","foundingDate":"1926"}
+  </script>
 </head>
 <body>
 <!-- Google Tag Manager (noscript) -->
@@ -2298,5 +2314,13 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   })();
 </script>
 
+
+<nav class="nav-pie" aria-label="Secciones">
+  <a href="/">Modelos 0km</a>
+  <a href="/financiacion">Financiacion</a>
+  <a href="/plan-de-ahorro">Plan de ahorro</a>
+  <a href="/ventas-corporativas">Empresas</a>
+  <a href="https://tienda.baratito.com.ar">Repuestos</a>
+</nav>
 </body>
 </html>
