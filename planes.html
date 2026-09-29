@@ -60,6 +60,9 @@
     .acto .tit { font-size: 10.5px; color: var(--vw-cyan); letter-spacing: 0.8px; text-transform: uppercase; font-weight: 700; }
     .acto .monto { font-size: 25px; font-weight: 700; margin-top: 6px; letter-spacing: -0.8px; }
     .acto .sub { font-size: 12px; color: rgba(255,255,255,0.62); margin-top: 3px; line-height: 1.45; }
+    .acto .rotulo { font-size: 12.5px; color: rgba(255,255,255,0.8); font-weight: 600; margin-top: 12px; }
+    .acto .rotulo.sep { margin-top: 16px; padding-top: 14px; border-top: 1px solid rgba(255,255,255,0.10); }
+    .acto .monto { margin-top: 2px; }
     .acto ul { list-style: none; margin-top: 10px; padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.10); }
     .acto li { font-size: 12px; color: rgba(255,255,255,0.75); line-height: 1.55; display: flex; justify-content: space-between; gap: 10px; }
     .acto li b { color: #fff; font-weight: 700; }
@@ -234,10 +237,15 @@
         ? 'Alícuota 30% + anticipo de cuotas 10%'
         : 'Alícuota extraordinaria 30%';
       if (r.cambioModelo > 0) detalle += ' + diferencia de modelo';
+      var menorActo = o.cuotas.reduce(function (a, c) { return Math.min(a, c.importe); }, Infinity);
       html += '<div class="acto">' +
         '<div class="tit mono">Adjudicás en cuota ' + o.acto + ' &middot; ' + pct + '</div>' +
+        '<div class="rotulo">Anticipo</div>' +
         '<div class="monto num">' + fmt(o.anticipo) + '</div>' +
         '<div class="sub">' + detalle + '. Con la cuota ' + o.cuotaPaga + ' paga.</div>' +
+        '<div class="rotulo sep">Cuotas desde</div>' +
+        '<div class="monto num">' + fmt(menorActo) + '</div>' +
+        '<div class="sub">por mes · ' + MESES + ' cuotas en total</div>' +
         '<ul>' +
           (o.cuotasCanceladas > 0
             ? '<li><span>Cuotas del final ya canceladas</span><b>' + o.cuotasCanceladas + '</b></li>'
@@ -248,13 +256,13 @@
     });
     $('actos').innerHTML = html;
 
-    var o8 = r.opciones.filter(function (o) { return o.acto === 8; })[0] || r.opciones[0];
-    var menor = o8.cuotas.reduce(function (a, c) { return Math.min(a, c.importe); }, Infinity);
-    $('cuota').innerHTML = 'Cuotas desde <b class="num">' + fmt(menor) + '</b> por mes · ' + MESES + ' cuotas en total';
     $('letra').innerHTML = 'Valor móvil del plan ' + fmt(p.valorMovil) + '. ' + p.diferimiento + '. ' + p.recupero + '.' +
       '<br><br>El anticipo y las cuotas de arriba <b>no incluyen</b> el derecho de adjudicación (1% + IVA del valor móvil) ' +
       'ni los gastos de entrega (10% + IVA del precio del auto que retirás), que se pagan al adjudicar y antes de ' +
       'retirar la unidad. Tampoco incluyen patentamiento ni seguro.' +
+      '<br><br>Decimos <b>cuotas desde</b> porque la cuota no es fija: se calcula sobre el valor móvil del ' +
+      'modelo y <b>se actualiza todos los meses</b> cuando VW cambia los precios. Las primeras son más altas ' +
+      '(' + p.diferimiento.toLowerCase() + ') y el valor de arriba es el del tramo más bajo del plan.' +
       '<br><br>Son <b>valores de referencia</b>, calculados con la grilla vigente y los precios de lista de hoy: ' +
       'el total real se arma con la lista del mes en que se factura la unidad.';
     $('comentario').placeholder = 'Plan ' + p.nombre + ', retiro ' + r.modelo;
