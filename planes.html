@@ -121,12 +121,19 @@
     .nav-pie { display: flex; flex-wrap: wrap; gap: 14px 22px; padding: 22px 16px; border-top: 1px solid rgba(255,255,255,0.14); margin-top: 18px; }
     .nav-pie a { color: #fff; font-size: 13px; font-weight: 600; text-decoration: none; opacity: 0.85; }
     .nav-pie a:hover { opacity: 1; }
+  
+    .rating-google {
+      display: inline-flex; align-items: center; gap: 8px; margin: 0 16px 20px;
+      color: inherit; text-decoration: none; font-size: 13px; opacity: 0.9;
+    }
+    .rating-google .estrellas { color: #FFB800; letter-spacing: 1px; }
+    .rating-google b { font-weight: 800; }
   </style>
   <script type="application/ld+json">
   {"@context":"https://schema.org","@type":"AutoDealer","name":"Tito Gonzalez Automotores",
    "alternateName":"Baratito","url":"https://www.baratito.com.ar/","telephone":"+541137573604",
    "email":"ventas@titovw.com.ar","priceRange":"$$",
-   "brand":{"@type":"Brand","name":"Volkswagen"},
+   "brand":{"@type":"Brand","name":"Volkswagen"},"aggregateRating":{"@type":"AggregateRating","ratingValue":"4.2","reviewCount":"754","bestRating":"5","worstRating":"1"},
    "address":[{"@type":"PostalAddress","streetAddress":"Av. Entre Rios 1338","addressLocality":"Ciudad Autonoma de Buenos Aires","addressCountry":"AR"},
               {"@type":"PostalAddress","streetAddress":"Av. Independencia 980","addressLocality":"Ciudad Autonoma de Buenos Aires","addressCountry":"AR"}],
    "areaServed":"Argentina","foundingDate":"1926"}
@@ -206,6 +213,8 @@
   Valores estimados a hoy, sujetos a la grilla vigente de Volkswagen S.A. de Ahorro para Fines Determinados.
   La adjudicación está sujeta a aprobación crediticia y presentación de garantías. <a href="/">Ver ofertas de 0km</a>.
 
+
+<a class="rating-google" href="https://www.google.com/maps?cid=6636243625460168563" target="_blank" rel="noopener"><span class="estrellas" aria-hidden="true">★★★★☆</span><span><b>4,2</b> · 754 opiniones en Google</span></a>
 <nav class="nav-pie" aria-label="Secciones">
   <a href="/">Modelos 0km</a>
   <a href="/financiacion">Financiacion</a>
