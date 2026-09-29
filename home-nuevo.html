@@ -576,7 +576,17 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       .featured-card {
         background: #fff; border-radius: 20px; padding: 28px;
         box-shadow: 0 1px 2px rgba(0,30,80,0.04), 0 20px 60px rgba(0,30,80,0.08);
+        transition: opacity 0.22s ease;
       }
+      /* Puntitos del destacado rotativo */
+      .featured-dots { display: flex; justify-content: center; gap: 9px; margin-top: 16px; }
+      .featured-dot {
+        width: 8px; height: 8px; padding: 0; border: 0; border-radius: 50%;
+        background: rgba(0,30,80,0.18); cursor: pointer;
+        transition: background 0.2s, transform 0.2s;
+      }
+      .featured-dot:hover { background: rgba(0,30,80,0.4); }
+      .featured-dot.on { background: var(--vw-blue); transform: scale(1.4); }
       .featured-card .featured-top {
         display: flex; align-items: center; justify-content: space-between;
         margin-bottom: 16px;
@@ -928,8 +938,9 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     </div>
 
     <!-- Desktop featured model card -->
-    <aside class="hero-featured-desktop desktop-only">
+    <aside class="hero-featured-desktop desktop-only" id="featured-wrap">
       <div class="featured-card" id="featured-card"></div>
+      <div class="featured-dots" id="featured-dots" role="tablist" aria-label="Modelo destacado"></div>
     </aside>
   </div>
 </section>
@@ -1239,13 +1250,96 @@ Sábados cerrado</div>
     }).join('');
   }
 
+  // ============== DESTACADO ROTATIVO ==============
+  // El cuadro de arriba muestra un modelo por vez y va rotando por todos.
+  // Arranca por el mismo que se destacaba antes (el nuevo; si no, el de tasa
+  // 0%) y sigue por el resto. Entran solo los que tienen stock, igual que la
+  // grilla de abajo, para no destacar algo que despues no aparece.
+  const DEST_MS = 6000;
+  const DEST_DESKTOP = window.matchMedia('(min-width: 1024px)');
+  const DEST_QUIETO = window.matchMedia('(prefers-reduced-motion: reduce)');
+  let destIdx = 0;
+  let destTimer = null;
+
+  function destacados() {
+    const conStock = MODELS.filter(m => m.hayStock !== false);
+    const lista = conStock.length ? conStock : MODELS.slice();
+    let i = lista.findIndex(m => m.isNew);
+    if (i < 0) i = lista.findIndex(m => m.campaign && m.campaign.id === 'tasa_cero');
+    if (i < 0) i = 0;
+    return lista.slice(i).concat(lista.slice(0, i));
+  }
+
+  // Trae la foto del que sigue antes de mostrarlo: si no, se ve el hueco.
+  function precargarSiguiente() {
+    const lista = destacados();
+    const prox = lista[(destIdx + 1) % lista.length];
+    if (prox) new Image().src = fotoCard(prox.foto);
+  }
+
+  function irADestacado(n, conFundido) {
+    const lista = destacados();
+    if (!lista.length) return;
+    destIdx = ((n % lista.length) + lista.length) % lista.length;
+    const card = document.getElementById('featured-card');
+    if (!card) return;
+    if (!conFundido || DEST_QUIETO.matches) { renderFeatured(); precargarSiguiente(); return; }
+    card.style.opacity = '0';
+    setTimeout(function () {
+      renderFeatured();
+      card.style.opacity = '1';
+      precargarSiguiente();
+    }, 220);
+  }
+
+  function frenarRotacion() {
+    clearInterval(destTimer);
+    destTimer = null;
+  }
+
+  // No rota en celular (ahi el cuadro no se ve) ni si el sistema pide menos
+  // movimiento.
+  function arrancarRotacion() {
+    frenarRotacion();
+    if (!DEST_DESKTOP.matches || DEST_QUIETO.matches) return;
+    destTimer = setInterval(function () { irADestacado(destIdx + 1, true); }, DEST_MS);
+  }
+
+  function engancharRotacion() {
+    const wrap = document.getElementById('featured-wrap');
+    if (!wrap) return;
+    // Mientras lo esta mirando o usando, no se le mueve abajo del mouse.
+    wrap.addEventListener('mouseenter', frenarRotacion);
+    wrap.addEventListener('mouseleave', arrancarRotacion);
+    wrap.addEventListener('focusin', frenarRotacion);
+    wrap.addEventListener('focusout', arrancarRotacion);
+    document.addEventListener('visibilitychange', function () {
+      if (document.hidden) frenarRotacion(); else arrancarRotacion();
+    });
+    const alCambiar = function () { arrancarRotacion(); };
+    if (DEST_DESKTOP.addEventListener) DEST_DESKTOP.addEventListener('change', alCambiar);
+    arrancarRotacion();
+  }
+
+  function renderDots(lista) {
+    const cont = document.getElementById('featured-dots');
+    if (!cont) return;
+    cont.innerHTML = lista.map(function (m, i) {
+      return '<button class="featured-dot' + (i === destIdx ? ' on' : '') + '"'
+        + ' data-dest="' + i + '" role="tab"'
+        + ' aria-selected="' + (i === destIdx) + '"'
+        + ' aria-label="Ver ' + m.name + '"></button>';
+    }).join('');
+  }
+
   function renderFeatured() {
     const card = document.getElementById('featured-card');
     if (!card) return;
-    // Modelo destacado: el primero con isNew, fallback al primero con campaña tasa 0%, fallback al primero
-    const destacado = MODELS.find(m => m.isNew)
-                   || MODELS.find(m => m.campaign && m.campaign.id === 'tasa_cero')
-                   || MODELS[0];
+    const lista = destacados();
+    if (destIdx >= lista.length) destIdx = 0;
+    const destacado = lista[destIdx];
+    if (!destacado) return;
+    renderDots(lista);
     const camp = destacado.campaign;
     const campBadge = camp
       ? `<span class="campaign-badge" style="background:${camp.bg}; color:${camp.color};">
@@ -1505,6 +1599,12 @@ Sábados cerrado</div>
 
   // ============== EVENTS ==============
   document.addEventListener('click', (ev) => {
+    const punto = ev.target.closest('.featured-dot');
+    if (punto) {
+      irADestacado(parseInt(punto.dataset.dest, 10), true);
+      arrancarRotacion();
+      return;
+    }
     const chip = ev.target.closest('.filter-chip');
     if (!chip) return;
     const key = chip.dataset.key;
@@ -1519,6 +1619,7 @@ Sábados cerrado</div>
   renderFilters();
   renderModels();
   renderFeatured();
+  engancharRotacion();
   cargarPreciosDesdeSheet();
 </script>
 
