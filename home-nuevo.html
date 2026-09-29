@@ -414,6 +414,8 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       font-size: 13.5px; color: var(--grey-700); font-weight: 600;
       margin-bottom: 14px;
     }
+    /* Campo trampa: invisible para la persona, lo completan los robots. */
+    .hp { position: absolute; left: -9999px; }
     .modal-input {
       width: 100%; height: 48px; padding: 0 14px;
       background: var(--grey-100); border: 1.5px solid transparent;
@@ -1066,6 +1068,7 @@ Sábados cerrado</div>
       <input class="modal-input" id="lead-telefono" type="tel" placeholder="Celular * (ej: 11 5566 7788)" maxlength="20">
       <div class="modal-error" id="lead-tel-error">Ingresá un celular argentino válido (10 dígitos sin 0 ni 15).</div>
       <input class="modal-input" id="lead-email" type="email" placeholder="Email (opcional)">
+      <input class="hp" id="lead-hp" name="hp" tabindex="-1" autocomplete="off" aria-hidden="true">
       <div class="modal-checks-label">¿Cómo lo querés pagar?</div>
       <div class="modal-checks">
         <label class="modal-check"><input type="checkbox" id="lead-contado"> Contado</label>
@@ -1349,6 +1352,14 @@ Sábados cerrado</div>
     const contado = document.getElementById('lead-contado').checked;
     const financiacion = document.getElementById('lead-financiacion').checked;
     const usado = document.getElementById('lead-usado').checked;
+
+    // Campo trampa: nadie lo ve, asi que si vino con texto es un robot. Le
+    // mostramos el exito de siempre y no mandamos nada al CRM.
+    if (document.getElementById('lead-hp').value) {
+      document.getElementById('lead-form-view').style.display = 'none';
+      document.getElementById('lead-success-view').style.display = 'block';
+      return;
+    }
 
     const partes = nombre.split(/\s+/).filter(p => p.length >= 3);
     if (partes.length < 2) { alert('Ingresá tu nombre y apellido (mínimo 3 letras cada uno).'); return; }

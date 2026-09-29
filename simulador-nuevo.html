@@ -800,6 +800,8 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       font-size: 13px; color: var(--grey-700);
       margin-bottom: 16px; line-height: 1.4;
     }
+    /* Campo trampa: invisible para la persona, lo completan los robots. */
+    .hp { position: absolute; left: -9999px; }
     .modal-input {
       width: 100%; height: 48px; padding: 0 14px;
       background: var(--grey-100); border: 1.5px solid transparent;
@@ -1073,6 +1075,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       <input class="modal-input" id="g-nombre" type="text" placeholder="Nombre y apellido *" autocomplete="name">
       <div class="modal-error" id="g-nombre-error">Escribí nombre y apellido (mínimo 3 letras cada uno).</div>
       <input class="modal-input" id="g-telefono" type="tel" placeholder="Celular * (ej: 11 5566 7788)" maxlength="20" autocomplete="tel">
+      <input class="hp" id="g-hp" name="hp" tabindex="-1" autocomplete="off" aria-hidden="true">
       <div class="modal-error" id="g-tel-error">Ingresá un celular argentino válido (10 dígitos sin 0 ni 15).</div>
       <button class="modal-cta" id="g-submit" onclick="gateEnviarDatos()">Empezar a simular</button>
       <div class="gate-legal">Al continuar aceptás que un asesor de Tito Gonzalez Automotores te contacte por este medio.</div>
@@ -1327,6 +1330,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       <input class="modal-input" id="m-telefono" type="tel" placeholder="Celular * (ej: 11 5566 7788)" maxlength="20">
       <div class="modal-error" id="m-tel-error">Ingresá un celular argentino válido (10 dígitos sin 0 ni 15).</div>
       <input class="modal-input" id="m-email" type="email" placeholder="Email (opcional)">
+      <input class="hp" id="m-hp" name="hp" tabindex="-1" autocomplete="off" aria-hidden="true">
       <button class="modal-cta" id="m-submit" onclick="enviarLead()">Enviar</button>
     </div>
     <div id="modal-success-view" style="display:none">
@@ -1921,6 +1925,14 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     const telRaw = $('m-telefono').value.trim();
     const email = $('m-email').value.trim();
 
+    // Campo trampa: si esta completo es un robot. Misma pantalla de exito,
+    // pero no se manda nada al CRM.
+    if ($('m-hp').value) {
+      $('modal-form-view').style.display = 'none';
+      $('modal-success-view').style.display = 'block';
+      return;
+    }
+
     // Validación nombre y apellido (mínimo 2 palabras, cada una 3+ letras)
     const partes = nombre.split(/\s+/).filter(p => p.length >= 3);
     if (partes.length < 2) { alert('Ingresá tu nombre y apellido (mínimo 3 letras cada uno).'); return; }
@@ -2281,6 +2293,10 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   async function gateEnviarDatos() {
     const nombre = $('g-nombre').value.trim();
     const tel = $('g-telefono').value.trim();
+
+    // Campo trampa: si esta completo es un robot. Lo dejamos pasar al
+    // simulador sin crear ningun lead.
+    if ($('g-hp').value) { abrirSimulador(); return; }
     const okNombre = nombre.split(/\s+/).filter(p => p.length >= 3).length >= 2;
     $('g-nombre').classList.toggle('error', !okNombre);
     $('g-nombre-error').classList.toggle('show', !okNombre);
