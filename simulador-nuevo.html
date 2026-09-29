@@ -2061,18 +2061,23 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
   function mejorCampanaPara(version) {
     const contado = version.priceOferta;
-    let mejor = null, respaldo = null;
+    // Si el modelo llega a una campana SIN quebranto, va esa: no tiene letra chica.
+    // Recien si no tiene ninguna usamos una con quebranto, y lo aclaramos abajo.
+    let sinQ = null, conQ = null, respaldo = null;
     for (const [nombre, camp] of Object.entries(CAMPANAS_CARGADAS)) {
       if (!aplicaCampana(version, camp)) continue;
       for (const plazoStr of Object.keys(camp.plazos)) {
         const plazo = Number(plazoStr);
-        const cand = { nombre, camp, plazo, ...entregaDe(contado, camp.plazos[plazo]) };
+        const datos = camp.plazos[plazo];
+        const cand = { nombre, camp, plazo, ...entregaDe(contado, datos) };
         if (!respaldo || cand.entrega < respaldo.entrega) respaldo = cand;
         if (!campanaUsable(nombre)) continue;
-        if (!mejor || cand.entrega < mejor.entrega) mejor = cand;
+        if (!datos.q) {
+          if (!sinQ || cand.entrega < sinQ.entrega) sinQ = cand;
+        } else if (!conQ || cand.entrega < conQ.entrega) conQ = cand;
       }
     }
-    return mejor || respaldo;
+    return sinQ || conQ || respaldo;
   }
 
   function pintarEjemplo() {
