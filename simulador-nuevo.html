@@ -106,6 +106,10 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       font-size: 12.5px; color: rgba(255,255,255,0.72); margin-top: 7px;
     }
     .hero-example .eg-linea b { color: #fff; font-weight: 700; font-variant-numeric: tabular-nums; }
+    .hero-example .eg-detalle {
+      font-size: 11.5px; color: rgba(255,255,255,0.72); margin-top: 6px;
+      font-variant-numeric: tabular-nums; line-height: 1.5;
+    }
     .hero-example .eg-disclaimer {
       font-size: 10px; color: rgba(255,255,255,0.45); margin-top: 10px; line-height: 1.45;
     }
@@ -994,6 +998,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       <div class="eg-mas">más <b id="hero-eg-plazo">12</b> cuotas de</div>
       <div class="eg-cuota num" id="hero-eg-cuota">$ —</div>
       <div class="eg-precio">Precio del auto: <b id="hero-eg-total">—</b></div>
+      <div class="eg-detalle" id="hero-eg-detalle"></div>
       <div class="eg-disclaimer">El contado incluye el quebranto de VWFS, pero <b>no</b> patentamiento, sellado, seguro ni gastos administrativos. Es <b>una</b> de las opciones: hay otros planes y plazos, y el detalle completo lo arma tu asesor.</div>
     </aside>
   </div>
@@ -1524,7 +1529,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         else grupo = 'TODOS';
 
         if (!campanas[nombre]) campanas[nombre] = { grupo, plazos: {} };
-        campanas[nombre].plazos[plazo] = { cp: cpVal, q: qVal / 100, max: maxVal, uva: esUva };
+        const tnaVal = parseFloat((f[4] || '0').replace(',', '.')) || 0;
+        campanas[nombre].plazos[plazo] = { cp: cpVal, q: qVal / 100, max: maxVal, uva: esUva, tna: tnaVal };
       }
 
       CAMPANAS_CARGADAS = campanas;
@@ -2082,6 +2088,14 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     $('hero-eg-plazo').textContent = op.plazo;
     $('hero-eg-cuota').textContent = fmt(cuota);
     $('hero-eg-total').textContent = fmt(contado);
+    const pct = (x) => (x * 100).toLocaleString('es-AR', { maximumFractionDigits: 2 });
+    const quebranto = Math.round(financia * (datos.q || 0) * 1.21);
+    const partes = [`Financiás ${fmt(financia)} en ${op.plazo} cuotas`];
+    partes.push(datos.q
+      ? `quebranto ${fmt(quebranto)} (${pct(datos.q)}% + IVA)`
+      : 'sin quebranto');
+    partes.push(`TNA ${pct((datos.tna || 0) / 100)}%`);
+    $('hero-eg-detalle').textContent = partes.join(' · ');
   }
 
   function mostrarEjemploHero() {
