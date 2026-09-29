@@ -134,6 +134,55 @@ def specs_del_molde(molde_txt):
     return fuera
 
 
+FICHAS_API = "https://precios.titogonzalez.online/api/public/fichas"
+
+
+def fichas_pdf():
+    """Fichas tecnicas oficiales por modelo. Los PDF viven en el portal y son
+    publicos; aca solo se enlazan."""
+    try:
+        import urllib.request
+        with urllib.request.urlopen(FICHAS_API, timeout=20) as r:
+            d = json.loads(r.read().decode("utf-8"))
+        return d.get("modelos", {}) if d.get("ok") else {}
+    except Exception as e:
+        print("  aviso: no pude traer las fichas tecnicas (%s)" % str(e)[:60])
+        return {}
+
+
+def bloque_fichas(nombre, lista):
+    if not lista:
+        return ""
+    items = []
+    for f in lista:
+        titulo = f.get("titulo") or nombre
+        tipo = "Comparativo de versiones" if f.get("tipo") == "comparativo" else "Ficha de versión"
+        paginas = f.get("paginas")
+        detalle = "PDF" + (", %s páginas" % paginas if paginas else "")
+        items.append(
+            '<li><a href="%s" target="_blank" rel="noopener">%s — %s</a> <span>(%s)</span></li>'
+            % (escapar(f.get("url")), escapar(titulo), tipo, detalle)
+        )
+    return (
+        '\n<section class="fichas-pdf">'
+        "<h2>Fichas técnicas oficiales del Volkswagen %s</h2>"
+        "<p>Material de Volkswagen Argentina, con el detalle completo de cada versión.</p>"
+        "<ul>%s</ul></section>\n"
+    ) % (escapar(nombre), "".join(items))
+
+
+ESTILO_FICHAS_PDF = """
+    .fichas-pdf { padding: 28px 16px; }
+    .fichas-pdf h2 { font-size: 19px; font-weight: 800; color: var(--vw-blue, #001E50); letter-spacing: -0.4px; }
+    .fichas-pdf > p { font-size: 13px; color: var(--grey-700, #4A4A4A); margin-top: 6px; }
+    .fichas-pdf ul { list-style: none; margin-top: 12px; padding: 0; }
+    .fichas-pdf li { padding: 10px 0; border-bottom: 1px solid var(--grey-200, #EBEBEB); font-size: 13.5px; }
+    .fichas-pdf a { color: var(--vw-blue, #001E50); font-weight: 600; text-decoration: none; }
+    .fichas-pdf span { color: var(--grey-500, #8A8A8A); font-size: 12px; }
+    @media (min-width: 900px) { .fichas-pdf { padding: 40px; } }
+"""
+
+
 def linda(clave):
     partes = re.split(r"[-_ ]", clave)
     return " ".join(p.upper() if p.lower() in SIGLAS else p.capitalize() for p in partes)
@@ -208,6 +257,7 @@ def generar():
     for slug, versiones in specs_del_molde(molde.decode("utf-8")).items():
         todas.setdefault(slug, {}).update(versiones)
     sin_ficha = []
+    pdfs = fichas_pdf()
 
     for slug, nombre, body in modelos():
         titulo = "Volkswagen %s 0km — precio y versiones | Tito Gonzalez" % nombre
@@ -257,6 +307,18 @@ def generar():
                 h = h[:i] + ficha.encode("utf-8") + h[i:]
         else:
             sin_ficha.append(slug)
+
+        # Las fichas oficiales en PDF, que ya estaban en el portal y no se ofrecian
+        # en ningun lado de la web.
+        bloque = bloque_fichas(nombre, pdfs.get(nombre))
+        if bloque:
+            h = h.replace(b"</style>", ESTILO_FICHAS_PDF.encode("utf-8") + b"  </style>", 1)
+            marca = b'<nav class="nav-pie"'
+            if marca in h:
+                h = h.replace(marca, bloque.encode("utf-8") + marca, 1)
+            else:
+                i = h.rindex(b"</body>")
+                h = h[:i] + bloque.encode("utf-8") + h[i:]
 
         destino = os.path.join(SALIDA, slug + ".html")
         open(destino, "wb").write(h)
