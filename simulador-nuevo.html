@@ -91,6 +91,16 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       font-family: inherit; font-size: 13px; font-weight: 600;
     }
     .hero-example .eg-select option { color: #111; }
+    .hero-example .eg-mas {
+      font-size: 13px; color: rgba(255,255,255,0.75); margin-top: 12px; font-weight: 600;
+    }
+    .hero-example .eg-mas b { color: #fff; }
+    .hero-example .eg-precio {
+      font-size: 12px; color: rgba(255,255,255,0.6); margin-top: 12px;
+      padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.12);
+    }
+    .hero-example .eg-precio b { color: rgba(255,255,255,0.85); font-variant-numeric: tabular-nums; }
+    .hero-example .eg-cuota + .eg-meta { margin-top: 2px; }
     .hero-example .eg-linea {
       display: flex; justify-content: space-between; gap: 12px;
       font-size: 12.5px; color: rgba(255,255,255,0.72); margin-top: 7px;
@@ -887,6 +897,9 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         font-size: 12.5px; color: rgba(255,255,255,0.65); margin-top: 4px;
       }
       .hero-example .eg-select { font-size: 14px; padding: 10px 12px; margin-top: 12px; }
+      .hero-example .eg-mas { font-size: 14.5px; margin-top: 14px; }
+      .hero-example .eg-precio { font-size: 13px; margin-top: 14px; padding-top: 12px; }
+      .hero-example .eg-cuota { margin-top: 12px; }
       .hero-example .eg-linea { font-size: 13.5px; margin-top: 8px; }
       .hero-example .eg-disclaimer {
         font-size: 10.5px; color: rgba(255,255,255,0.45);
@@ -976,11 +989,11 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <aside class="hero-example">
       <div class="eg-eyebrow" id="hero-eg-eyebrow">Ejemplo</div>
       <select class="eg-select" id="hero-eg-modelo" aria-label="Elegí un modelo"></select>
-      <div class="eg-linea"><span>Contado</span><b id="hero-eg-contado">—</b></div>
-      <div class="eg-linea"><span>Entregás</span><b id="hero-eg-entrega">—</b></div>
-      <div class="eg-linea"><span>Financiás</span><b id="hero-eg-financia">—</b></div>
+      <div class="eg-cuota num" id="hero-eg-contado">$ —</div>
+      <div class="eg-meta">de contado</div>
+      <div class="eg-mas">más <b id="hero-eg-plazo">12</b> cuotas de</div>
       <div class="eg-cuota num" id="hero-eg-cuota">$ —</div>
-      <div class="eg-meta">por mes</div>
+      <div class="eg-precio">Precio del auto: <b id="hero-eg-total">—</b></div>
       <div class="eg-disclaimer">No incluye patentamiento, sellado, seguro ni gastos administrativos. Es <b>una</b> de las opciones: hay otros planes y plazos, y el detalle completo lo arma tu asesor.</div>
     </aside>
   </div>
@@ -2048,10 +2061,10 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     const financia = Math.min(datos.max || contado, contado);
     const entrega = Math.max(contado - financia, 0);
     const cuota = Math.round(financia / 1000 * datos.cp);
-    $('hero-eg-contado').textContent = fmt(contado);
-    $('hero-eg-entrega').textContent = fmt(entrega);
-    $('hero-eg-financia').textContent = `${fmt(financia)} en ${EG.plazo} cuotas`;
+    $('hero-eg-contado').textContent = fmt(entrega);
+    $('hero-eg-plazo').textContent = EG.plazo;
     $('hero-eg-cuota').textContent = fmt(cuota);
+    $('hero-eg-total').textContent = fmt(contado);
   }
 
   function mostrarEjemploHero() {
