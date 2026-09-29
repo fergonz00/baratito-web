@@ -13,71 +13,79 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Plan de Ahorro Volkswagen — adjudicación asegurada | Tito Gonzalez</title>
-  <meta name="description" content="Plan de Ahorro Volkswagen con adjudicación asegurada en cuota 3 u 8. Mirá el anticipo y la cuota de cada modelo y dejanos tus datos: un asesor te arma la mejor opción.">
+  <meta name="description" content="Plan de Ahorro Volkswagen con adjudicación asegurada en cuota 3 u 8. Simulá el anticipo, las cuotas y con qué otro modelo podés retirar. Dejanos tus datos y un asesor te arma la mejor opción.">
   <link rel="canonical" href="https://www.baratito.com.ar/plan-de-ahorro" />
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://www.baratito.com.ar/plan-de-ahorro">
   <meta property="og:title" content="Plan de Ahorro Volkswagen — adjudicación asegurada">
-  <meta property="og:description" content="Adjudicación asegurada en cuota 3 u 8. Anticipo y cuota de cada modelo.">
+  <meta property="og:description" content="Adjudicación asegurada en cuota 3 u 8. Anticipo, cuotas y cambio de modelo.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet">
   <style>
     :root {
       --vw-blue: #001E50; --vw-blue-deep: #00133A; --vw-cyan: #00B0F0;
-      --vw-cyan-soft: #E6F7FE; --vw-green: #25D366;
-      --grey-100: #F5F5F5; --grey-200: #EBEBEB; --grey-500: #8A8A8A;
-      --grey-700: #4A4A4A; --grey-900: #1A1A1A; --max-w: 1200px;
+      --vw-cyan-soft: #E6F7FE; --grey-100: #F5F5F5; --grey-200: #EBEBEB;
+      --grey-500: #8A8A8A; --grey-700: #4A4A4A; --grey-900: #1A1A1A; --max-w: 1100px;
     }
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     body { font-family: 'DM Sans', system-ui, sans-serif; color: var(--grey-900); background: #fff; }
     .num { font-variant-numeric: tabular-nums; }
+    .mono { font-family: 'JetBrains Mono', monospace; }
 
     .header { position: sticky; top: 0; z-index: 30; background: #fff; border-bottom: 1px solid var(--grey-200); }
     .header-inner { padding: 12px 16px; display: flex; align-items: center; justify-content: space-between; gap: 10px; }
     .logo-tito { height: 36px; width: auto; display: block; }
     .volver { font-size: 13px; font-weight: 600; color: var(--grey-700); text-decoration: none; }
 
-    .hero { background: var(--vw-blue-deep); color: #fff; padding: 28px 16px 32px; }
-    .hero .eyebrow {
-      font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--vw-cyan);
-      letter-spacing: 1.2px; text-transform: uppercase; font-weight: 700;
-    }
-    .hero h1 { font-size: 26px; font-weight: 800; letter-spacing: -0.8px; margin-top: 10px; line-height: 1.15; }
-    .hero p { font-size: 14px; color: rgba(255,255,255,0.72); margin-top: 10px; line-height: 1.55; max-width: 560px; }
+    .hero { background: var(--vw-blue-deep); color: #fff; padding: 26px 16px 30px; }
+    .hero .eyebrow { font-size: 11px; color: var(--vw-cyan); letter-spacing: 1.2px; text-transform: uppercase; font-weight: 700; }
+    .hero h1 { font-size: 25px; font-weight: 800; letter-spacing: -0.8px; margin-top: 10px; line-height: 1.15; }
+    .hero p.bajada { font-size: 14px; color: rgba(255,255,255,0.72); margin-top: 10px; line-height: 1.55; max-width: 620px; }
 
-    .caja {
-      background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.10);
-      border-radius: 14px; padding: 16px; margin-top: 20px;
-    }
+    .caja { background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.10); border-radius: 14px; padding: 16px; margin-top: 20px; }
+    .campo { margin-bottom: 12px; }
+    .campo > label { font-size: 11.5px; color: var(--vw-cyan); letter-spacing: 0.8px; text-transform: uppercase; font-weight: 700; display: block; margin-bottom: 6px; }
     .caja select {
       width: 100%; padding: 10px; background: rgba(255,255,255,0.10); color: #fff;
       border: 1px solid rgba(255,255,255,0.22); border-radius: 9px;
       font-family: inherit; font-size: 14px; font-weight: 600;
     }
     .caja select option { color: #111; }
-    .actos { display: grid; gap: 12px; margin-top: 16px; }
+    .dif { font-size: 12.5px; color: rgba(255,255,255,0.75); margin-top: 8px; line-height: 1.5; }
+    .dif b { color: #fff; }
+
+    .actos { display: grid; gap: 12px; margin-top: 8px; }
     .acto { background: rgba(255,255,255,0.05); border-radius: 11px; padding: 14px; }
-    .acto .tit {
-      font-family: 'JetBrains Mono', monospace; font-size: 10.5px; color: var(--vw-cyan);
-      letter-spacing: 0.8px; text-transform: uppercase; font-weight: 700;
-    }
-    .acto .monto { font-size: 26px; font-weight: 700; margin-top: 6px; letter-spacing: -0.8px; }
-    .acto .sub { font-size: 12px; color: rgba(255,255,255,0.65); margin-top: 3px; line-height: 1.45; }
+    .acto .tit { font-size: 10.5px; color: var(--vw-cyan); letter-spacing: 0.8px; text-transform: uppercase; font-weight: 700; }
+    .acto .monto { font-size: 25px; font-weight: 700; margin-top: 6px; letter-spacing: -0.8px; }
+    .acto .sub { font-size: 12px; color: rgba(255,255,255,0.62); margin-top: 3px; line-height: 1.45; }
+    .acto ul { list-style: none; margin-top: 10px; padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.10); }
+    .acto li { font-size: 12px; color: rgba(255,255,255,0.75); line-height: 1.55; display: flex; justify-content: space-between; gap: 10px; }
+    .acto li b { color: #fff; font-weight: 700; }
     .cuota-linea { font-size: 13.5px; color: rgba(255,255,255,0.85); margin-top: 14px; font-weight: 600; }
     .cuota-linea b { font-size: 17px; }
-    .letra { font-size: 11px; color: rgba(255,255,255,0.5); margin-top: 14px; line-height: 1.5; }
-    .aviso {
-      background: #FFF4E5; color: #7A4A00; border-radius: 10px; padding: 12px 14px;
-      font-size: 13px; margin-top: 16px; line-height: 1.5;
-    }
+    .letra { font-size: 11px; color: rgba(255,255,255,0.5); margin-top: 12px; line-height: 1.5; }
+    .aviso { background: #FFF4E5; color: #7A4A00; border-radius: 10px; padding: 12px 14px; font-size: 13px; margin-top: 16px; line-height: 1.5; }
 
-    .form-wrap { padding: 28px 16px 40px; background: var(--grey-100); }
+    .letras { background: #fff; padding: 28px 16px 8px; }
+    .letras-inner { max-width: var(--max-w); margin: 0 auto; }
+    .letras h2 { font-size: 19px; font-weight: 800; color: var(--vw-blue); letter-spacing: -0.4px; }
+    details { border: 1px solid var(--grey-200); border-radius: 11px; padding: 12px 14px; margin-top: 10px; }
+    details[open] { background: var(--grey-100); }
+    details.alerta { border-color: #FFD79A; background: #FFF9F0; }
+    summary { font-size: 14px; font-weight: 700; color: var(--vw-blue); cursor: pointer; list-style: none; }
+    summary::-webkit-details-marker { display: none; }
+    summary::after { content: ' +'; color: var(--grey-500); }
+    details[open] summary::after { content: ' −'; }
+    details p { font-size: 13.5px; color: var(--grey-700); line-height: 1.6; margin-top: 8px; }
+
+    .form-wrap { padding: 28px 16px 40px; background: var(--grey-100); margin-top: 28px; }
     .form-inner { max-width: 560px; margin: 0 auto; }
     .form-inner h2 { font-size: 20px; font-weight: 800; color: var(--vw-blue); letter-spacing: -0.4px; }
     .form-inner p.bajada { font-size: 13.5px; color: var(--grey-700); margin-top: 8px; line-height: 1.55; }
     form { margin-top: 18px; display: grid; gap: 12px; }
-    label { font-size: 12.5px; font-weight: 600; color: var(--grey-700); display: block; margin-bottom: 5px; }
+    label.lbl { font-size: 12.5px; font-weight: 600; color: var(--grey-700); display: block; margin-bottom: 5px; }
     input, textarea {
       width: 100%; padding: 11px 12px; border: 1px solid var(--grey-200); border-radius: 10px;
       font-family: inherit; font-size: 15px; background: #fff;
@@ -85,10 +93,7 @@
     input:focus, textarea:focus { outline: none; border-color: var(--vw-cyan); }
     textarea { resize: vertical; min-height: 70px; }
     .hp { position: absolute; left: -9999px; }
-    button.enviar {
-      background: var(--vw-blue); color: #fff; border: none; border-radius: 10px;
-      padding: 14px; font-family: inherit; font-size: 15px; font-weight: 700; cursor: pointer;
-    }
+    button.enviar { background: var(--vw-blue); color: #fff; border: none; border-radius: 10px; padding: 14px; font-family: inherit; font-size: 15px; font-weight: 700; cursor: pointer; }
     button.enviar:disabled { opacity: 0.6; cursor: default; }
     .msg { font-size: 13.5px; margin-top: 4px; line-height: 1.5; }
     .msg.ok { color: #0A7C3F; font-weight: 600; }
@@ -99,12 +104,14 @@
 
     @media (min-width: 900px) {
       .header-inner, .hero-inner { max-width: var(--max-w); margin: 0 auto; padding-left: 40px; padding-right: 40px; }
-      .hero { padding: 56px 0 64px; }
-      .hero h1 { font-size: 40px; letter-spacing: -1.4px; }
-      .hero p { font-size: 16px; }
-      .caja { padding: 24px; max-width: 620px; }
+      .hero { padding: 52px 0 60px; }
+      .hero h1 { font-size: 38px; letter-spacing: -1.3px; }
+      .hero p.bajada { font-size: 16px; }
+      .caja { padding: 24px; }
+      .campos { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
       .actos { grid-template-columns: 1fr 1fr; }
-      .form-wrap { padding: 56px 40px 72px; }
+      .letras { padding: 48px 40px 8px; }
+      .form-wrap { padding: 48px 40px 64px; }
     }
   </style>
 </head>
@@ -118,12 +125,22 @@
 
 <section class="hero">
   <div class="hero-inner">
-    <div class="eyebrow">Plan de Ahorro Volkswagen</div>
+    <div class="eyebrow mono">Plan de Ahorro Volkswagen</div>
     <h1>Adjudicación asegurada<br>en cuota 3 u 8.</h1>
-    <p>Elegí el modelo y mirá cuánto necesitás para adjudicar y cuánto pagás por mes. Son los mismos números que usa el asesor.</p>
+    <p class="bajada">Elegí el plan, mirá con qué auto podés salir y cuánto te sale en cada caso. Son los mismos números que usa el asesor.</p>
 
-    <div class="caja">
-      <select id="plan" aria-label="Elegí un modelo"><option>Cargando planes…</option></select>
+    <div class="caja" id="caja">
+      <div class="campos">
+        <div class="campo">
+          <label for="plan">Plan que suscribís</label>
+          <select id="plan"><option>Cargando…</option></select>
+        </div>
+        <div class="campo">
+          <label for="retiro">Auto que retirás</label>
+          <select id="retiro"></select>
+        </div>
+      </div>
+      <div class="dif" id="dif"></div>
       <div class="actos" id="actos"></div>
       <div class="cuota-linea" id="cuota"></div>
       <div class="letra" id="letra"></div>
@@ -132,26 +149,33 @@
   </div>
 </section>
 
+<section class="letras">
+  <div class="letras-inner">
+    <h2>Cómo funciona, en detalle</h2>
+    <div id="aclaraciones"></div>
+  </div>
+</section>
+
 <section class="form-wrap">
   <div class="form-inner">
     <h2>Dejanos tus datos</h2>
-    <p class="bajada">Un asesor te contacta y arma la mejor opción para tu caso: hay más planes y formas de pagar el anticipo que las que se ven acá.</p>
+    <p class="bajada">Un asesor te contacta y arma la mejor opción para tu caso: hay más planes y más formas de pagar el anticipo que las que se ven acá.</p>
     <form id="form">
       <div>
-        <label for="nombre">Nombre y apellido *</label>
+        <label class="lbl" for="nombre">Nombre y apellido *</label>
         <input id="nombre" name="nombre" required autocomplete="name">
       </div>
       <div>
-        <label for="telefono">Teléfono / WhatsApp *</label>
+        <label class="lbl" for="telefono">Teléfono / WhatsApp *</label>
         <input id="telefono" name="telefono" required inputmode="tel" autocomplete="tel" placeholder="11 2345-6789">
       </div>
       <div>
-        <label for="email">Email</label>
+        <label class="lbl" for="email">Email</label>
         <input id="email" name="email" type="email" autocomplete="email">
       </div>
       <div>
-        <label for="comentario">Comentario (opcional)</label>
-        <textarea id="comentario" name="comentario" placeholder="Contanos qué modelo te interesa"></textarea>
+        <label class="lbl" for="comentario">Comentario (opcional)</label>
+        <textarea id="comentario" name="comentario"></textarea>
       </div>
       <input class="hp" id="hp" name="hp" tabindex="-1" autocomplete="off" aria-hidden="true">
       <button class="enviar" id="enviar" type="submit">Quiero que me contacten</button>
@@ -162,38 +186,83 @@
 
 <footer>
   Tito Gonzalez Automotores S.A. · Concesionario oficial Volkswagen · Av. Entre Ríos 1338, CABA.<br>
-  Los valores son estimados a hoy y pueden variar según la grilla vigente de Volkswagen S.A. de Ahorro para Fines Determinados.
-  La adjudicación está sujeta a la aprobación crediticia y a la presentación de garantías. <a href="/">Ver ofertas de 0km</a>.
+  Valores estimados a hoy, sujetos a la grilla vigente de Volkswagen S.A. de Ahorro para Fines Determinados.
+  La adjudicación está sujeta a aprobación crediticia y presentación de garantías. <a href="/">Ver ofertas de 0km</a>.
 </footer>
 
 <script>
   var API = 'https://precios.titogonzalez.online/api/public/planes';
-  var PLANES = [];
+  var PLANES = [], MESES = 84;
   function fmt(n) { return '$' + Math.round(n).toLocaleString('es-AR'); }
   function $(id) { return document.getElementById(id); }
+  function planActual() { return PLANES.filter(function (p) { return p.codigo === $('plan').value; })[0]; }
+  function retiroActual() {
+    var p = planActual(); if (!p) return null;
+    return p.retiros.filter(function (r) { return r.modelo === $('retiro').value; })[0] || p.retiros[0];
+  }
+
+  function pintarRetiros() {
+    var p = planActual(); if (!p) return;
+    $('retiro').innerHTML = p.retiros.map(function (r) {
+      var etiqueta = r.modelo === p.modelo ? r.modelo + ' (el del plan)' : r.modelo;
+      return '<option value="' + r.modelo + '">' + etiqueta + '</option>';
+    }).join('');
+    pintar();
+  }
 
   function pintar() {
-    var p = PLANES.filter(function (x) { return x.codigo === $('plan').value; })[0];
-    if (!p) return;
+    var p = planActual(), r = retiroActual();
+    if (!p || !r) return;
+
+    // Qué cambia por salir con otro auto
+    var dif = '';
+    if (r.cambioModelo > 0) {
+      dif = 'Retirás un auto de <b>' + fmt(r.lista) + '</b>, más caro que el valor móvil del plan (' +
+        fmt(p.valorMovil) + '): pagás <b>' + fmt(r.cambioModelo) + '</b> de diferencia junto con el anticipo.';
+    } else if (r.saldoAFavor > 0) {
+      dif = 'Retirás un auto de <b>' + fmt(r.lista) + '</b>, más barato que el valor móvil del plan (' +
+        fmt(p.valorMovil) + '). Esos <b>' + fmt(r.saldoAFavor) + '</b> no se devuelven en efectivo: cancelan cuotas del final.';
+    } else {
+      dif = 'Es el auto del propio plan, así que no hay diferencia de modelo que pagar.';
+    }
+    $('dif').innerHTML = dif;
+
     var html = '';
-    p.opciones.forEach(function (o) {
+    r.opciones.forEach(function (o) {
+      var pct = o.acto === 3 ? '40%' : '30%';
+      var detalle = o.acto === 3
+        ? 'Alícuota 30% + anticipo de cuotas 10%'
+        : 'Alícuota extraordinaria 30%';
+      if (r.cambioModelo > 0) detalle += ' + diferencia de modelo';
       html += '<div class="acto">' +
-        '<div class="tit">Adjudicás en cuota ' + o.acto + '</div>' +
+        '<div class="tit mono">Adjudicás en cuota ' + o.acto + ' &middot; ' + pct + '</div>' +
         '<div class="monto num">' + fmt(o.anticipo) + '</div>' +
-        '<div class="sub">de anticipo, con la cuota ' + o.cuotaPaga + ' paga</div>' +
-        '</div>';
+        '<div class="sub">' + detalle + '. Con la cuota ' + o.cuotaPaga + ' paga.</div>' +
+        '<ul>' +
+          '<li><span>Cuotas hasta adjudicar</span><b class="num">' + fmt(o.cuotasHastaAdjudicar) + '</b></li>' +
+          '<li><span>Al adjudicar y retirar</span><b class="num">' + fmt(o.alAdjudicarYRetirar) + '</b></li>' +
+          '<li><span>Total hasta llevarte el auto</span><b class="num">' + fmt(o.desembolsoHastaRetirar) + '</b></li>' +
+          (o.cuotasCanceladas > 0
+            ? '<li><span>Cuotas del final ya canceladas</span><b>' + o.cuotasCanceladas + '</b></li>' +
+              '<li><span>Terminás de pagar en la cuota</span><b>' + o.ultimaCuota + ' de ' + MESES + '</b></li>'
+            : '<li><span>Terminás de pagar en la cuota</span><b>' + o.ultimaCuota + ' de ' + MESES + '</b></li>') +
+        '</ul>' +
+      '</div>';
     });
     $('actos').innerHTML = html;
-    var o8 = p.opciones.filter(function (o) { return o.acto === 8; })[0] || p.opciones[0];
+
+    var o8 = r.opciones.filter(function (o) { return o.acto === 8; })[0] || r.opciones[0];
     var menor = o8.cuotas.reduce(function (a, c) { return Math.min(a, c.importe); }, Infinity);
-    $('cuota').innerHTML = 'Cuotas desde <b class="num">' + fmt(menor) + '</b> por mes · ' + 84 + ' cuotas en total';
-    $('letra').textContent = 'Valor móvil ' + fmt(p.valorMovil) + ' · ' + p.diferimiento + ' · ' + p.recupero +
-      '. Al adjudicar se suman el derecho de adjudicación y los gastos de entrega. No incluye patentamiento ni seguro.';
-    $('comentario').placeholder = 'Me interesa el plan de ' + p.nombre;
+    $('cuota').innerHTML = 'Cuotas desde <b class="num">' + fmt(menor) + '</b> por mes · ' + MESES + ' cuotas en total';
+    $('letra').textContent = 'Valor móvil del plan ' + fmt(p.valorMovil) + '. ' + p.diferimiento + '. ' + p.recupero +
+      '. "Al adjudicar y retirar" incluye el derecho de adjudicación (' + fmt(p.derechoAdjudicacion) +
+      ') y los gastos de entrega. No incluye patentamiento ni seguro.';
+    $('comentario').placeholder = 'Plan ' + p.nombre + ', retiro ' + r.modelo;
   }
 
   fetch(API).then(function (r) { return r.json(); }).then(function (d) {
     if (!d.ok || !d.planes) throw new Error('sin datos');
+    MESES = d.meses || 84;
     // Un plan desalineado quiere decir que llego una grilla nueva y estos numeros
     // quedaron viejos: preferimos no publicarlo antes que publicar un precio que no es.
     PLANES = d.planes.filter(function (p) { return !p.desalineado; });
@@ -201,13 +270,14 @@
     $('plan').innerHTML = PLANES.map(function (p) {
       return '<option value="' + p.codigo + '">' + p.nombre + '</option>';
     }).join('');
-    $('plan').onchange = pintar;
-    pintar();
+    $('plan').onchange = pintarRetiros;
+    $('retiro').onchange = pintar;
+    pintarRetiros();
+    $('aclaraciones').innerHTML = PLANES[0].aclaraciones.map(function (a) {
+      return '<details' + (a.alerta ? ' class="alerta"' : '') + '><summary>' + a.titulo + '</summary><p>' + a.texto + '</p></details>';
+    }).join('');
   }).catch(function () {
-    $('plan').style.display = 'none';
-    $('actos').innerHTML = '';
-    $('cuota').innerHTML = '';
-    $('letra').textContent = '';
+    $('caja').style.display = 'none';
     $('aviso').style.display = 'block';
     $('aviso').textContent = 'Estamos actualizando los planes con la grilla nueva de Volkswagen. Dejanos tus datos acá abajo y un asesor te pasa los valores al día.';
   });
@@ -216,7 +286,9 @@
     ev.preventDefault();
     var btn = $('enviar'), msg = $('msg');
     msg.className = 'msg'; msg.textContent = '';
-    var plan = PLANES.filter(function (x) { return x.codigo === $('plan').value; })[0];
+    var p = planActual(), r = retiroActual();
+    var coment = $('comentario').value.trim();
+    if (p && r) coment = (coment ? coment + ' · ' : '') + 'Simuló: plan ' + p.nombre + ', retira ' + r.modelo;
     btn.disabled = true; btn.textContent = 'Enviando…';
     fetch('/api/lead', {
       method: 'POST',
@@ -225,11 +297,11 @@
         nombre: $('nombre').value.trim(),
         telefono: $('telefono').value.trim(),
         email: $('email').value.trim(),
-        comentario: $('comentario').value.trim(),
-        modelo: plan ? plan.nombre : null,
+        comentario: coment,
+        modelo: r ? r.modelo : null,
         hp: $('hp').value,
       }),
-    }).then(function (r) { return r.json().then(function (d) { return { ok: r.ok, d: d }; }); })
+    }).then(function (res) { return res.json().then(function (d) { return { ok: res.ok, d: d }; }); })
       .then(function (res) {
         if (!res.ok) throw new Error(res.d.error || 'error');
         msg.className = 'msg ok';
