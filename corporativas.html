@@ -13,19 +13,19 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Ventas Corporativas Volkswagen — precios para empresas | Tito Gonzalez</title>
-  <meta name="description" content="Canal de Ventas Corporativas Volkswagen: precios para empresas con CUIT, desde 1 unidad. Mirá el precio corporativo de cada modelo y pedí tu cotización de flota en Tito Gonzalez, concesionario oficial en CABA.">
-  <meta name="keywords" content="ventas corporativas volkswagen, venta a empresas, autos para empresas, compra de flota, precio corporativo VW, flota volkswagen, venta institucional">
+  <meta name="description" content="Canal de Ventas Corporativas Volkswagen: fijate si tu empresa califica, mirá el precio corporativo de cada modelo desde 1 unidad y pedí tu cotización de flota. Tito Gonzalez, concesionario oficial en CABA.">
+  <meta name="keywords" content="ventas corporativas volkswagen, venta a empresas, autos para empresas, compra de flota, precio corporativo VW, flota volkswagen, venta institucional, autos con CUIT">
   <link rel="canonical" href="https://www.baratito.com.ar/ventas-corporativas" />
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://www.baratito.com.ar/ventas-corporativas">
   <meta property="og:title" content="Ventas Corporativas Volkswagen — precios para empresas">
-  <meta property="og:description" content="Precio corporativo por modelo, desde 1 unidad. Pedí tu cotización de flota.">
+  <meta property="og:description" content="Fijate si tu empresa califica y mirá el precio corporativo, desde 1 unidad.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet">
   <style>
     :root {
-      --vw-blue: #001E50; --vw-blue-deep: #00133A; --vw-cyan: #00B0F0;
+      --vw-blue: #001E50; --vw-blue-deep: #00133A; --vw-cyan: #00B0F0; --vw-cyan-soft: #E6F7FE;
       --grey-100: #F5F5F5; --grey-200: #EBEBEB; --grey-500: #8A8A8A;
       --grey-700: #4A4A4A; --grey-900: #1A1A1A; --max-w: 1100px;
     }
@@ -33,6 +33,7 @@
     body { font-family: 'DM Sans', system-ui, sans-serif; color: var(--grey-900); background: #fff; }
     .num { font-variant-numeric: tabular-nums; }
     .mono { font-family: 'JetBrains Mono', monospace; }
+    .wrap { max-width: var(--max-w); margin: 0 auto; }
 
     .header { position: sticky; top: 0; z-index: 30; background: #fff; border-bottom: 1px solid var(--grey-200); }
     .header-inner { padding: 12px 16px; display: flex; align-items: center; justify-content: space-between; gap: 10px; }
@@ -46,13 +47,23 @@
     .chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 18px; }
     .chip { background: rgba(255,255,255,0.10); border: 1px solid rgba(255,255,255,0.16); border-radius: 999px; padding: 7px 12px; font-size: 12.5px; }
 
-    .lista { padding: 24px 16px 8px; }
-    .lista-inner { max-width: var(--max-w); margin: 0 auto; }
-    .lista h2 { font-size: 19px; font-weight: 800; color: var(--vw-blue); letter-spacing: -0.4px; }
-    .lista .sub { font-size: 13px; color: var(--grey-700); margin-top: 6px; line-height: 1.5; }
-    .controles { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 14px; align-items: flex-end; }
-    .control label { display: block; font-size: 11.5px; font-weight: 700; color: var(--grey-500); text-transform: uppercase; letter-spacing: 0.6px; margin-bottom: 5px; }
-    .control select { padding: 9px 10px; border: 1px solid var(--grey-200); border-radius: 9px; font-family: inherit; font-size: 14px; font-weight: 600; background: #fff; color: var(--grey-900); }
+    section.paso { padding: 28px 16px 0; }
+    .paso-num { font-size: 11px; color: var(--vw-cyan); letter-spacing: 1px; text-transform: uppercase; font-weight: 700; }
+    .paso h2 { font-size: 20px; font-weight: 800; color: var(--vw-blue); letter-spacing: -0.5px; margin-top: 6px; }
+    .paso .sub { font-size: 13.5px; color: var(--grey-700); margin-top: 8px; line-height: 1.55; }
+
+    .control { margin-top: 14px; }
+    .control label { display: block; font-size: 11.5px; font-weight: 700; color: var(--grey-500); text-transform: uppercase; letter-spacing: 0.6px; margin-bottom: 6px; }
+    select.campo, input.campo, textarea.campo {
+      width: 100%; padding: 11px 12px; border: 1px solid var(--grey-200); border-radius: 10px;
+      font-family: inherit; font-size: 15px; background: #fff; color: var(--grey-900);
+    }
+    select.campo:focus, input.campo:focus, textarea.campo:focus { outline: none; border-color: var(--vw-cyan); }
+
+    .ficha { background: var(--vw-cyan-soft); border-radius: 12px; padding: 16px; margin-top: 14px; }
+    .ficha .tipo { font-size: 13px; font-weight: 800; color: var(--vw-blue); }
+    .ficha .dato { font-size: 13px; color: var(--grey-700); margin-top: 8px; line-height: 1.55; }
+    .ficha .dato b { color: var(--vw-blue); }
 
     .fila { border: 1px solid var(--grey-200); border-radius: 12px; padding: 14px; margin-top: 10px; }
     .fila .modelo { font-size: 15.5px; font-weight: 700; color: var(--vw-blue); letter-spacing: -0.2px; }
@@ -64,15 +75,21 @@
     .aviso { background: #FFF4E5; color: #7A4A00; border-radius: 10px; padding: 14px; font-size: 13.5px; line-height: 1.55; margin-top: 14px; }
     .letra { font-size: 11.5px; color: var(--grey-500); line-height: 1.55; margin-top: 16px; }
 
-    .form-wrap { padding: 28px 16px 40px; background: var(--grey-100); margin-top: 28px; }
+    details { border: 1px solid var(--grey-200); border-radius: 11px; padding: 12px 14px; margin-top: 10px; }
+    details[open] { background: var(--grey-100); }
+    summary { font-size: 14.5px; font-weight: 700; color: var(--vw-blue); cursor: pointer; list-style: none; }
+    summary::-webkit-details-marker { display: none; }
+    summary::after { content: ' +'; color: var(--grey-500); }
+    details[open] summary::after { content: ' −'; }
+    details p { font-size: 13.5px; color: var(--grey-700); line-height: 1.6; margin-top: 8px; }
+    details p + p { margin-top: 10px; }
+
+    .form-wrap { padding: 28px 16px 40px; background: var(--grey-100); margin-top: 32px; }
     .form-inner { max-width: 560px; margin: 0 auto; }
     .form-inner h2 { font-size: 20px; font-weight: 800; color: var(--vw-blue); letter-spacing: -0.4px; }
     .form-inner p.bajada { font-size: 13.5px; color: var(--grey-700); margin-top: 8px; line-height: 1.55; }
     form { margin-top: 18px; display: grid; gap: 12px; }
     label.lbl { font-size: 12.5px; font-weight: 600; color: var(--grey-700); display: block; margin-bottom: 5px; }
-    input, textarea, select.campo { width: 100%; padding: 11px 12px; border: 1px solid var(--grey-200); border-radius: 10px; font-family: inherit; font-size: 15px; background: #fff; }
-    input:focus, textarea:focus { outline: none; border-color: var(--vw-cyan); }
-    textarea { resize: vertical; min-height: 64px; }
     .hp { position: absolute; left: -9999px; }
     button.enviar { background: var(--vw-blue); color: #fff; border: none; border-radius: 10px; padding: 14px; font-family: inherit; font-size: 15px; font-weight: 700; cursor: pointer; }
     button.enviar:disabled { opacity: 0.6; cursor: default; }
@@ -89,7 +106,8 @@
       .hero { padding: 52px 0 58px; }
       .hero h1 { font-size: 38px; letter-spacing: -1.3px; }
       .hero p.bajada { font-size: 16px; }
-      .lista { padding: 44px 40px 8px; }
+      section.paso { padding: 44px 40px 0; }
+      .controles-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
       .fila { display: grid; grid-template-columns: 1.3fr 1fr; gap: 16px; align-items: center; }
       .fila .precios { justify-content: flex-end; margin-top: 0; }
       .fila .nota { grid-column: 1 / -1; margin-top: 0; }
@@ -109,63 +127,129 @@
   <div class="hero-inner">
     <div class="eyebrow mono">Ventas Corporativas Volkswagen</div>
     <h1>Precio de empresa,<br>desde una unidad.</h1>
-    <p class="bajada">Si comprás a nombre de una empresa con CUIT, Volkswagen tiene un canal aparte con precio propio. No hace falta comprar una flota: arranca en la primera unidad y mejora con el volumen.</p>
+    <p class="bajada">Volkswagen tiene un canal aparte para empresas, organismos y algunas actividades particulares, con una lista de precios propia. No hace falta comprar una flota: casi todas las categorías arrancan en la primera unidad.</p>
     <div class="chips">
-      <div class="chip">Factura A a nombre de la empresa</div>
+      <div class="chip">Factura a nombre de la empresa</div>
       <div class="chip">El beneficio va en la factura</div>
       <div class="chip">Desde 1 unidad</div>
     </div>
   </div>
 </section>
 
-<section class="lista">
-  <div class="lista-inner">
-    <h2>Precios corporativos vigentes</h2>
-    <div class="sub" id="sub">Cargando la lista del mes…</div>
-    <div class="controles" id="controles" style="display:none">
-      <div class="control">
-        <label for="unidades">¿Cuántas unidades?</label>
-        <select id="unidades"></select>
-      </div>
-      <div class="control">
-        <label for="tipo">Tipo de cliente</label>
-        <select id="tipo"></select>
-      </div>
-    </div>
-    <div id="filas"></div>
-    <div class="aviso" id="aviso" style="display:none"></div>
-    <div class="letra" id="letra"></div>
+<section class="paso wrap">
+  <div class="paso-num mono">Paso 1</div>
+  <h2>¿Tu empresa califica?</h2>
+  <div class="sub">El precio no lo define cuántos autos comprás, sino en qué categoría te ubica Volkswagen. Elegí la que corresponda y te decimos qué tipo de cliente sos y qué documentación piden.</div>
+  <div class="control">
+    <label for="categoria">Actividad o tipo de comprador</label>
+    <select class="campo" id="categoria"><option>Cargando…</option></select>
   </div>
+  <div class="control" id="control-tipo" style="display:none">
+    <label for="tipo">Tipo de la empresa a la que pertenecés</label>
+    <select class="campo" id="tipo"></select>
+  </div>
+  <div class="ficha" id="ficha" style="display:none"></div>
+</section>
+
+<section class="paso wrap">
+  <div class="paso-num mono">Paso 2</div>
+  <h2>Precios corporativos vigentes</h2>
+  <div class="sub" id="sub">Cargando la lista del mes…</div>
+  <div class="control" id="control-unidades" style="display:none">
+    <label for="unidades">¿Cuántas unidades?</label>
+    <select class="campo" id="unidades"></select>
+  </div>
+  <div id="filas"></div>
+  <div class="aviso" id="aviso" style="display:none"></div>
+  <div class="letra" id="letra"></div>
+</section>
+
+<section class="paso wrap">
+  <div class="paso-num mono">Cómo funciona</div>
+  <h2>Preguntas frecuentes</h2>
+
+  <details>
+    <summary>¿Qué es la venta corporativa?</summary>
+    <p>Es un canal de Volkswagen Argentina distinto del de mostrador, con su propia lista de precios y sus propias reglas. Está pensado para compras a nombre de empresas y organismos, y también para algunas actividades particulares que la marca define.</p>
+    <p>El beneficio se aplica <b>en la factura</b>: no es un reintegro ni un bono posterior. El auto se factura a nombre de la empresa o de la persona que califica.</p>
+  </details>
+
+  <details>
+    <summary>¿Qué significan tipo A, tipo B y tipo C?</summary>
+    <p>Es cómo Volkswagen clasifica al comprador, y es lo que determina el descuento. <b>No lo elige el cliente ni el concesionario</b>: sale de la Política de Ingreso de Pedidos de la marca, según la actividad del CUIT o la condición que se acredite.</p>
+    <p><b>Tipo A</b> es el de mejor condición y agrupa a la mayoría: flotistas, agro, construcción, seguridad, minería, energía, laboratorios, rentadoras, bancos, compañías de seguro, taxis y remises, organismos públicos, y personas como productores agropecuarios, taxistas o ex combatientes de Malvinas.</p>
+    <p><b>Tipo B</b> son proveedores y socios de Volkswagen, organizaciones sin fines de lucro, empresas del Top 200 del ranking MERCO, socios de la Cámara Argentino-Alemana, periodistas y diplomáticos. <b>Tipo C</b> son las empresas del Grupo Volkswagen (Scania, MAN, VW Financial Services), sus empleados y los concesionarios de otras marcas del grupo.</p>
+    <p>En el Paso 1 podés ver a qué tipo corresponde cada categoría y qué papeles pide.</p>
+  </details>
+
+  <details>
+    <summary>¿Cambia el precio si compro más unidades?</summary>
+    <p>Sí. La grilla del canal tiene tramos por volumen —para tipo A son 1 a 4, 5 a 9 y 10 o más— y a mayor cantidad, mayor descuento.</p>
+    <p>Ahora bien, hay un detalle importante: <b>Volkswagen no publica precio cerrado para todos los tramos de todos los modelos</b>. En la mayoría publica hasta cierta cantidad y, de ahí en adelante, el precio se cotiza con la marca operación por operación. Cuando pasa eso, la fila del precio te lo avisa en vez de repetir el mismo número.</p>
+  </details>
+
+  <details>
+    <summary>¿Tengo que comprar una flota?</summary>
+    <p>No. Casi todas las categorías empiezan en <b>1 o más unidades</b>. Las excepciones están indicadas en cada una: las licitaciones de organismos públicos piden un mínimo de 10 unidades, y varias categorías de personas físicas permiten 1 unidad cada 12 meses.</p>
+  </details>
+
+  <details>
+    <summary>¿Qué documentación piden?</summary>
+    <p>Siempre la <b>orden de compra</b>. Según la categoría se suma documentación que acredite la condición: por ejemplo, un flotista que compra 1 o 2 unidades tiene que acreditar el dominio de 3 vehículos; un proveedor de Volkswagen necesita el aval del área de Suministros; una empresa del ranking MERCO, la captura del ranking vigente.</p>
+    <p>Elegí tu categoría en el Paso 1 y te mostramos exactamente qué pide esa.</p>
+  </details>
+
+  <details>
+    <summary>¿El auto puede quedar a nombre de otra persona?</summary>
+    <p>Por regla general <b>no</b>: se factura y se patenta a nombre de quien califica. La cesión de factura está autorizada solo en dos casos: las <b>asociaciones de taxistas y remiseros</b>, donde se patenta a nombre del taxista, y las <b>compañías de seguro</b> cuando compran para reposición, a nombre del asegurado.</p>
+  </details>
+
+  <details>
+    <summary>¿Qué incluye el precio que veo?</summary>
+    <p>Es el precio final de la unidad con los gastos administrativos incluidos. <b>No incluye patentamiento</b>, ni seguro, ni accesorios.</p>
+    <p>Los valores son los de la circular vigente del mes. Los precios del canal <b>se renuevan todos los meses</b> y algunas acciones tienen vigencia propia, así que el precio definitivo es el del momento en que se ingresa el pedido y se factura la unidad.</p>
+  </details>
+
+  <details>
+    <summary>Soy una persona, no una empresa. ¿Puedo comprar por este canal?</summary>
+    <p>En algunos casos sí. Hay categorías para personas físicas: personas con discapacidad (con o sin la Ley 19.279), ex combatientes de Malvinas, taxistas y remiseros, productores agropecuarios, agentes de propaganda médica, periodistas, diplomáticos y quienes tengan tres o más vehículos a su nombre.</p>
+    <p>También entran los directores, socios y accionistas de una empresa que califique, y sus empleados del área comercial, con el mismo descuento que le corresponde a la empresa.</p>
+  </details>
+
+  <details>
+    <summary>¿Cómo sigue después de que dejo mis datos?</summary>
+    <p>Te contacta un asesor de Ventas Corporativas, revisa en qué categoría entra tu caso y te arma la propuesta con el precio que corresponde a tu empresa y a la cantidad de unidades. Si hace falta cotizar con la marca, te lo dice en ese momento.</p>
+  </details>
 </section>
 
 <section class="form-wrap">
   <div class="form-inner">
     <h2>Pedí tu cotización</h2>
-    <p class="bajada">Contanos qué necesitás y te armamos la propuesta con el precio que corresponde a tu empresa y a la cantidad de unidades.</p>
+    <p class="bajada">Contanos qué necesitás y te armamos la propuesta con el precio que corresponde a tu caso.</p>
     <form id="form">
       <div>
         <label class="lbl" for="empresa">Razón social *</label>
-        <input id="empresa" required autocomplete="organization">
+        <input class="campo" id="empresa" required autocomplete="organization">
       </div>
       <div>
         <label class="lbl" for="cuit">CUIT</label>
-        <input id="cuit" inputmode="numeric" placeholder="30-12345678-9">
+        <input class="campo" id="cuit" inputmode="numeric" placeholder="30-12345678-9">
       </div>
       <div>
         <label class="lbl" for="nombre">Nombre y apellido *</label>
-        <input id="nombre" required autocomplete="name">
+        <input class="campo" id="nombre" required autocomplete="name">
       </div>
       <div>
         <label class="lbl" for="telefono">Teléfono / WhatsApp *</label>
-        <input id="telefono" required inputmode="tel" autocomplete="tel" placeholder="11 2345-6789">
+        <input class="campo" id="telefono" required inputmode="tel" autocomplete="tel" placeholder="11 2345-6789">
       </div>
       <div>
         <label class="lbl" for="email">Email</label>
-        <input id="email" type="email" autocomplete="email">
+        <input class="campo" id="email" type="email" autocomplete="email">
       </div>
       <div>
         <label class="lbl" for="comentario">¿Qué necesitás?</label>
-        <textarea id="comentario" placeholder="Modelo, cantidad de unidades, plazo de entrega…"></textarea>
+        <textarea class="campo" id="comentario" placeholder="Modelo, cantidad de unidades, plazo…"></textarea>
       </div>
       <input class="hp" id="hp" tabindex="-1" autocomplete="off" aria-hidden="true">
       <button class="enviar" id="enviar" type="submit">Pedir cotización</button>
@@ -176,22 +260,53 @@
 
 <footer>
   Tito Gonzalez Automotores S.A. · Concesionario oficial Volkswagen · Av. Entre Ríos 1338, CABA.<br>
-  Precios del canal de Ventas Corporativas de Volkswagen Argentina, vigentes durante el mes en curso y sujetos a la
-  categoría de cliente y al volumen. No incluyen patentamiento. <a href="/">Ver ofertas de 0km</a>.
+  Los precios y las condiciones son los del canal de Ventas Corporativas de Volkswagen Argentina vigentes en el mes en
+  curso, y dependen de la categoría que la marca le asigna a cada cliente y de la cantidad de unidades. La categoría y
+  el precio definitivo se confirman al ingresar el pedido. <a href="/">Ver ofertas de 0km</a>.
 </footer>
 
 <script>
   var API = 'https://precios.titogonzalez.online/api/public/corporativo';
   var DATA = null;
+  var GRUPOS = { juridica: 'Empresas y organizaciones', organismo: 'Organismos públicos', fisica: 'Personas' };
   function fmt(n) { return '$' + Math.round(n).toLocaleString('es-AR'); }
   function $(id) { return document.getElementById(id); }
+  function esc(s) { return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;'); }
 
-  function pintar() {
+  function categoriaActual() {
+    if (!DATA) return null;
+    return DATA.categorias[parseInt($('categoria').value, 10)] || null;
+  }
+  /** El tipo que manda: el de la categoría, o el que eligió si la categoría hereda el de la empresa. */
+  function tipoActual() {
+    var c = categoriaActual();
+    if (!c) return null;
+    return c.tipoCliente || $('tipo').value || null;
+  }
+
+  function pintarFicha() {
+    var c = categoriaActual();
+    if (!c) return;
+    // Hay categorías que no tienen tipo propio: toman el de la empresa a la que pertenece
+    // la persona (directores, empleados del área comercial, beneficiarios Auto-Compañía).
+    $('control-tipo').style.display = c.tipoCliente ? 'none' : 'block';
+    var t = tipoActual();
+    var html = '<div class="tipo">' + (t ? 'Sos tipo de cliente ' + esc(t) : 'Tomás el tipo de la empresa') + '</div>';
+    if (c.minimoCompra) html += '<div class="dato"><b>Mínimo:</b> ' + esc(c.minimoCompra) + '</div>';
+    if (c.documentacion) html += '<div class="dato"><b>Documentación:</b> ' + esc(c.documentacion) + '</div>';
+    if (c.observaciones) html += '<div class="dato">' + esc(c.observaciones) + '</div>';
+    $('ficha').innerHTML = html;
+    $('ficha').style.display = 'block';
+    pintarPrecios();
+  }
+
+  function pintarPrecios() {
+    if (!DATA || DATA.vencido) return;
     var unidades = parseInt($('unidades').value, 10) || 1;
-    var tipo = $('tipo').value;
+    var tipo = tipoActual();
+    if (!tipo) { $('filas').innerHTML = ''; return; }
     var html = '';
     DATA.modelos.forEach(function (m) {
-      // El precio del tramo que corresponde a esa cantidad y ese tipo de cliente.
       var p = null;
       m.precios.forEach(function (x) {
         if (x.tipoCliente !== tipo) return;
@@ -200,53 +315,64 @@
       if (!p) return;
       var ahorro = m.lista - p.precio;
       html += '<div class="fila">' +
-        '<div class="modelo">' + m.modelo + '</div>' +
+        '<div class="modelo">' + esc(m.modelo) + '</div>' +
         '<div class="precios">' +
           '<span class="lista-tachada num">' + fmt(m.lista) + '</span>' +
           '<span class="corp num">' + fmt(p.precio) + '</span>' +
           (ahorro > 0 ? '<span class="ahorro num">ahorrás ' + fmt(ahorro) + '</span>' : '') +
         '</div>' +
         (p.arrastrado
-          ? '<div class="nota">Volkswagen publicó precio hasta ' + p.desdeUnidades + ' unidades para este modelo. Para esta cantidad lo cotizamos con la marca: escribinos y te lo confirmamos.</div>'
+          ? '<div class="nota">Volkswagen publicó precio cerrado hasta ' + p.desdeUnidades + ' unidades para este modelo. Para esta cantidad se cotiza con la marca: dejanos tus datos y te lo confirmamos.</div>'
           : '') +
       '</div>';
     });
-    $('filas').innerHTML = html || '<div class="aviso">No hay precio publicado para esa combinación. Dejanos tus datos y te lo cotizamos.</div>';
+    $('filas').innerHTML = html || '<div class="aviso">Para esa combinación no hay precio publicado. Dejanos tus datos y te lo cotizamos.</div>';
   }
 
   fetch(API).then(function (r) { return r.json(); }).then(function (d) {
     if (!d.ok) throw new Error('sin datos');
-    // Si la circular cargada no es la del mes en curso, no se publican numeros:
-    // los precios corporativos cambian todos los meses y las acciones del zonal
-    // tienen vigencia propia.
-    if (d.vencido) throw new Error('vencido');
     DATA = d;
 
-    var tipos = d.tiposCliente;
-    $('tipo').innerHTML = tipos.map(function (t) {
-      return '<option value="' + t.tipoCliente + '">Tipo ' + t.tipoCliente + '</option>';
-    }).join('');
-    var cantidades = [1, 2, 3, 5, 10, 20];
-    $('unidades').innerHTML = cantidades.map(function (n) {
+    // Paso 1: categorías agrupadas (empresas / organismos / personas).
+    var porGrupo = {};
+    d.categorias.forEach(function (c, i) { (porGrupo[c.grupo] = porGrupo[c.grupo] || []).push([i, c]); });
+    var html = '<option value="">Elegí una…</option>';
+    Object.keys(porGrupo).forEach(function (g) {
+      html += '<optgroup label="' + esc(GRUPOS[g] || g) + '">';
+      porGrupo[g].forEach(function (par) {
+        html += '<option value="' + par[0] + '">' + esc(par[1].categoria) + '</option>';
+      });
+      html += '</optgroup>';
+    });
+    $('categoria').innerHTML = html;
+    $('categoria').onchange = pintarFicha;
+
+    var tipos = d.tiposCliente.map(function (t) { return t.tipoCliente; });
+    $('tipo').innerHTML = tipos.map(function (t) { return '<option value="' + esc(t) + '">Tipo ' + esc(t) + '</option>'; }).join('');
+    $('tipo').onchange = pintarFicha;
+
+    // Paso 2: si la circular no es la del mes en curso, no se publican numeros.
+    if (d.vencido) {
+      $('sub').textContent = '';
+      $('aviso').style.display = 'block';
+      $('aviso').textContent = 'Estamos cargando la lista corporativa del mes. Dejanos tus datos acá abajo y te pasamos los precios al día, con el descuento que le corresponde a tu empresa.';
+      return;
+    }
+    $('unidades').innerHTML = [1, 2, 3, 5, 10, 20].map(function (n) {
       return '<option value="' + n + '">' + n + (n === 20 ? ' o más' : '') + '</option>';
     }).join('');
-    $('tipo').onchange = pintar;
-    $('unidades').onchange = pintar;
-    $('controles').style.display = 'flex';
-
+    $('unidades').onchange = pintarPrecios;
+    $('control-unidades').style.display = 'block';
     var acc = d.acciones.map(function (a) { return a.etiqueta; }).join(' y ');
-    $('sub').textContent = 'Circular ' + (d.circular || '') + ' · ' + d.modelos.length +
-      ' versiones' + (acc ? ' · incluye ' + acc : '') + '.';
-    $('letra').innerHTML = 'Precios finales con gastos incluidos, <b>sin patentamiento</b>. El precio depende de la ' +
-      'categoría de cliente que Volkswagen le asigna a cada empresa y de la cantidad de unidades; el que se muestra ' +
-      'es el de la categoría elegida arriba. La lista se renueva todos los meses.' +
+    $('sub').textContent = 'Elegí tu categoría arriba para ver el precio que te corresponde. Circular ' +
+      (d.circular || '') + ' · ' + d.modelos.length + ' versiones' + (acc ? ' · incluye ' + acc : '') + '.';
+    $('letra').innerHTML = 'Precios finales de la unidad con gastos incluidos, <b>sin patentamiento</b>. ' +
+      'Dependen de la categoría de cliente y de la cantidad de unidades, y se renuevan todos los meses.' +
       (d.fueraDelCanal && d.fueraDelCanal.length
-        ? '<br><br>Este mes no entran al canal corporativo: ' + d.fueraDelCanal.join(', ') + '.'
+        ? '<br><br>Este mes no entran al canal corporativo: ' + esc(d.fueraDelCanal.join(', ')) + '.'
         : '');
-    pintar();
   }).catch(function () {
     $('sub').textContent = '';
-    $('controles').style.display = 'none';
     $('aviso').style.display = 'block';
     $('aviso').textContent = 'Estamos cargando la lista corporativa del mes. Dejanos tus datos acá abajo y te pasamos los precios al día, con el descuento que le corresponde a tu empresa.';
   });
@@ -256,6 +382,10 @@
     var btn = $('enviar'), msg = $('msg');
     msg.className = 'msg'; msg.textContent = '';
     btn.disabled = true; btn.textContent = 'Enviando…';
+    var c = categoriaActual();
+    var extra = [];
+    if (c) extra.push('Categoría: ' + c.categoria + (tipoActual() ? ' (tipo ' + tipoActual() + ')' : ''));
+    if ($('comentario').value.trim()) extra.push($('comentario').value.trim());
     fetch('/api/lead-corp', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -265,8 +395,8 @@
         email: $('email').value.trim(),
         empresa: $('empresa').value.trim(),
         cuit: $('cuit').value.trim(),
-        unidades: DATA ? $('unidades').value : null,
-        comentario: $('comentario').value.trim(),
+        unidades: DATA && !DATA.vencido ? $('unidades').value : null,
+        comentario: extra.join(' · '),
         hp: $('hp').value,
       }),
     }).then(function (r) { return r.json().then(function (d) { return { ok: r.ok, d: d }; }); })
