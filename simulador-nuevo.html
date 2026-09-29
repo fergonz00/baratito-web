@@ -84,6 +84,18 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       letter-spacing: -1.2px; margin-top: 10px; font-variant-numeric: tabular-nums;
     }
     .hero-example .eg-meta { font-size: 11.5px; color: rgba(255,255,255,0.65); margin-top: 4px; }
+    .hero-example .eg-select {
+      width: 100%; margin-top: 10px; padding: 9px 10px;
+      background: rgba(255,255,255,0.10); color: #fff;
+      border: 1px solid rgba(255,255,255,0.22); border-radius: 9px;
+      font-family: inherit; font-size: 13px; font-weight: 600;
+    }
+    .hero-example .eg-select option { color: #111; }
+    .hero-example .eg-linea {
+      display: flex; justify-content: space-between; gap: 12px;
+      font-size: 12.5px; color: rgba(255,255,255,0.72); margin-top: 7px;
+    }
+    .hero-example .eg-linea b { color: #fff; font-weight: 700; font-variant-numeric: tabular-nums; }
     .hero-example .eg-disclaimer {
       font-size: 10px; color: rgba(255,255,255,0.45); margin-top: 10px; line-height: 1.45;
     }
@@ -874,6 +886,8 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       .hero-example .eg-meta {
         font-size: 12.5px; color: rgba(255,255,255,0.65); margin-top: 4px;
       }
+      .hero-example .eg-select { font-size: 14px; padding: 10px 12px; margin-top: 12px; }
+      .hero-example .eg-linea { font-size: 13.5px; margin-top: 8px; }
       .hero-example .eg-disclaimer {
         font-size: 10.5px; color: rgba(255,255,255,0.45);
         margin-top: 18px; line-height: 1.5;
@@ -960,11 +974,14 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       </div>
     </div>
     <aside class="hero-example">
-      <div class="eg-eyebrow" id="hero-eg-eyebrow">Ejemplo · cargando…</div>
-      <div class="eg-title" id="hero-eg-title">Esperá unos segundos…</div>
+      <div class="eg-eyebrow" id="hero-eg-eyebrow">Ejemplo</div>
+      <select class="eg-select" id="hero-eg-modelo" aria-label="Elegí un modelo"></select>
+      <div class="eg-linea"><span>Contado</span><b id="hero-eg-contado">—</b></div>
+      <div class="eg-linea"><span>Entregás</span><b id="hero-eg-entrega">—</b></div>
+      <div class="eg-linea"><span>Financiás</span><b id="hero-eg-financia">—</b></div>
       <div class="eg-cuota num" id="hero-eg-cuota">$ —</div>
-      <div class="eg-meta" id="hero-eg-meta">cuota mensual</div>
-      <div class="eg-disclaimer">Valor calculado con la grilla VWFS vigente. Simulá abajo con tu modelo y plazo.</div>
+      <div class="eg-meta">por mes</div>
+      <div class="eg-disclaimer">No incluye patentamiento, sellado, seguro ni gastos administrativos. Es <b>una</b> de las opciones: hay otros planes y plazos, y el detalle completo lo arma tu asesor.</div>
     </aside>
   </div>
 </section>
@@ -1985,66 +2002,77 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   });
 
   // ============== EJEMPLO HERO ==============
-  // Busca una versión FINANCIA_MAS en stock + campaña Sin Quebranto (12c).
-  // Si no hay Sin Quebranto, cae a Especial Autos. Si no, a Financia Más.
-  function mostrarEjemploHero() {
-    if (!CAMPANAS_CARGADAS || Object.keys(VERSIONS_POR_SLUG).length === 0) return;
-    // El ejemplo SIEMPRE se muestra: es un caso de ejemplo con la grilla real, no la
-    // cuota del visitante. Taparlo dejaba la pagina sin un solo numero y el que llega
-    // de un aviso se iba sin ver nada. El gate sigue para simular con SU modelo.
+  // Un ejemplo de verdad y navegable: el visitante elige modelo y ve cuanto sale de
+  // contado, cuanto entrega y cuanto le queda por mes. UNA sola financiacion (la de
+  // mejor condicion vigente); el resto de los planes los arma el asesor.
+  const EG = { camp: null, nombre: '', plazo: 0, versiones: [] };
 
-    // Versión candidata: la primera versión en stock que esté en FINANCIA_MAS
-    let version = null;
-    for (const slug of Object.keys(VERSIONS_POR_SLUG)) {
-      for (const v of VERSIONS_POR_SLUG[slug]) {
-        if (v.enStock && FINANCIA_MAS.includes(v.nombreSheet)) { version = v; break; }
-      }
-      if (version) break;
-    }
-    if (!version) {
-      // Fallback: cualquier versión en stock
-      for (const slug of Object.keys(VERSIONS_POR_SLUG)) {
-        const v = VERSIONS_POR_SLUG[slug].find(x => x.enStock);
-        if (v) { version = v; break; }
-      }
-    }
-    if (!version) return;
+  function todasLasVersiones() {
+    const out = [];
+    for (const slug of Object.keys(VERSIONS_POR_SLUG)) out.push(...VERSIONS_POR_SLUG[slug]);
+    return out;
+  }
 
-    // Buscar campaña preferida para esta versión
+  // Mismas reglas de aplicabilidad que usa el simulador de abajo.
+  function aplicaCampana(version, camp) {
     const esAmarok = version.nombreSheet.toLowerCase().includes('amarok');
     const esFM = FINANCIA_MAS.includes(version.nombreSheet);
-    const candidatos = [];
+    if (camp.grupo === 'AMAROK') return esAmarok;
+    if (esAmarok) return false;
+    if (camp.grupo === 'FM') return esFM;
+    return true;
+  }
+
+  function elegirCampanaEjemplo() {
+    let mejor = null;
+    const versiones = todasLasVersiones();
     for (const [nombre, camp] of Object.entries(CAMPANAS_CARGADAS)) {
-      // Filtro de aplicabilidad
-      if (camp.grupo === 'AMAROK' && !esAmarok) continue;
-      if (camp.grupo !== 'AMAROK' && esAmarok) continue;
-      if (camp.grupo === 'FM' && !esFM) continue;
       const n = nombre.toLowerCase();
-      // Prioridad: Sin Quebranto > Especial Autos > Financia Más
       let prio = 99;
       if (n.includes('sin quebranto')) prio = 1;
       else if (n.includes('especial autos')) prio = 2;
-      else if (n.includes('financia más')) prio = 3;
+      else if (n.includes('financia m\u00e1s')) prio = 3;
       else continue;
-      candidatos.push({ nombre, camp, prio });
+      if (!versiones.some(v => v.enStock && aplicaCampana(v, camp))) continue;
+      if (!mejor || prio < mejor.prio) mejor = { nombre, camp, prio };
     }
-    if (candidatos.length === 0) return;
-    candidatos.sort((a, b) => a.prio - b.prio);
-    const { nombre, camp } = candidatos[0];
+    return mejor;
+  }
 
-    // Plazo: el menor disponible (suele ser 12 para Sin Quebranto)
-    const plazos = Object.keys(camp.plazos).map(Number).sort((a, b) => a - b);
-    const plazo = plazos[0];
-    const datos = camp.plazos[plazo];
-    const monto = datos.max || 17000000;
-    const cuota = Math.round(monto / 1000 * datos.cp);
-
-    // Render
-    $('hero-eg-eyebrow').textContent = `Ejemplo · ${version.displayName}`;
-    $('hero-eg-title').textContent = `${fmt(monto)} en ${plazo} cuotas`;
+  function pintarEjemplo() {
+    const sel = $('hero-eg-modelo');
+    const v = EG.versiones.find(x => x.nombreSheet === sel.value) || EG.versiones[0];
+    if (!v) return;
+    const datos = EG.camp.plazos[EG.plazo];
+    const contado = v.priceOferta;
+    const financia = Math.min(datos.max || contado, contado);
+    const entrega = Math.max(contado - financia, 0);
+    const cuota = Math.round(financia / 1000 * datos.cp);
+    $('hero-eg-contado').textContent = fmt(contado);
+    $('hero-eg-entrega').textContent = fmt(entrega);
+    $('hero-eg-financia').textContent = `${fmt(financia)} en ${EG.plazo} cuotas`;
     $('hero-eg-cuota').textContent = fmt(cuota);
-    const metaParts = [`cuota mensual · ${nombre}`];
-    $('hero-eg-meta').textContent = metaParts.join(' · ');
+  }
+
+  function mostrarEjemploHero() {
+    if (!CAMPANAS_CARGADAS || Object.keys(VERSIONS_POR_SLUG).length === 0) return;
+    const elegida = elegirCampanaEjemplo();
+    if (!elegida) return;
+    EG.camp = elegida.camp;
+    EG.nombre = elegida.nombre;
+    const plazos = Object.keys(EG.camp.plazos).map(Number).sort((a, b) => a - b);
+    EG.plazo = plazos[0];
+    EG.versiones = todasLasVersiones()
+      .filter(v => v.enStock && aplicaCampana(v, EG.camp))
+      .sort((a, b) => a.priceOferta - b.priceOferta);
+    if (EG.versiones.length === 0) return;
+
+    $('hero-eg-eyebrow').textContent = EG.nombre;
+    const sel = $('hero-eg-modelo');
+    sel.innerHTML = EG.versiones
+      .map(v => `<option value="${v.nombreSheet}">${v.displayName}</option>`).join('');
+    sel.onchange = pintarEjemplo;
+    pintarEjemplo();
   }
 
   // ============== GATE ==============
