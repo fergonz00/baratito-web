@@ -46,10 +46,10 @@ def generar():
     hechos = []
 
     for slug, nombre, body in modelos():
-        titulo = "Volkswagen %s 0km — precio y versiones | Tito González" % nombre
+        titulo = "Volkswagen %s 0km — precio y versiones | Tito Gonzalez" % nombre
         desc = (
             "Precio, versiones y financiación del Volkswagen %s 0km (%s) en Tito "
-            "González Automotores, concesionario oficial Volkswagen en CABA." % (nombre, body)
+            "Gonzalez Automotores, concesionario oficial Volkswagen en CABA." % (nombre, body)
         )
         url = "%s/%s" % (SITIO, slug)
 
