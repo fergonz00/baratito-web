@@ -124,6 +124,9 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       padding: calc(12px + env(safe-area-inset-top, 0px)) 16px 12px;
       display: flex; align-items: center; gap: 12px;
     }
+    .header-logo { margin-left: auto; display: block; flex-shrink: 0; }
+    .header-logo img { height: 40px; width: auto; display: block; }
+    .header-logo .logo-oscuro { display: none; }
     .btn-back {
       width: 40px; height: 40px; border-radius: 999px;
       background: rgba(255,255,255,0.1); border: none;
@@ -848,6 +851,9 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       .desktop-only { display: revert !important; }
 
       .header { background: #fff; color: var(--grey-900); border-bottom: 1px solid var(--grey-200); }
+      .header-logo img { height: 56px; }
+      .header-logo .logo-claro { display: none; }
+      .header-logo .logo-oscuro { display: block; }
       .header-inner {
         max-width: var(--max-w); margin: 0 auto;
         padding: 0 40px; height: 88px;
@@ -965,6 +971,10 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       <div class="eyebrow">VWFS</div>
       <div class="titulo">Simulá tu cuota</div>
     </div>
+    <a href="/" class="header-logo" aria-label="Tito Gonzalez Automotores">
+      <img class="logo-claro" src="imagenes/logo-tito-white.svg" alt="Tito Gonzalez Automotores">
+      <img class="logo-oscuro" src="imagenes/logo-tito-blue.svg" alt="">
+    </a>
   </div>
 </header>
 
