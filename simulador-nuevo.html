@@ -994,7 +994,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       <div class="eg-mas">más <b id="hero-eg-plazo">12</b> cuotas de</div>
       <div class="eg-cuota num" id="hero-eg-cuota">$ —</div>
       <div class="eg-precio">Precio del auto: <b id="hero-eg-total">—</b></div>
-      <div class="eg-disclaimer">No incluye patentamiento, sellado, seguro ni gastos administrativos. Es <b>una</b> de las opciones: hay otros planes y plazos, y el detalle completo lo arma tu asesor.</div>
+      <div class="eg-disclaimer">El contado incluye el quebranto de VWFS, pero <b>no</b> patentamiento, sellado, seguro ni gastos administrativos. Es <b>una</b> de las opciones: hay otros planes y plazos, y el detalle completo lo arma tu asesor.</div>
     </aside>
   </div>
 </section>
@@ -2036,28 +2036,37 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     return true;
   }
 
-  // Orden de preferencia para el ejemplo: primero lo simple y sin sorpresas (tasa 0 y
-  // sin pago final), al final lo que tiene UVA o tasa alta.
-  function prioridadCampana(nombre) {
+  // Que campana mostrar. Descartamos UVA (la cuota se ajusta) y las de tasa alta, y
+  // entre las de TNA 0% elegimos la que le pida MENOS plata al arranque. Ojo: el
+  // quebranto NO es un pago final, se paga junto con la entrega (asi lo calcula el
+  // simulador de abajo), por eso entra en la cuenta para comparar.
+  function campanaUsable(nombre) {
     const n = nombre.toLowerCase();
-    if (n.includes('sin quebranto')) return 1;
-    if (n.includes('uva')) return 5;
-    if (n.includes('prendario')) return 6;
-    if (n.includes('largo plazo')) return 6;
-    if (n.includes('tna 0')) return 2;
-    return 4;
+    if (n.includes('uva')) return false;
+    if (n.includes('prendario') || n.includes('largo plazo')) return false;
+    return n.includes('tna 0');
+  }
+
+  function entregaDe(contado, datos) {
+    const financia = Math.min(datos.max || contado, contado);
+    const quebranto = Math.round(financia * (datos.q || 0) * 1.21);
+    return { financia, quebranto, entrega: Math.max(contado - financia, 0) + quebranto };
   }
 
   function mejorCampanaPara(version) {
-    let mejor = null;
+    const contado = version.priceOferta;
+    let mejor = null, respaldo = null;
     for (const [nombre, camp] of Object.entries(CAMPANAS_CARGADAS)) {
       if (!aplicaCampana(version, camp)) continue;
-      const plazos = Object.keys(camp.plazos).map(Number).sort((a, b) => a - b);
-      if (!plazos.length) continue;
-      const prio = prioridadCampana(nombre);
-      if (!mejor || prio < mejor.prio) mejor = { nombre, camp, plazo: plazos[0], prio };
+      for (const plazoStr of Object.keys(camp.plazos)) {
+        const plazo = Number(plazoStr);
+        const cand = { nombre, camp, plazo, ...entregaDe(contado, camp.plazos[plazo]) };
+        if (!respaldo || cand.entrega < respaldo.entrega) respaldo = cand;
+        if (!campanaUsable(nombre)) continue;
+        if (!mejor || cand.entrega < mejor.entrega) mejor = cand;
+      }
     }
-    return mejor;
+    return mejor || respaldo;
   }
 
   function pintarEjemplo() {
@@ -2066,8 +2075,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     if (!op) return;
     const datos = op.camp.plazos[op.plazo];
     const contado = op.v.priceOferta;
-    const financia = Math.min(datos.max || contado, contado);
-    const entrega = Math.max(contado - financia, 0);
+    const { financia, entrega } = entregaDe(contado, datos);
     const cuota = Math.round(financia / 1000 * datos.cp);
     $('hero-eg-eyebrow').textContent = op.nombre;
     $('hero-eg-contado').textContent = fmt(entrega);
