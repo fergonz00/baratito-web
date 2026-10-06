@@ -1351,7 +1351,36 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   // Precios: API en vivo del portal primero (igual que home/modelo), CSV como fallback.
   const API_OFERTAS_URL = 'https://precios.titogonzalez.online/api/public/ofertas';
   const PRECIOS_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTD40FCkAXCrVNslz1OtxnYm1DRhDulVOHaCxJ81-kiQL17KnfimCOPn3hJDHAvJsF9ROEZdePuRw2E/pub?gid=1432576316&single=true&output=csv';
-  const CAMPANAS_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTD40FCkAXCrVNslz1OtxnYm1DRhDulVOHaCxJ81-kiQL17KnfimCOPn3hJDHAvJsF9ROEZdePuRw2E/pub?gid=2146569390&single=true&output=csv';
+  // Campañas VWFS: API del portal (tabla portal_campanas, la que se carga con cada
+  // circular). La pestaña "config campañas" del Sheet quedó congelada en julio-26:
+  // NO volver a leerla, ni como fallback (sin campañas se muestra el hueco).
+  const CAMPANAS_API_URL = 'https://precios.titogonzalez.online/api/public/campanas';
+
+  // Devuelve las campañas con las mismas columnas que tenía el CSV del Sheet
+  // (fila 0 = encabezado), para no tocar el parseo de abajo.
+  async function filasCampanasAPI() {
+    const res = await fetch(CAMPANAS_API_URL);
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const j = await res.json();
+    const s = (x) => (x === null || x === undefined) ? '' : String(x);
+    return [null].concat((j.campanas || []).map(c => [
+      s(c.categoria), s(c.nombre), s(c.tipo), s(c.plazo), s(c.tna), s(c.cuota_inicial),
+      s(c.cuota_promedio), s(c.quebranto_pct), s(c.max_financiado), s(c.amarok),
+      c.uva ? 'SI' : 'NO', s(c.ltv), s(c.grupo_modelos), (c.modelos_aplicables || []).join('|'),
+    ]));
+  }
+
+  // Campañas con lista exclusiva de versiones (Tera/Nivus/T-Cross 0%, Amarok
+  // Trendline, Polo Track/Robust LP...): aplican SOLO a esas versiones. Financia
+  // Más sigue yendo por su grupo. Mismo match que el portal (filtrarCampanasPara).
+  function listaExclusiva(grupoModelos, modelosAplicables) {
+    if ((grupoModelos || '').toUpperCase() === 'FINANCIA_MAS') return null;
+    const l = (modelosAplicables || '').split('|').map(x => x.trim()).filter(Boolean);
+    return l.length ? l : null;
+  }
+  function enLista(lista, nombres) {
+    return nombres.some(n => n && lista.some(m => n.includes(m) || m.includes(n)));
+  }
   const CRM_LEAD_URL = 'https://tito-crm.vercel.app/api/lead-externo';
   const WA_FALLBACK = '5491137573604';
 
@@ -1528,10 +1557,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   // ============== CARGA DE CAMPAÑAS ==============
   async function cargarCampanas() {
     try {
-      const res = await fetch(CAMPANAS_CSV_URL);
-      if (!res.ok) throw new Error('HTTP ' + res.status);
-      const text = await res.text();
-      const filas = parseCSV(text);
+      const filas = await filasCampanasAPI();
       const campanas = {};
       const modelosFM = new Set();
 
@@ -1566,7 +1592,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         } else if (modelos === 'BASICO') grupo = 'BASICO';
         else grupo = 'TODOS';
 
-        if (!campanas[nombre]) campanas[nombre] = { grupo, plazos: {} };
+        if (!campanas[nombre]) campanas[nombre] = { grupo, plazos: {}, lista: listaExclusiva(modelos, modelosAplicables) };
         const tnaVal = parseFloat((f[4] || '0').replace(',', '.')) || 0;
         campanas[nombre].plazos[plazo] = { cp: cpVal, q: qVal / 100, max: maxVal, uva: esUva, tna: tnaVal };
       }
@@ -1658,6 +1684,10 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
     const disponibles = {};
     for (const [nombre, camp] of Object.entries(CAMPANAS_CARGADAS)) {
+      if (camp.lista) {
+        if (enLista(camp.lista, [dataModelo])) disponibles[nombre] = camp;
+        continue;
+      }
       if (camp.grupo === 'AMAROK' && esAmarok) disponibles[nombre] = camp;
       else if (camp.grupo === 'AMAROK' && !esAmarok) continue;
       else if (!esAmarok) {
@@ -2083,6 +2113,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   function aplicaCampana(version, camp) {
     const esAmarok = version.nombreSheet.toLowerCase().includes('amarok');
     const esFM = FINANCIA_MAS.includes(version.nombreSheet);
+    if (camp.lista) return enLista(camp.lista, [version.nombreSheet]);
     if (camp.grupo === 'AMAROK') return esAmarok;
     if (esAmarok) return false;
     if (camp.grupo === 'FM') return esFM;
