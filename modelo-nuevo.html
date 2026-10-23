@@ -779,7 +779,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <div class="eyebrow">Volkswagen</div>
     <h1 class="nombre" id="header-nombre">—</h1>
   </div>
-  <a href="/financiacion" class="btn-financiacion">Financiación</a>
+  <a href="/financiacion" class="btn-financiacion" id="btn-financiacion-header">Financiación</a>
 </header>
 
 <section class="meta-row">
@@ -1324,9 +1324,18 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     const finLegalEl = document.getElementById('vc-fin-legal');
     if (camp) {
       const tasaTxt = camp.tna === 0 ? 'TNA 0%' : `TNA ${String(camp.tna).replace('.', ',')}%`;
-      finEl.innerHTML = `Financiá hasta <span class="num">${fmtPrice(camp.tope)}</span> en <strong>${camp.plazo} cuotas</strong> · ${tasaTxt}`;
+      // El plazo mas largo casi siempre financia MENOS (Tera/Nivus 36m: $12M contra
+      // $23M a 18m). Si se comunica solo "36 cuotas", el cliente entra al simulador,
+      // ve 18 y cree que hay trampa. Por eso: el monto mayor primero y el plazo largo
+      // aparte, con su propio tope.
+      let txt = `Financiá hasta <span class="num">${fmtPrice(camp.tope)}</span> en <strong>${camp.plazo} cuotas</strong> · ${tasaTxt}`;
+      if (camp.largo) {
+        txt += `<br>o hasta <strong>${camp.largo.plazo} cuotas</strong>, financiando hasta <span class="num">${fmtPrice(camp.largo.tope)}</span>`;
+      }
+      finEl.innerHTML = txt;
       finEl.style.display = '';
-      finLegalEl.textContent = `${camp.nombre} · VW Financial Services${camp.uva ? ', cuota ajustada por UVA' : ''}. Sujeto a aprobación crediticia. Consultá CFT, gastos y valor de cuota con tu asesor.`;
+      const nombresCamp = [camp.nombre].concat(camp.largo && camp.largo.nombre !== camp.nombre ? [camp.largo.nombre] : []);
+      finLegalEl.textContent = `${nombresCamp.join(' / ')} · VW Financial Services${camp.uva ? ', cuota ajustada por UVA' : ''}. Montos máximos a financiar; el resto va de anticipo. Sujeto a aprobación crediticia. Consultá CFT, gastos y valor de cuota con tu asesor.`;
       finLegalEl.style.display = '';
     } else {
       finEl.style.display = 'none';
@@ -1345,8 +1354,15 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     // CTA WhatsApp con la versión actual
     const precioTxt = v.precio ? ` a ${fmtPrice(v.precio)}` : '';
     const msg = `Hola Tito Gonzalez, vi en baratito.com.ar el ${m.name} ${v.short}${precioTxt} y quería consultar disponibilidad.`;
-    // Link "Ver financiaciones" (sticky bottom mobile + CTA desktop) apunta al simulador con el slug
-    const finHref = `simulador-nuevo.html?slug=${encodeURIComponent(m.slug)}`;
+    // Links al simulador: llevan modelo, version y la campaña/plazo del claim, asi el
+    // simulador abre con lo mismo que el cliente acaba de leer.
+    const finParams = new URLSearchParams({ slug: m.slug });
+    const nombreSim = (v.sheetNames || [])[0];
+    if (nombreSim) finParams.set('v', nombreSim);
+    if (camp) { finParams.set('c', camp.nombre); finParams.set('p', String(camp.plazo)); }
+    const finHref = `/financiacion?${finParams.toString()}`;
+    const linkFinHeader = document.getElementById('btn-financiacion-header');
+    if (linkFinHeader) linkFinHeader.href = finHref;
     const linkFin = document.getElementById('btn-ver-financiaciones');
     if (linkFin) linkFin.href = finHref;
     const linkFinDesktop = document.getElementById('btn-ver-financiaciones-desktop');
@@ -1810,8 +1826,9 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   }
 
   // Campana a comunicar para una version: entre las de TNA 0% sin UVA que le
-  // apliquen, la de plazo mas largo (a igual plazo, la de mayor monto). El tope
-  // se recorta al precio del auto (no se puede financiar mas que el vehiculo).
+  // apliquen, la que MAS financia (a igual monto, la de plazo mas largo). Si hay
+  // un plazo mas largo que financia menos, va aparte en `largo` con su tope.
+  // Los topes se recortan al precio del auto (no se financia mas que el vehiculo).
   function campanaDeVersion(v) {
     if (!CAMPANAS_VWFS || !v) return null;
     const nombres = v.sheetNames || [];
@@ -1830,11 +1847,16 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     const cero = aplican.filter(c => c.tna === 0 && !c.uva);
     const pool = cero.length ? cero : aplican;
     if (!pool.length) return null;
-    pool.sort((a, b) => (b.plazo - a.plazo) || (b.max - a.max));
-    const best = pool[0];
+    const recorte = (x) => v.precio ? Math.min(x, v.precio) : x;
+    const best = pool.slice().sort((a, b) => (recorte(b.max) - recorte(a.max)) || (b.plazo - a.plazo))[0];
+    const masLargo = pool.slice().sort((a, b) => (b.plazo - a.plazo) || (b.max - a.max))[0];
+    const largo = masLargo.plazo > best.plazo
+      ? Object.assign({}, masLargo, { tope: recorte(masLargo.max) })
+      : null;
     return Object.assign({}, best, {
       esFM,
-      tope: v.precio ? Math.min(best.max, v.precio) : best.max,
+      tope: recorte(best.max),
+      largo,
     });
   }
 

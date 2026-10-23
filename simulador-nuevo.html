@@ -1234,6 +1234,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
               <div class="desglose-row"><span>Gestoría</span><span class="v num" id="d-gestoria">—</span></div>
               <div class="desglose-row"><span>Arancel Tito Gonzalez (PF)</span><span class="v num" id="d-arancel-tg">—</span></div>
               <div class="desglose-row"><span id="d-prenda-label">Inscripción prenda</span><span class="v num" id="d-prenda">—</span></div>
+              <div class="desglose-row"><span>Informe de dominio / inhibiciones</span><span class="v num" id="d-informe">—</span></div>
               <div class="desglose-row"><span id="d-sellado-label">Sellado prenda</span><span class="v num" id="d-sellado">—</span></div>
               <div class="desglose-row"><span>Quebranto VWFS</span><span class="v num" id="d-quebranto">—</span></div>
               <div class="desglose-row total"><span>Total patentado</span><span class="v num" id="d-total">—</span></div>
@@ -1711,8 +1712,11 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       return n.includes('especial autos') || n.includes('sin quebranto');
     };
 
-    // Ordenar: destacadas primero
+    // Ordenar: la campaña elegida (p. ej. la que vino del link de la ficha) primero,
+    // despues las destacadas
     const ordenadas = Object.entries(disponibles).sort((a, b) => {
+      if (a[0] === sim.campana) return -1;
+      if (b[0] === sim.campana) return 1;
       const aDest = esMasElegida(a[0]);
       const bDest = esMasElegida(b[0]);
       if (aDest && !bDest) return -1;
@@ -1722,9 +1726,11 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
     cont.innerHTML = ordenadas.map(([nombre, camp]) => {
       const plazos = Object.keys(camp.plazos).map(Number).sort((a, b) => a - b);
-      const plazoMaxObj = camp.plazos[plazos[plazos.length - 1]];
-      const maxStr = plazoMaxObj && plazoMaxObj.max
-        ? `Hasta ${fmt(plazoMaxObj.max)} en ${plazos[plazos.length - 1]} cuotas`
+      // Cada plazo con su tope: el plazo mas largo suele financiar menos (Tera/Nivus
+      // 0%: $23M a 18 cuotas, $12M a 36) y mostrar solo uno confundia.
+      const conTope = plazos.filter(p => camp.plazos[p].max);
+      const maxStr = conTope.length
+        ? conTope.map(p => `${p} cuotas: hasta ${fmt(camp.plazos[p].max)}`).join(' · ')
         : `${plazos.length} plazos disponibles`;
       const n = nombre.toLowerCase();
       const destacada = esMasElegida(nombre);
@@ -1823,15 +1829,19 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       tasaArancel = 0.04; tasaSelladoPrenda = 0.01; pciaLabel = 'CABA';
     }
 
+    // Mismos gastos que el presupuesto del portal (portal-precios/src/lib/presupuesto.ts:
+    // GESTORIA_0KM, INSCRIPCION_PRENDA_*_0KM, INFORME_INHIBICIONES, ARANCEL_TG_FISICA).
+    // Si cambian alla, cambiarlos aca.
     const cuota = Math.round(sim.monto / 1000 * datos.cp);
     const arancel = Math.round(sim.version.priceLista * tasaArancel);
-    const gestoria = 180000;
+    const gestoria = 200000;
     const arancelTG = 10000;
-    const inscPrenda = sim.titulares === 2 ? 200000 : 150000;
+    const inscPrenda = sim.titulares === 2 ? 300000 : 250000;
+    const informe = 65000;
     const totalDeuda = cuota * sim.plazo;
     const selladoPrenda = Math.round(totalDeuda * tasaSelladoPrenda);
     const quebranto = Math.round(sim.monto * datos.q * 1.21);
-    const totalPatentado = sim.version.priceOferta + arancel + gestoria + arancelTG + inscPrenda + selladoPrenda + quebranto;
+    const totalPatentado = sim.version.priceOferta + arancel + gestoria + arancelTG + inscPrenda + informe + selladoPrenda + quebranto;
     const entrega = totalPatentado - sim.monto;
 
     // Result card principal
@@ -1854,6 +1864,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     $('d-arancel-tg').textContent = fmt(arancelTG);
     $('d-prenda-label').textContent = `Inscripción prenda (${sim.titulares} tit.)`;
     $('d-prenda').textContent = fmt(inscPrenda);
+    $('d-informe').textContent = fmt(informe);
     $('d-sellado-label').textContent = `Sellado prenda (${pciaLabel} ${(tasaSelladoPrenda * 100).toFixed(1)}%)`;
     $('d-sellado').textContent = fmt(selladoPrenda);
     $('d-quebranto').textContent = fmt(quebranto);
@@ -2361,6 +2372,21 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       if (m) {
         $('sel-modelo').value = m.slug;
         sim.modelo = m;
+        // Desde la ficha del modelo llegan tambien la version (?v=), la campaña
+        // (?c=) y el plazo (?p=) del claim que el cliente acaba de leer.
+        const vIni = urlParam('v');
+        const verIni = vIni && (VERSIONS_POR_SLUG[m.slug] || []).find(x => x.enStock && x.nombreSheet === vIni);
+        if (verIni) {
+          sim.version = verIni;
+          renderCampanas();  // llena sim.campanasDisponibles para esta version
+          const cIni = urlParam('c');
+          const campIni = cIni && sim.campanasDisponibles[cIni];
+          if (campIni) {
+            sim.campana = cIni;
+            const pIni = parseInt(urlParam('p'));
+            if (campIni.plazos[pIni]) sim.plazo = pIni;
+          }
+        }
         renderVersiones();
         renderCampanas();
         renderPlazos();
