@@ -1328,7 +1328,9 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     if (notaEl) {
       notaEl.textContent = sinPrecio
         ? 'Sin unidades en stock por ahora · consultanos disponibilidad'
-        : 'Precio final patenta cliente · stock limitado';
+        : v.notaPrecio
+          ? v.notaPrecio + '. Precio final patenta cliente.'
+          : 'Precio final patenta cliente · stock limitado';
     }
 
     // Financiacion: claim cualitativo armado con la campana VWFS real de ESTA
@@ -1654,22 +1656,39 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   const SHEET_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTD40FCkAXCrVNslz1OtxnYm1DRhDulVOHaCxJ81-kiQL17KnfimCOPn3hJDHAvJsF9ROEZdePuRw2E/pub?gid=1432576316&single=true&output=csv';
   const API_OFERTAS_URL = 'https://precios.titogonzalez.online/api/public/ofertas';
 
-  // Devuelve filas tipo CSV: [modelo, lista, oferta, stock]. Primero la API
+  // Devuelve filas tipo CSV: [modelo, lista, oferta, stock, nota]. Primero la API
   // del portal (en vivo, incluye precio por color en "precio_desde");
   // si falla, el CSV publicado del Sheet de siempre.
+  // Super precio de stock limitado: el precio sale de chasis puntuales, asi que
+  // hay que decir en que colores vale. Si TODO el stock del modelo ya esta a ese
+  // precio no aclara nada y no se muestra. Texto aprobado por Fer (5-11-2026).
+  function notaSuperPrecio(m) {
+    const sp = m.super_precio;
+    if (!sp || !Array.isArray(sp.colores) || !sp.colores.length) return '';
+    const nd = (s) => String(s).normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().trim();
+    const enOferta = sp.colores.map(nd);
+    const otros = (m.colores || []).filter(c => !enOferta.includes(nd(c.color)));
+    if (!otros.length) return '';
+    if (sp.unidades === 1) return 'Super precio · última unidad: ' + sp.colores[0];
+    const cs = sp.colores.slice();
+    const ult = cs.pop();
+    return 'Super precio · sólo ' + (cs.length ? cs.join(', ') + ' y ' + ult : ult);
+  }
+
   async function fetchFilasOfertas() {
     try {
       const res = await fetch(API_OFERTAS_URL);
       if (!res.ok) throw new Error('HTTP ' + res.status);
       const data = await res.json();
       if (!data.ok || !Array.isArray(data.modelos)) throw new Error('respuesta inválida');
-      const filas = [['modelo', 'lista', 'oferta', 'stock']];
+      const filas = [['modelo', 'lista', 'oferta', 'stock', 'nota']];
       for (const m of data.modelos) {
         filas.push([
           m.modelo,
           String(m.precio_lista || ''),
           String(m.precio_desde || m.oferta_fyf || ''),
           m.stock_disponible ? 'stock disponible' : 'sin stock',
+          notaSuperPrecio(m),
         ]);
       }
       return filas;
@@ -1735,7 +1754,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         if (!oferta || isNaN(oferta)) continue;
         const enStock = (f[3] || '').trim().toLowerCase().includes('stock disponible');
         if (!v.filas) v.filas = [];
-        v.filas.push({ nombre, oferta, enStock });
+        v.filas.push({ nombre, oferta, enStock, nota: (f[4] || '').trim() });
       }
       // El precio que se publica sale SIEMPRE de una fila con stock: si la
       // unidad no esta, su precio no se muestra. `sheetNames` queda con los
@@ -1746,6 +1765,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         v.enStock = true;
         v.precio = Math.min(...conStock.map(r => r.oferta));
         v.sheetNames = conStock.map(r => r.nombre);
+        // La aclaracion del color es la de la fila que puso el precio.
+        v.notaPrecio = (conStock.find(r => r.oferta === v.precio) || {}).nota || '';
       }
       // Filtrar versiones sin stock antes de renderizar.
       const conStock = m.versions.filter(v => v.enStock === true);
