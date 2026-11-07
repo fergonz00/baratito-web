@@ -1152,6 +1152,9 @@ Sábados cerrado</div>
     { slug: 'amarok',   name: 'Amarok',   body: 'Pick-up Mediana',   bodyType: 'pickup', origin: 'Argentina', priceFrom: 41974035, versions: 4, foto: 'imagenes/amarok hero v6.webp', campaign: CAMPAIGNS.credito_vw },
     { slug: 'taos',     name: 'Taos',     body: 'SUV Compacta',      bodyType: 'suv',    origin: 'Argentina', priceFrom: 45300000, versions: 2, foto: 'imagenes/taos comfortline.webp',      campaign: CAMPAIGNS.especial_autos },
     { slug: 'tiguan',   name: 'Tiguan',   body: 'SUV Mediana',       bodyType: 'suv',    origin: 'México',    priceFrom: 58200000, versions: 2, foto: 'imagenes/tiguan rline.webp',          campaign: CAMPAIGNS.especial_autos },
+    // Preventa: VW lo lista en dolares y lo asigna por reserva (circular 133/26), asi que no
+    // tiene precio en el portal. Se muestra siempre, sin precio, y la tarjeta lleva a consultar.
+    { slug: 'golf',     name: 'Golf GTI', body: 'Hatchback Deportivo', bodyType: 'hatch', origin: 'Alemania', priceFrom: null, versions: 1, foto: 'imagenes/golf gti.webp', campaign: null, isNew: true, preventa: true },
   ];
 
   const BODY_FILTERS = [
@@ -1180,6 +1183,8 @@ Sábados cerrado</div>
       // Si todavía no se cargó (hayStock === undefined) los mostramos todos.
       if (m.hayStock === false) return false;
       if (state.body !== 'all' && m.bodyType !== state.body) return false;
+      // sin precio en pesos no entra en ningun rango de precio
+      if (state.price !== 'all' && m.preventa) return false;
       if (state.price === 'low'  && m.priceFrom > 32000000) return false;
       if (state.price === 'mid'  && (m.priceFrom < 32000000 || m.priceFrom > 45000000)) return false;
       if (state.price === 'high' && m.priceFrom < 45000000) return false;
@@ -1246,7 +1251,7 @@ Sábados cerrado</div>
       const loadingAttr = idx === 0 ? 'eager' : 'lazy';
       const fetchPriority = idx === 0 ? ' fetchpriority="high"' : '';
 
-      const precioStr = fmtPrice(m.priceFrom);
+      const precioStr = m.preventa ? '' : fmtPrice(m.priceFrom);
       const nameEsc = m.name.replace(/'/g, "\\'");
       return `
         <div class="model-card${sinStock}" data-slug="${m.slug}">
@@ -1261,14 +1266,14 @@ Sábados cerrado</div>
               <div class="body-tipo">${m.body}</div>
             </div>
             <div class="precio-wrap">
-              <div class="precio-eyebrow">Desde · contado</div>
+              <div class="precio-eyebrow">${m.preventa ? 'Preventa exclusiva' : 'Desde · contado'}</div>
               ${m.priceList ? `<div class="precio-lista num">${fmtPrice(m.priceList)}</div>` : ''}
-              <div class="precio-valor num" data-precio-slot>${precioStr}</div>
-              <div class="precio-nota">Precio final patenta cliente · stock limitado</div>
+              <div class="precio-valor num" data-precio-slot>${m.preventa ? 'Consultá' : precioStr}</div>
+              <div class="precio-nota">${m.preventa ? 'Precio en dólares · unidades limitadas' : 'Precio final patenta cliente · stock limitado'}</div>
             </div>
             <div class="meta-row">
               <div>
-                <span class="versiones"><span class="num">${m.versions}</span> versiones</span>
+                <span class="versiones"><span class="num">${m.versions}</span> ${m.versions === 1 ? 'versión' : 'versiones'}</span>
               </div>
               ${campBadge}
             </div>
@@ -1296,7 +1301,8 @@ Sábados cerrado</div>
   function destacados() {
     const conStock = MODELS.filter(m => m.hayStock !== false);
     const lista = conStock.length ? conStock : MODELS.slice();
-    let i = lista.findIndex(m => m.isNew);
+    let i = lista.findIndex(m => m.preventa);
+    if (i < 0) i = lista.findIndex(m => m.isNew);
     if (i < 0) i = lista.findIndex(m => m.campaign && m.campaign.id === 'tasa_cero');
     if (i < 0) i = 0;
     return lista.slice(i).concat(lista.slice(0, i));
@@ -1423,13 +1429,13 @@ Sábados cerrado</div>
       </div>
       <div class="featured-foot">
         <div>
-          <div class="precio-eye">Desde · contado</div>
+          <div class="precio-eye">${destacado.preventa ? 'Preventa exclusiva' : 'Desde · contado'}</div>
           ${destacado.priceList ? `<div class="precio-lista num">${fmtPrice(destacado.priceList)}</div>` : ''}
-          <div class="precio num">${fmtPrice(destacado.priceFrom)}</div>
-          <div class="precio-nota">Precio final patenta cliente</div>
+          <div class="precio num">${destacado.preventa ? 'Consultá' : fmtPrice(destacado.priceFrom)}</div>
+          <div class="precio-nota">${destacado.preventa ? 'Precio en dólares · unidades limitadas' : 'Precio final patenta cliente'}</div>
         </div>
         <div class="featured-actions">
-          <button class="btn-ver" onclick="abrirLead('${destacado.name.replace(/'/g,"\\'")}', '${fmtPrice(destacado.priceFrom)}')">
+          <button class="btn-ver" onclick="abrirLead('${destacado.name.replace(/'/g,"\\'")}', '${destacado.preventa ? '' : fmtPrice(destacado.priceFrom)}')">
             Me interesa
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
           </button>
@@ -1649,6 +1655,7 @@ Sábados cerrado</div>
         versionsEnStockPorSlug[slug] = (versionsEnStockPorSlug[slug] || 0) + 1;
       }
       for (const m of MODELS) {
+        if (m.preventa) continue;
         if (minEnStockPorSlug[m.slug]) m.priceFrom = minEnStockPorSlug[m.slug];
         // solo vale como tachado si de verdad es mas caro que la oferta
         const l = listaDelMinPorSlug[m.slug];

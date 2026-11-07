@@ -265,6 +265,13 @@ def generar():
             "Precio, versiones y financiación del Volkswagen %s 0km (%s) en Tito "
             "Gonzalez Automotores, concesionario oficial Volkswagen en CABA." % (nombre, body)
         )
+        if slug == "golf":
+            # preventa en dolares (circular 133/26): no hay precio ni financiacion que prometer
+            desc = (
+                "Preventa exclusiva del nuevo Volkswagen Golf GTI 0km: 265 CV, DSG de 7 "
+                "marchas. Consultá y reservá el tuyo en Tito Gonzalez Automotores, "
+                "concesionario oficial Volkswagen en CABA."
+            )
         url = "%s/%s" % (SITIO, slug)
 
         h = molde
@@ -310,7 +317,8 @@ def generar():
 
         # Las fichas oficiales en PDF, que ya estaban en el portal y no se ofrecian
         # en ningun lado de la web.
-        bloque = bloque_fichas(nombre, pdfs.get(nombre))
+        # el portal agrupa las fichas por familia ("Golf"), la web usa el nombre comercial ("Golf GTI")
+        bloque = bloque_fichas(nombre, pdfs.get(nombre) or pdfs.get(nombre.split()[0]))
         if bloque:
             h = h.replace(b"</style>", ESTILO_FICHAS_PDF.encode("utf-8") + b"  </style>", 1)
             marca = b'<nav class="nav-pie"'

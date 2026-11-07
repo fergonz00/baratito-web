@@ -14,7 +14,8 @@
     { "source": "/vento",   "destination": "/m/vento.html" },
     { "source": "/amarok",  "destination": "/m/amarok.html" },
     { "source": "/taos",    "destination": "/m/taos.html" },
-    { "source": "/tiguan",  "destination": "/m/tiguan.html" }
+    { "source": "/tiguan",  "destination": "/m/tiguan.html" },
+    { "source": "/golf",    "destination": "/m/golf.html" }
   ],
   "headers": [
     {

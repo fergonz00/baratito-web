@@ -109,6 +109,8 @@ MAP = {
 
     'tiguan rline':              'Tiguan > R-Line',
 
+    'golf gti':                  'Golf GTI > GTI',
+
     'vento gli':                 'Vento > GLI',
 
     # el sitio la llama MSI; en el configurador es la Sense
