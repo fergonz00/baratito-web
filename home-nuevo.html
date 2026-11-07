@@ -1154,7 +1154,7 @@ Sábados cerrado</div>
     { slug: 'tiguan',   name: 'Tiguan',   body: 'SUV Mediana',       bodyType: 'suv',    origin: 'México',    priceFrom: 58200000, versions: 2, foto: 'imagenes/tiguan rline.webp',          campaign: CAMPAIGNS.especial_autos },
     // Preventa: VW lo lista en dolares y lo asigna por reserva (circular 133/26), asi que no
     // tiene precio en el portal. Se muestra siempre, sin precio, y la tarjeta lleva a consultar.
-    { slug: 'golf',     name: 'Golf GTI', body: 'Hatchback Deportivo', bodyType: 'hatch', origin: 'Alemania', priceFrom: null, versions: 1, foto: 'imagenes/golf gti.webp', campaign: null, isNew: true, preventa: true },
+    { slug: 'golf',     name: 'Golf GTI', body: 'Hatchback Deportivo', bodyType: 'hatch', origin: 'Alemania', priceFrom: null, versions: 1, foto: 'imagenes/golf gti.webp', campaign: null, isNew: true, preventa: true, precioTexto: 'US$ 65.000' },
   ];
 
   const BODY_FILTERS = [
@@ -1251,7 +1251,7 @@ Sábados cerrado</div>
       const loadingAttr = idx === 0 ? 'eager' : 'lazy';
       const fetchPriority = idx === 0 ? ' fetchpriority="high"' : '';
 
-      const precioStr = m.preventa ? '' : fmtPrice(m.priceFrom);
+      const precioStr = m.preventa ? m.precioTexto : fmtPrice(m.priceFrom);
       const nameEsc = m.name.replace(/'/g, "\\'");
       return `
         <div class="model-card${sinStock}" data-slug="${m.slug}">
@@ -1268,8 +1268,8 @@ Sábados cerrado</div>
             <div class="precio-wrap">
               <div class="precio-eyebrow">${m.preventa ? 'Preventa exclusiva' : 'Desde · contado'}</div>
               ${m.priceList ? `<div class="precio-lista num">${fmtPrice(m.priceList)}</div>` : ''}
-              <div class="precio-valor num" data-precio-slot>${m.preventa ? 'Consultá' : precioStr}</div>
-              <div class="precio-nota">${m.preventa ? 'Precio en dólares · unidades limitadas' : 'Precio final patenta cliente · stock limitado'}</div>
+              <div class="precio-valor num" data-precio-slot>${precioStr}</div>
+              <div class="precio-nota">${m.preventa ? 'Se factura en pesos al dólar del día · unidades limitadas' : 'Precio final patenta cliente · stock limitado'}</div>
             </div>
             <div class="meta-row">
               <div>
@@ -1431,11 +1431,11 @@ Sábados cerrado</div>
         <div>
           <div class="precio-eye">${destacado.preventa ? 'Preventa exclusiva' : 'Desde · contado'}</div>
           ${destacado.priceList ? `<div class="precio-lista num">${fmtPrice(destacado.priceList)}</div>` : ''}
-          <div class="precio num">${destacado.preventa ? 'Consultá' : fmtPrice(destacado.priceFrom)}</div>
-          <div class="precio-nota">${destacado.preventa ? 'Precio en dólares · unidades limitadas' : 'Precio final patenta cliente'}</div>
+          <div class="precio num">${destacado.preventa ? destacado.precioTexto : fmtPrice(destacado.priceFrom)}</div>
+          <div class="precio-nota">${destacado.preventa ? 'Se factura en pesos al dólar del día · unidades limitadas' : 'Precio final patenta cliente'}</div>
         </div>
         <div class="featured-actions">
-          <button class="btn-ver" onclick="abrirLead('${destacado.name.replace(/'/g,"\\'")}', '${destacado.preventa ? '' : fmtPrice(destacado.priceFrom)}')">
+          <button class="btn-ver" onclick="abrirLead('${destacado.name.replace(/'/g,"\\'")}', '${destacado.preventa ? destacado.precioTexto : fmtPrice(destacado.priceFrom)}')">
             Me interesa
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
           </button>
