@@ -900,6 +900,8 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     }
     .badge-estado.fisico { background: #E4F5EA; color: #0B6B31; }
     .badge-estado.a_recibir { background: #FFF4D6; color: #8A5A00; }
+    .badge-estado.reservado { background: #3B3B3B; color: #fff; }
+    .aviso-recibir.aviso-reservado { background: #F1F1F1; border-color: #D6D6D6; color: #333; }
     .aviso-recibir {
       margin: 0 18px 14px; padding: 10px 12px; border-radius: 10px;
       background: #FFF8E6; border: 1px solid #F5DFA3; color: #6B4800;
@@ -1201,11 +1203,12 @@ Sábados cerrado</div>
 
   function tarjeta(u, i) {
     const recibir = u.estado === 'a_recibir';
+    const reservado = !!u.reservado;
     const datos = [u.anio, u.km != null ? Number(u.km).toLocaleString('es-AR') + ' km' : null, u.color ? cap(u.color) : null]
       .filter(Boolean).map((d) => '<span class="dato">' + esc(d) + '</span>').join('');
     return '<article class="model-card usado-card">' +
       '<div class="foto-wrap">' +
-        '<span class="badge-estado ' + u.estado + '">' + (recibir ? 'Próximo ingreso' : 'En el salón') + '</span>' +
+        '<span class="badge-estado ' + (reservado ? 'reservado' : u.estado) + '">' + (reservado ? 'Reservado' : (recibir ? 'Próximo ingreso' : 'En el salón')) + '</span>' +
         '<div class="foto" onclick="abrirGaleria(' + i + ',0)">' +
           '<img src="' + esc(u.fotos[0]) + '" alt="' + esc(u.titulo) + '" loading="lazy">' +
           (u.fotos.length > 1 ? '<span class="n-fotos">📷 ' + u.fotos.length + '</span>' : '') +
@@ -1221,9 +1224,10 @@ Sábados cerrado</div>
         '<div class="precio-valor num">' + fmt(u.precio) + '</div>' +
         '<div class="precio-nota">Precio sujeto a confirmación · gastos de transferencia aparte</div>' +
       '</div>' +
-      (recibir ? '<div class="aviso-recibir"><b>Todavía no ingresó al salón.</b> Lo estamos recibiendo: podés reservarlo con una seña y te avisamos cuando llegue. Si finalmente no ingresa, te devolvemos la seña.</div>' : '') +
+      (reservado ? '<div class="aviso-recibir aviso-reservado"><b>Esta unidad está reservada.</b> Si se libera vuelve a estar disponible. Consultanos y te avisamos.</div>' : '') +
+      (recibir && !reservado ? '<div class="aviso-recibir"><b>Todavía no ingresó al salón.</b> Lo estamos recibiendo: podés reservarlo con una seña y te avisamos cuando llegue. Si finalmente no ingresa, te devolvemos la seña.</div>' : '') +
       '<div class="cta-row" style="grid-template-columns:1fr">' +
-        '<button class="cta-primary" onclick="consultarUsado(' + i + ')">' + (recibir ? 'Quiero reservarlo' : 'Me interesa') + '</button>' +
+        '<button class="cta-primary" onclick="consultarUsado(' + i + ')">' + (reservado ? 'Avisame si se libera' : (recibir ? 'Quiero reservarlo' : 'Me interesa')) + '</button>' +
       '</div>' +
     '</article>';
   }
@@ -1244,7 +1248,7 @@ Sábados cerrado</div>
 
   function consultarUsado(i) {
     const u = USADOS[i];
-    const nombre = (u.titulo + ' ' + (u.anio || '')).trim() + (u.estado === 'a_recibir' ? ' (próximo ingreso)' : '');
+    const nombre = (u.titulo + ' ' + (u.anio || '')).trim() + (u.reservado ? ' (RESERVADO: avisar si se libera)' : (u.estado === 'a_recibir' ? ' (próximo ingreso)' : ''));
     abrirLead('Usado: ' + nombre + ' [#' + u.id + ']', fmt(u.precio));
     document.getElementById('lead-modelo-info').textContent = nombre + ' · ' + fmt(u.precio);
   }
